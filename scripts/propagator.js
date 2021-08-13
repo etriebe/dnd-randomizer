@@ -17,7 +17,8 @@ class Propagator{
         for(let r = canvas.scene.dimensions.size; r < canvas.scene.dimensions.size*10; r+=canvas.scene.dimensions.size){
 
             for(let theta = 0; theta < 2*Math.PI; theta+=Math.PI/(4*r/canvas.scene.dimensions.size)){
-                positions.push(canvas.grid.getSnappedPosition(origin.x + r*Math.cos(theta),origin.y + r*Math.sin(theta)));
+                const newPos = canvas.grid.getTopLeft(origin.x + r*Math.cos(theta),origin.y + r*Math.sin(theta))
+                positions.push({x:newPos[0],y:newPos[1]});
             }
         }
         return positions;
