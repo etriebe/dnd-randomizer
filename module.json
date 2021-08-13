@@ -1,14 +1,20 @@
 {
-  "name": "name",
-  "title": "title",
+  "name": "dnd-randomizer",
+  "title": "DnD Randomizer",
   "description": "desc",
   "version": "0.1",
-  "author": "theripper93",
+  "systems": ["dnd5e"],
+  "author": "theripper93, Mouse0270",
   "authors": [
       {
           "name": "theripper93",
           "email": "tsplab@gmail.com",
           "url": "https://www.patreon.com/theripper93"
+      }, {
+        "name": "Mouse0270",
+        "email": "",
+        "url": "https://www.patreon.com/mouse0270",
+        "discord": "mouse0270#0270"
       }
   ],
   "languages": [
@@ -21,10 +27,13 @@
   "scripts": [
       "./scripts/main.js",
       "./scripts/config.js",
-      "./scripts/module.js"
+      "./scripts/module.js",
+      "./scripts/propagator.js",
+      "./scripts/spawner.js",
+      "./scripts/encounter.js"
   ],
   "styles": [
-      "./styles/module.css"
+      "./styles/encounterGenerator.css"
   ],
   "packs": [
   ],
