@@ -1,10 +1,11 @@
 class Propagator{
     // Find a non occupid cell in the grid that matches the size of the token given an origin
     static getFreePosition(tokenData,origin, collision = true){
-        origin = canvas.grid.getSnappedPosition(origin.x,origin.y);
+        const center = canvas.grid.getCenter(origin.x,origin.y)
+        origin = {x:center[0],y:center[1]};
         const positions = Propagator.generatePositions(origin);
         for(let position of positions){
-            if(Propagator.canFit(tokenData, position, origin, collision)){
+            if(Propagator.canFit(tokenData, position, positions[0], collision)){
                 return position;
             }
         }
@@ -12,7 +13,7 @@ class Propagator{
     }
     //generate positions radiantially from the origin
     static generatePositions(origin){
-        let positions = [];
+        let positions = [canvas.grid.getSnappedPosition(origin.x-1,origin.y-1)];
         for(let r = canvas.scene.dimensions.size; r < canvas.scene.dimensions.size*10; r+=canvas.scene.dimensions.size){
 
             for(let theta = 0; theta < 2*Math.PI; theta+=Math.PI/(4*r/canvas.scene.dimensions.size)){
