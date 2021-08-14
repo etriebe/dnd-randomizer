@@ -27,7 +27,6 @@ class Encounter {
   }
 
   validate() {
-    debugger;
     if (
       this.data.every(
         (creature) =>
