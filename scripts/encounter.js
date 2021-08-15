@@ -1,6 +1,7 @@
 class Encounter {
   constructor(data) {
     this.data = data;
+    this.currency = data.currency
     this.creatures = [];
     this.loot = [];
     this.abstractLoot = [];
@@ -9,10 +10,10 @@ class Encounter {
   async prepareData() {
     for (let creature of this.data.creatures) {
       let actor = game.actors.find(
-        (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name
+        (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name.replace(/\s/g, "").toLowerCase()
       );
       if (!actor) {
-        const compData = Encounter.getCompendiumEntryByName(creature.name);
+        const compData = Encounter.getCompendiumEntryByName(creature.name, "Actor");
         const compEntry = compData.entry;
         await game.actors.importFromCompendium(
           compData.compendium,
@@ -20,16 +21,16 @@ class Encounter {
           {}
         );
         actor = game.actors.find(
-          (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name
+          (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name.replace(/\s/g, "").toLowerCase()
         );
       }
       this.creatures.push({
         name: creature.name,
-        number: creature.number,
+        quantity: creature.quantity,
         actor: actor,
       });
     }
-    for (let loot of this.data.loot) {
+    for (let loot of this.data.loot.items) {
       let item = game.items.find(
         (a) => a.name.replace(/\s/g, "").toLowerCase() === loot.itemName
       );
@@ -52,7 +53,11 @@ class Encounter {
           (a) => a.name.replace(/\s/g, "").toLowerCase() === loot.itemName
         );
       }
-      this.loot.push(item);
+      this.loot.push({
+        name: item.data.name,
+        quantity: loot.quantity,
+        item: item,
+      });
     }
     return this;
   }
@@ -62,8 +67,8 @@ class Encounter {
       this.data.creatures.every(
         (creature) =>
           game.actors.find(
-            (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name
-          ) || Encounter.getCompendiumEntryByName(creature.name, "Actor")
+            (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name.replace(/\s/g, "").toLowerCase()
+          ) || Encounter.getCompendiumEntryByName(creature.name.replace(/\s/g, "").toLowerCase(), "Actor")
       ) /* &&
       this.data.loot.some(
         (item) =>
@@ -100,10 +105,11 @@ class Encounter {
   }
 
   static getCompendiumEntryByName(name, type) {
+    name = type == "Actor" ? Encounter.fuzzyMatch(name, type) : Encounter.fuzzyMatch(name, type);
     const compendiums = game.packs.filter((p) => p.documentName === type);
     for (let compendium of compendiums) {
       const entry = compendium.index.find(
-        (i) => i.name.replace(/\s/g, "").toLowerCase() === name
+        (i) => i.name.replace(/\s/g, "").toLowerCase() === name.replace(/\s/g, "").toLowerCase()
       );
       if (entry) return { entry: entry, compendium: compendium };
     }
@@ -118,59 +124,8 @@ class Encounter {
         matchDb.push(entry.name);
       }
     }
-    fs = FuzzySet(matchDb,false);
-    return fs.get(name)[0];
+    const fs = FuzzySet(matchDb,true);
+    const result = fs.get(name);
+    return result ? result[0][1]: undefined;
   }
 }
-
-/*fs.get('alabam')
-fs = FuzzySet(['Alabama',
-'Alaska',
-'Arizona',
-'Arkansas',
-'California',
-'Colorado',
-'Connecticut',
-'Delaware',
-'Florida',
-'Georgia',
-'Hawaii',
-'Idaho',
-'Illinois',
-'Indiana',
-'Iowa',
-'Kansas',
-'Kentucky',
-'Louisiana',
-'Maine',
-'Maryland',
-'Massachusetts',
-'Michigan',
-'Minnesota',
-'Mississippi',
-'Missouri',
-'Montana',
-'Nebraska',
-'Nevada',
-'New Hampshire',
-'New Jersey',
-'New Mexico',
-'New York',
-'North Carolina',
-'North Dakota',
-'Ohio',
-'Oklahoma',
-'Oregon',
-'Pennsylvania',
-'Rhode Island',
-'South Carolina',
-'South Dakota',
-'Tennessee',
-'Texas',
-'Utah',
-'Vermont',
-'Virginia',
-'Washington',
-'West Virginia',
-'Wisconsin',
-'Wyoming'], false)*/

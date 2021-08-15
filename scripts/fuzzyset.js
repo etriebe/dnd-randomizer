@@ -272,7 +272,3 @@ const FuzzySet = function(arr, useLevenshtein, gramSizeLower, gramSizeUpper) {
 
     return fuzzyset;
 };
-
-export {
-  FuzzySet as default,
-};

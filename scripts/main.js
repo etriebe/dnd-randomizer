@@ -7,7 +7,8 @@ async function spawnTest(name,number){
 }
 
 async function dataTest(){
-    const parsedData = RandomGeneratorParser.parseToEncounters(sampleDataset)
+
+    const parsedData = await fetchTest();
     console.log(parsedData)
     const encounters = parsedData.reduce((a,v) => {
         const enc = new Encounter(v).validate()
@@ -19,4 +20,8 @@ async function dataTest(){
     }
 
     return encounters
+}
+
+async function fetchTest(){
+    return await fetch('https://talacatt.com/encounterData.php').then(response => response.json()).then(data => data);
 }
