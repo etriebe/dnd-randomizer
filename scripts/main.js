@@ -1,5 +1,31 @@
 const SFCONSTS = {
     MODULE_NAME: "dnd-randomizer",
+    GEN_OPT: {
+        loot_type: ["individual treasure", "treasure hoard"],
+        numberOfPlayers: Number,//[1 - 13]
+        averageLevelOfPlayers: Number,//[1 - 20]
+        environment: [
+          "arctic",
+          "coastal",
+          "desert",
+          "forest",
+          "grassland",
+          "hill",
+          "jungle",
+          "mountain",
+          "underdark",
+          "swamp",
+          "underwater",
+          "urban",
+          "celestial",
+          "abyssal",
+          "infernal",
+          "air_elemental",
+          "earth_elemental",
+          "fire_elemental",
+          "water_elemental",
+        ],
+      }
 }
 
 async function spawnTest(name,number){
@@ -22,6 +48,7 @@ async function dataTest(){
     for(let encounter of encounters){
         await encounter.prepareData()
         await encounter.loadActors()
+        await encounter.createLootSheet()
     }
 
     return encounters

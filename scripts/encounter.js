@@ -8,12 +8,7 @@ class Encounter {
     this.id = data.id || randomID(20);
   }
 
-  async prepareData() {
-    //Prepare creature data
-    for (let creature of this.data.creatures) {
-      this.creatures.push(new EncCreature(creature));
-    }
-
+  async prepareData(lootOnly = false) {
     //Prepare loot data
     for (let loot of this.data.loot.items) {
       const item = new EncItem(loot, "item");
@@ -25,6 +20,11 @@ class Encounter {
       const item = new EncItem(loot, "abstract");
       item.getData();
       this.loot.push(item);
+    }
+    if(lootOnly) return this;
+    //Prepare creature data
+    for (let creature of this.data.creatures) {
+      this.creatures.push(new EncCreature(creature));
     }
     return this;
   }
@@ -78,8 +78,48 @@ class Encounter {
     });
   }
 
-  async createLootSheet(){
-    
+  async createLootSheet(name) {
+    const folderName = SFHelpers.getFolder("loot");
+    const folder = game.folders.getName(folderName)
+      ? game.folders.getName(folderName)
+      : await Folder.create({ type: "Actor", name: folderName });
+
+    const actorData = {
+      name: name || this.id,
+      type: "npc",
+      img: "icons/svg/chest.svg",
+      data: {
+        currency: {
+          cp: {
+            value: this.currency.cp,
+          },
+          sp: {
+            value: this.currency.sp,
+          },
+          gp: {
+            value: this.currency.gp,
+          },
+          pp: {
+            value: this.currency.pp,
+          },
+          ep: {
+            value: this.currency.ep,
+          },
+        },
+      },
+      folder: folder.id,
+      flags: {
+        lootsheetnpc5e: {
+          lootsheettype: "Loot",
+        },
+      },
+    };
+    const actor = await Actor.create(actorData);
+    let items = [];
+    for (let item of this.loot) {
+      items.push(await item.getData());
+    }
+    await actor.createEmbeddedDocuments("Item", items);
   }
 }
 
@@ -137,9 +177,9 @@ class EncItem {
   async getData() {
     switch (this.type) {
       case "item":
-        return this.getItemData();
+        return await this.getItemData();
       case "abstract":
-        return this.generateAbstractLootData();
+        return await this.generateAbstractLootData();
     }
   }
 
@@ -150,7 +190,7 @@ class EncItem {
 
     if (item) {
       this.name = item.data.name;
-      this._itemDocument = item.document;
+      this._itemDocument = item.data;
       this.dynamicLink = `@Item[${item.id}]{${item.data.name}}`;
       return item.data;
     }
@@ -163,8 +203,9 @@ class EncItem {
       item = await game.packs
         .get(compData.compendium.collection)
         .getDocument(compData.entry._id);
+      delete item.data._id;
       this.name = item.data.name;
-      this._itemDocument = item;
+      this._itemDocument = item.data;
       this.dynamicLink = `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${item.data.name}}`;
       return item;
     }
