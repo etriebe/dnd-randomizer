@@ -5,6 +5,7 @@ class Encounter {
     this.creatures = [];
     this.loot = [];
     this.abstractLoot = [];
+    this.id = data.id || randomID(20);
   }
 
   async prepareData() {
@@ -61,6 +62,25 @@ class Encounter {
     const result = fs.get(name);
     return result ? result[0][1] : undefined;
   }
+
+  async loadActors() {
+    for (let creature of this.creatures) {
+      await creature.getActor();
+    }
+  }
+
+  async spawn() {
+    await this.loadActors();
+    const _this = this;
+    Hooks.once("createMeasuredTemplate", async (template) => {
+      await CreatureSpawner.fromTemplate(template.object, _this);
+      template.object.delete();
+    });
+  }
+
+  async createLootSheet(){
+    
+  }
 }
 
 class EncCreature {
@@ -75,12 +95,16 @@ class EncCreature {
     if (this._actor) return this._actor;
     let actor = game.actors.find((a) => a.name === this.name);
     if (!actor) {
+      const folderName = SFHelpers.getFolder("actor");
+      const folder = game.folders.getName(folderName)
+        ? game.folders.getName(folderName)
+        : await Folder.create({ type: "Actor", name: folderName });
       const compData = Encounter.getCompendiumEntryByName(this.name, "Actor");
       const compEntry = compData.entry;
       await game.actors.importFromCompendium(
         compData.compendium,
         compEntry._id,
-        {}
+        { folder: folder.id }
       );
       actor = game.actors.find((a) => a.name === this.name);
     }
@@ -108,10 +132,9 @@ class EncItem {
     this.type = type;
     this.dynamicLink = "";
     this._itemDocument = null;
-
   }
 
-  async getData(){
+  async getData() {
     switch (this.type) {
       case "item":
         return this.getItemData();

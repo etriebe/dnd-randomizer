@@ -3,7 +3,7 @@
   "title": "Stochastic, Fantastic!",
   "description": "desc",
   "version": "0.1",
-  "systems": ["dnd5e"],
+  "system": ["dnd5e"],
   "author": "theripper93, Mouse0270",
   "authors": [
       {
@@ -31,7 +31,6 @@
       "./scripts/propagator.js",
       "./scripts/spawner.js",
       "./scripts/encounter.js",
-      "./scripts/parser.js",
       "./scripts/fuzzyset.js"
   ],
   "styles": [

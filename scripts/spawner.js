@@ -5,7 +5,7 @@ class CreatureSpawner {
         for (let creature of encounterData.creatures) {
           for (let i = 0; i < creature.number; i++) {
             await CreatureSpawner.wait(100);
-            const tD = await creature.actor.getTokenData();
+            const tD = await creature._actor.getTokenData();
             const position = Propagator.getFreePosition(
               tD,
               CreatureSpawner.randomInCircle(

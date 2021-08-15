@@ -1,3 +1,7 @@
+const SFCONSTS = {
+    MODULE_NAME: "dnd-randomizer",
+}
+
 async function spawnTest(name,number){
     let encounterData = await new Encounter([{name: name, number: number}]).validate().prepareData();
     Hooks.once("createMeasuredTemplate", async (template) => {
@@ -17,11 +21,12 @@ async function dataTest(){
     },[])
     for(let encounter of encounters){
         await encounter.prepareData()
+        await encounter.loadActors()
     }
 
     return encounters
 }
 
 async function fetchTest(){
-    return await fetch('https://talacatt.com/encounterData.php?loot_type=Treasure+Hoard').then(response => response.json()).then(data => data);
+    return await fetch('https://theripper93.com/encounterData.php?loot_type=Treasure+Hoard').then(response => response.json()).then(data => data);
 }
