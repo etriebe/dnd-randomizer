@@ -10,7 +10,7 @@ class RandomGeneratorParser {
   static generateEncounterData(encounter) {
     const encounterData = {};
     encounterData.difficulty = encounter.xp.difficulty
-      .replace(" ", "")
+      .replace(/\s/g, '')
       .toLowerCase();
     encounterData.xp = encounter.xp.xp.replace(" xp", "");
     encounterData.creatures = encounter.monsters.map((monster) => {
@@ -19,6 +19,7 @@ class RandomGeneratorParser {
     encounterData.loot = encounter.treasure.map((loot) => {
       return RandomGeneratorParser.generateLootData(loot);
     });
+    return encounterData;
   }
 
   static generateCreatureData(creature) {
@@ -30,23 +31,24 @@ class RandomGeneratorParser {
   }
 
   static cleanupCreatureName(name) {
-    return name.replace(" ", "").toLowerCase();
+    return name.replace(/\s/g, '').toLowerCase();
   }
 
   static generateLootData(loot) {
-    const quantity = parseInt(loot.split(" x ")[0]) || 1;
-    const isGold = parseInt(loot.split("")[0]) && !loot.includes("x");
-    const isScroll = RandomGeneratorParser.cleanupItemName(loot) === "spellscroll"
-    const itemName = RandomGeneratorParser.cleanupItemName(loot,isScroll) || "";
-    const displayName = loot;
-    
-    return {
-      quantity: quantity,
-      isGold: isGold,
-      isScroll: isScroll,
-      itemName: itemName,
-      originalName: displayName,
-    };
+        loot=loot[0];
+        const quantity = parseInt(loot.split(" x ")[0]) || 1;
+        const isGold = parseInt(loot.split("")[0]) && !loot.includes("x");
+        const isScroll = loot.includes("Spell Scroll")
+        const itemName = RandomGeneratorParser.cleanupItemName(loot,isScroll) || "";
+        const displayName = loot;
+        
+        return {
+          quantity: quantity,
+          isGold: isGold,
+          isScroll: isScroll,
+          itemName: itemName,
+          originalName: displayName,
+        };
   }
 
   static wordsToCut() {
@@ -57,9 +59,10 @@ class RandomGeneratorParser {
     let cleanName = "";
     const quantitySplit = name.split(" x ");
     cleanName = quantitySplit[quantitySplit.length - 1];
-    cleanName = cleanName.replace(")", "");
+    cleanName = cleanName.replace(/\)/g, '')
     cleanName = cleanName.split("(")[isScroll ? 1:0];
-    cleanName.replace(" ", "").toLowerCase();
+    cleanName = cleanName.replace(/\s/g, '')
+    cleanName = cleanName.toLowerCase();
     return cleanName;
   }
 }

@@ -31,7 +31,8 @@
       "./scripts/propagator.js",
       "./scripts/spawner.js",
       "./scripts/encounter.js",
-      "./scripts/parser.js"
+      "./scripts/parser.js",
+      "./scripts/fuzzyset.js"
   ],
   "styles": [
       "./styles/encounterGenerator.css"
