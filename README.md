@@ -15,7 +15,7 @@ Stochastic, Fantastic! pulls it's data from https://donjon.bin.sh/ with permissi
 
 This package is licensed under the Prosperity Public License 3.0.
 
-That means that this package is free to use for non-commercial projects — personal projects, public benefit projects, research, education, etc. (see the license for full details). If your project is commercial (even for internal use at your company), you have 30 days to try this package for free before you have to pay a one-time licensing fee of $49.
+That means that this package is free to use for non-commercial projects
 
 See https://github.com/Glench/fuzzyset.js for more details
 
