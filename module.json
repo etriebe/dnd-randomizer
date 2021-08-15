@@ -30,7 +30,8 @@
       "./scripts/module.js",
       "./scripts/propagator.js",
       "./scripts/spawner.js",
-      "./scripts/encounter.js"
+      "./scripts/encounter.js",
+      "./scripts/parser.js"
   ],
   "styles": [
       "./styles/encounterGenerator.css"

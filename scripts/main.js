@@ -5,3 +5,7 @@ async function spawnTest(name,number){
         template.object.delete()
     })
 }
+
+function dataTest(){
+    console.log(RandomGeneratorParser.parseToEncounters(sampleDataset))
+}

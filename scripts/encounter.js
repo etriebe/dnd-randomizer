@@ -40,7 +40,7 @@ class Encounter {
   static getCompendiumEntryByName(name) {
     const compendiums = game.packs.filter((p) => p.documentName === "Actor");
     for (let compendium of compendiums) {
-      const entry = compendium.index.find((i) => i.name === name);
+      const entry = compendium.index.find((i) => i.name.replace(" ","").toLowerCase() === name);
       if (entry) return { entry: entry, compendium: compendium };
     }
     return null;
