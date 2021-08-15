@@ -9,8 +9,6 @@ desc
 
 Stochastic, Fantastic! pulls it's data from https://donjon.bin.sh/ with permission from the author. Support this amazing website here https://ko-fi.com/donjon 
 
-## Stochastic, Fantastic! is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
-
 ## Fuzzyset.js
 
 This package is licensed under the Prosperity Public License 3.0.
@@ -18,3 +16,5 @@ This package is licensed under the Prosperity Public License 3.0.
 That means that this package is free to use for non-commercial projects — personal projects, public benefit projects, research, education, etc. (see the license for full details). If your project is commercial (even for internal use at your company), you have 30 days to try this package for free before you have to pay a one-time licensing fee of $49.
 
 See https://github.com/Glench/fuzzyset.js for more details
+
+## Stochastic, Fantastic! is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
