@@ -7,7 +7,7 @@ desc
 
 ## Donjon
 
-Stochastic, Fantastic! pulls it's data from https://donjon.bin.sh/ with permission from the author. Support this amazing website here https://ko-fi.com/donjon 
+Stochastic, Fantastic! pulls it's data from https://donjon.bin.sh/ with permission from the author (Some content used under the Open Gaming License). Support this amazing website here https://ko-fi.com/donjon 
 
 ## Fuzzyset.js
 
