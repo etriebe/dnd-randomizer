@@ -23,5 +23,5 @@ async function dataTest(){
 }
 
 async function fetchTest(){
-    return await fetch('https://talacatt.com/encounterData.php').then(response => response.json()).then(data => data);
+    return await fetch('https://talacatt.com/encounterData.php?loot_type=Treasure+Hoard').then(response => response.json()).then(data => data);
 }

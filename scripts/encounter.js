@@ -1,16 +1,18 @@
 class Encounter {
   constructor(data) {
     this.data = data;
-    this.currency = data.currency
+    this.currency = data.loot.currency
     this.creatures = [];
     this.loot = [];
     this.abstractLoot = [];
   }
 
   async prepareData() {
+
+    //Prepare actor data
     for (let creature of this.data.creatures) {
       let actor = game.actors.find(
-        (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name.replace(/\s/g, "").toLowerCase()
+        (a) => a.name === creature.name
       );
       if (!actor) {
         const compData = Encounter.getCompendiumEntryByName(creature.name, "Actor");
@@ -21,7 +23,7 @@ class Encounter {
           {}
         );
         actor = game.actors.find(
-          (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name.replace(/\s/g, "").toLowerCase()
+          (a) => a.name === creature.name
         );
       }
       this.creatures.push({
@@ -30,17 +32,18 @@ class Encounter {
         actor: actor,
       });
     }
+
+    //Prepare loot data
     for (let loot of this.data.loot.items) {
       let item = game.items.find(
-        (a) => a.name.replace(/\s/g, "").toLowerCase() === loot.itemName
+        (a) => a.name === loot.name
       );
       if (!item) {
         const compData = Encounter.getCompendiumEntryByName(
-          loot.itemName,
+          loot.name,
           "Item"
         );
         if (!compData) {
-          this.processAbstractLoot(loot);
           continue;
         }
         const compEntry = compData.entry;
@@ -50,7 +53,7 @@ class Encounter {
           {}
         );
         item = game.items.find(
-          (a) => a.name.replace(/\s/g, "").toLowerCase() === loot.itemName
+          (a) => a.name === loot.name
         );
       }
       this.loot.push({
@@ -67,49 +70,19 @@ class Encounter {
       this.data.creatures.every(
         (creature) =>
           game.actors.find(
-            (a) => a.name.replace(/\s/g, "").toLowerCase() === creature.name.replace(/\s/g, "").toLowerCase()
-          ) || Encounter.getCompendiumEntryByName(creature.name.replace(/\s/g, "").toLowerCase(), "Actor")
-      ) /* &&
-      this.data.loot.some(
-        (item) =>
-          game.items.find(
-            (a) => a.name.replace(/\s/g, "").toLowerCase() === item.itemName
-          ) || Encounter.getCompendiumEntryByName(item.name, "Items")
-      )*/
+            (a) => a.name === creature.name
+          ) || Encounter.getCompendiumEntryByName(creature.name, "Actor")
+      )
     )
       return this;
   }
 
-  processAbstractLoot(loot) {
-    if (loot.isGold) {
-      switch (true) {
-        case loot.originalName.includes("gp"):
-          this.gp = loot.quantity;
-          break;
-        case loot.originalName.includes("sp"):
-          this.sp = loot.quantity;
-          break;
-        case loot.originalName.includes("cp"):
-          this.cp = loot.quantity;
-          break;
-        case loot.originalName.includes("pp"):
-          this.pp = loot.quantity;
-          break;
-        case loot.originalName.includes("ep"):
-          this.ep = loot.quantity;
-          break;
-      }
-    } else {
-      this.abstractLoot.push(loot.originalName);
-    }
-  }
-
   static getCompendiumEntryByName(name, type) {
-    name = type == "Actor" ? Encounter.fuzzyMatch(name, type) : Encounter.fuzzyMatch(name, type);
+    name = type == "Actor" ? name : Encounter.fuzzyMatch(name, type);
     const compendiums = game.packs.filter((p) => p.documentName === type);
     for (let compendium of compendiums) {
       const entry = compendium.index.find(
-        (i) => i.name.replace(/\s/g, "").toLowerCase() === name.replace(/\s/g, "").toLowerCase()
+        (i) => i.name === name
       );
       if (entry) return { entry: entry, compendium: compendium };
     }
