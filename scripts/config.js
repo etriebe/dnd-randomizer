@@ -17,4 +17,18 @@ Hooks.once("init", async function () {
   });
 });
 
+Hooks.on("changeSidebarTab",(settings) => {
+  if(!game.user.isGM || settings.tabName != "actors") return
+  const html = settings.element
+  if(html.find("#sfButton").length !== 0) return
+  const button = `<button id="sfButton" style="flex-basis: auto;">
+  <i class="fas fa-dice"></i> Generate Encounter
+</button>`
+  html.find(`.header-actions`).append(button)
+  html.find("#sfButton").on("click",async (e) => {
+    e.preventDefault();
+    if (!canvas.sfDialog?.rendered) await canvas.sfDialog.render(true);
+  })
+});
+
 Hooks.once("ready", async function () {});

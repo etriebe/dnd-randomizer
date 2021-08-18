@@ -31,10 +31,7 @@ class SFHelpers {
 class StocasticFantastic {
   static async addToDialog(data) {
     const encounterData = await SFHelpers.parseEncounter(data);
-    if (!canvas.sfDialog?.rendered) await canvas.sfDialog.rendered.render(true);
+    if (!canvas.sfDialog?.rendered) await canvas.sfDialog.render(true);
     canvas.sfDialog.populateEncounters(encounterData);
   }
 }
-
-
-StocasticFantastic.addToDialog(data)

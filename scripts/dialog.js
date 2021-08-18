@@ -86,8 +86,7 @@ class SFDialog extends FormApplication {
 			const $button = $(event.currentTarget);
 
 			$button.prop('disabled', true).addClass('disabled');
-			$button.find('i.fas').removeClass('fa-bolt').addClass('fa-spinner fa-spin');
-
+			$button.find('i.fas').removeClass('fa-dice').addClass('fa-spinner fa-spin');
 			const params = {
 				loot_type: html.find('#lootType select[name="lootType"]').val(),
 				numberOfPlayers: html.find('#numberOfPlayers select[name="numberOfPlayers"]').val(),
@@ -111,7 +110,7 @@ class SFDialog extends FormApplication {
 
 
 			$button.prop('disabled', false).removeClass('disabled');
-			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-bolt');
+			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
 		});
 
 		/*async function dataTest(){
@@ -228,7 +227,7 @@ class SFDialog extends FormApplication {
 
 Hooks.once('ready', async () => {
 	canvas.sfDialog = new SFDialog();
-	canvas.sfDialog.render(true);
+	//canvas.sfDialog.render(true);
 
 	
 });
