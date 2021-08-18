@@ -9,7 +9,7 @@ class CreatureSpawner {
             const position = Propagator.getFreePosition(
               tD,
               CreatureSpawner.randomInCircle(
-                template.center,
+                {x:template.data.x,y:template.data.y},
                 (template.data.distance * canvas.dimensions.size) /
                   canvas.dimensions.distance
               )

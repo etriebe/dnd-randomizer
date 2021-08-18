@@ -1,7 +1,7 @@
 class Encounter {
   constructor(data) {
     this.data = data;
-    this.name = this.data.name
+    this.name = this.data.name;
     this.currency = data.loot.currency;
     this.creatures = [];
     this.loot = [];
@@ -73,9 +73,10 @@ class Encounter {
   async spawn() {
     await this.loadActors();
     const _this = this;
-    Hooks.once("createMeasuredTemplate", async (template) => {
-      await CreatureSpawner.fromTemplate(template.object, _this);
-      template.object.delete();
+    Hooks.once("preCreateMeasuredTemplate", (template) => {
+      canvas.tokens.activate();
+      CreatureSpawner.fromTemplate(template, _this);
+      return false;
     });
   }
 
