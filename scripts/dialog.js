@@ -57,6 +57,7 @@ class SFDialog extends FormApplication {
 			let $ul = html.find('.form-encounters ul').first();
 
 			for (const encounter of encounterData) {
+				console.log(encounter)
 				$ul.append(`<li>
 					<div class="favorite-encounter"><i class="far fa-star"></i></div>
 					<div class="encounter-details">

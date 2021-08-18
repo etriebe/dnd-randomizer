@@ -3,7 +3,7 @@ class CreatureSpawner {
     switch (template.data.t) {
       case "circle":
         for (let creature of encounterData.creatures) {
-          for (let i = 0; i < creature.number; i++) {
+          for (let i = 0; i < creature.quantity; i++) {
             await CreatureSpawner.wait(100);
             const tD = await creature._actor.getTokenData();
             const position = Propagator.getFreePosition(
@@ -14,7 +14,7 @@ class CreatureSpawner {
                   canvas.dimensions.distance
               )
             );
-            const tokenData = await creature.actor.getTokenData({
+            const tokenData = await creature._actor.getTokenData({
               x: position.x,
               y: position.y,
             });
