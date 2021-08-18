@@ -21,7 +21,7 @@ class Encounter {
       item.getData();
       this.loot.push(item);
     }
-    if(lootOnly) return this;
+    if (lootOnly) return this;
     //Prepare creature data
     for (let creature of this.data.creatures) {
       this.creatures.push(new EncCreature(creature));
@@ -109,6 +109,9 @@ class Encounter {
       },
       folder: folder.id,
       flags: {
+        core: {
+          sheetClass: "dnd5e.LootSheet5eNPC",
+        },
         lootsheetnpc5e: {
           lootsheettype: "Loot",
         },
