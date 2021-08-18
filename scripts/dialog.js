@@ -97,7 +97,7 @@ class SFDialog extends FormApplication {
 			}
 			
 			const fetchedData = await SFHelpers.fetchData(params);
-			const encounterData = await SFHelpers.parseEncounter(fetchedData);
+			const encounterData = await SFHelpers.parseEncounter(fetchedData, params);
 
 			/* Structure
 			<li>

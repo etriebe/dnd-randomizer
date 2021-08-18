@@ -5,7 +5,6 @@ class Encounter {
     this.currency = data.loot.currency;
     this.creatures = [];
     this.loot = [];
-    this.abstractLoot = [];
     this.id = data.id || randomID(20);
   }
 
@@ -80,16 +79,21 @@ class Encounter {
     });
   }
 
-  async createLootSheet(name) {
+  async getRandomChestIcon(){    
+    const folder = await FilePicker.browse("public","icons/containers/chest")
+    return folder.files[Math.floor(Math.random() * folder.files.length)]
+  }
+
+  async createLootSheet() {
     const folderName = SFHelpers.getFolder("loot");
     const folder = game.folders.getName(folderName)
       ? game.folders.getName(folderName)
       : await Folder.create({ type: "Actor", name: folderName });
 
     const actorData = {
-      name: name || this.id,
+      name: this.name || this.id,
       type: "npc",
-      img: "icons/svg/chest.svg",
+      img: await this.getRandomChestIcon(),//"icons/svg/chest.svg",
       data: {
         currency: {
           cp: {
@@ -188,6 +192,10 @@ class EncItem {
     }
   }
 
+  getRandomLootImg(){
+    return SFCONSTS.LOOT_ICONS[Math.floor(Math.random() * SFCONSTS.LOOT_ICONS.length)]
+  }
+
   async getItemData() {
     if (this._itemDocument) return this._itemDocument;
 
@@ -221,7 +229,7 @@ class EncItem {
     this._itemDocument = {
       name: this.name,
       type: "loot",
-      img: "icons/svg/item-bag.svg",
+      img: this.getRandomLootImg(),//"icons/svg/item-bag.svg",
       data: {
         quantity: 1,
         weight: 0,

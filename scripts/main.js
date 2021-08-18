@@ -25,7 +25,12 @@ const SFCONSTS = {
           "Fire Elemental",
           "Water Elemental"
         ],
-      }
+      },
+    LOOT_ICONS: [
+        "systems/dnd5e/icons/items/inventory/pouch-sealed.jpg",
+        "systems/dnd5e/icons/items/inventory/satchel.jpg",
+        "systems/dnd5e/icons/items/inventory/briefcase.jpg"
+    ]
 }
 
 async function spawnTest(name,number){
