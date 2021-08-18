@@ -23,9 +23,63 @@ class SFDialog extends FormApplication {
 		}
 	}
 
+	populateEncounters(encounterData) {
+		const html = this.element
+		let $ul = html.find('.form-encounters ul').first();
+
+		for (const encounter of encounterData) {
+			$ul.append(`<li>
+				<div class="favorite-encounter"><i class="far fa-star"></i></div>
+				<div class="encounter-details">
+					<div class="encounter-details-header">
+						<div class="encounter-details-header-title">${encounter.name ?? "Custom Name"}</div>
+					</div>
+					<div class="encounter-details-loot"></div>
+				</div>
+				<div class="encounter-info">
+					<div class="encounter-data">
+						<span class="loot-button"><i class="fas fa-coins"></i></span>
+						${encounter.currency.pp > 0 ? `<span class="loot-button">pp ${encounter.currency.pp}</span>` : ''}
+						${encounter.currency.gp > 0 ? `<span class="loot-button">gp ${encounter.currency.gp}</span>` : ''}
+						${encounter.currency.ep > 0 ? `<span class="loot-button">ep ${encounter.currency.ep}</span>` : ''}
+						${encounter.currency.sp > 0 ? `<span class="loot-button">sp ${encounter.currency.sp}</span>` : ''}
+						${encounter.currency.cp > 0 ? `<span class="loot-button">cp ${encounter.currency.cp}</span>` : ''}
+						<span class="encounter-difficulty ${encounter.data.difficulty}">${encounter.data.difficulty}</span>
+						<span class="encounter-xp">${encounter.data.xp}</span>
+					</div>
+				</div>
+				<div class="create-encounter">
+					<i class="fas fa-angle-double-right" data-trigger="spawn"></i>
+					<i class="fas fa-briefcase" data-trigger="loot"></i>
+				</div>
+			</li>`);
+
+			$ul.find('li:last-child .create-encounter i.fas[data-trigger="spawn"]').on('click', function(event) {
+				encounter.spawn();
+			})
+
+			$ul.find('li:last-child .create-encounter i.fas[data-trigger="loot"]').on('click', function(event) {
+				encounter.createLootSheet();
+			})
+
+			let $details = $ul.find('li:last-child .encounter-details');
+			for (const creature of encounter.creatures) {
+				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${TextEditor.enrichHTML(creature.dynamicLink)}</span>`);
+			}
+
+			
+			for (const loot of encounter.loot) {
+				$details.find('.encounter-details-loot').append(`<span class="loot-button">
+					${loot.quantity} <i class="fas fa-times" style="font-size: 0.5rem"></i>
+					${loot.dynamicLink.length > 0 ? TextEditor.enrichHTML(loot.dynamicLink) : loot.name}
+				</span>`)
+			}
+		}
+	}
+
 	activateListeners(html) {
 		super.activateListeners(html);
-
+		const _this=this;
 
 		html.find('button.generate-encounters').on('click', async (event) => {
 			event.preventDefault();
@@ -53,58 +107,8 @@ class SFDialog extends FormApplication {
 				</div>
 				<div class="create-encounter"></div>
 			</li>*/
+			_this.populateEncounters(encounterData);
 
-			let $ul = html.find('.form-encounters ul').first();
-
-			for (const encounter of encounterData) {
-				console.log(encounter)
-				$ul.append(`<li>
-					<div class="favorite-encounter"><i class="far fa-star"></i></div>
-					<div class="encounter-details">
-						<div class="encounter-details-header">
-							<div class="encounter-details-header-title">Custom Name</div>
-						</div>
-						<div class="encounter-details-loot"></div>
-					</div>
-					<div class="encounter-info">
-						<div class="encounter-data">
-							<span class="loot-button"><i class="fas fa-coins"></i></span>
-							${encounter.currency.pp > 0 ? `<span class="loot-button">pp ${encounter.currency.pp}</span>` : ''}
-							${encounter.currency.gp > 0 ? `<span class="loot-button">gp ${encounter.currency.gp}</span>` : ''}
-							${encounter.currency.ep > 0 ? `<span class="loot-button">ep ${encounter.currency.ep}</span>` : ''}
-							${encounter.currency.sp > 0 ? `<span class="loot-button">sp ${encounter.currency.sp}</span>` : ''}
-							${encounter.currency.cp > 0 ? `<span class="loot-button">cp ${encounter.currency.cp}</span>` : ''}
-							<span class="encounter-difficulty ${encounter.data.difficulty}">${encounter.data.difficulty}</span>
-							<span class="encounter-xp">${encounter.data.xp}</span>
-						</div>
-					</div>
-					<div class="create-encounter">
-						<i class="fas fa-angle-double-right" data-trigger="spawn"></i>
-						<i class="fas fa-briefcase" data-trigger="loot"></i>
-					</div>
-				</li>`);
-
-				$ul.find('li:last-child .create-encounter i.fas[data-trigger="spawn"]').on('click', function(event) {
-					encounter.spawn();
-				})
-
-				$ul.find('li:last-child .create-encounter i.fas[data-trigger="loot"]').on('click', function(event) {
-					encounter.createLootSheet();
-				})
-
-				let $details = $ul.find('li:last-child .encounter-details');
-				for (const creature of encounter.creatures) {
-					$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${TextEditor.enrichHTML(creature.dynamicLink)}</span>`);
-				}
-
-				
-				for (const loot of encounter.loot) {
-					$details.find('.encounter-details-loot').append(`<span class="loot-button">
-						${loot.quantity} <i class="fas fa-times" style="font-size: 0.5rem"></i>
-						${loot.dynamicLink.length > 0 ? TextEditor.enrichHTML(loot.dynamicLink) : loot.name}
-					</span>`)
-				}
-			}
 
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-bolt');
@@ -223,8 +227,8 @@ class SFDialog extends FormApplication {
 }
 
 Hooks.once('ready', async () => {
-	let sfDialog = new SFDialog();
-	sfDialog.render(true);
+	canvas.sfDialog = new SFDialog();
+	canvas.sfDialog.render(true);
 
 	
 });

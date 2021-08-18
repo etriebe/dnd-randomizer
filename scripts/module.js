@@ -14,17 +14,27 @@ class SFHelpers {
   }
 
   static async parseEncounter(data) {
-    const encounters = data.reduce((a,v) => {
-      const enc = new Encounter(v).validate()
-      if(enc !== undefined) a.push(enc)
-      return a
-    },[])
+    const encounters = data.reduce((a, v) => {
+      const enc = new Encounter(v).validate();
+      if (enc !== undefined) a.push(enc);
+      return a;
+    }, []);
 
-    for(let encounter of encounters){
-      await encounter.prepareData()
+    for (let encounter of encounters) {
+      await encounter.prepareData();
     }
 
     return encounters;
   }
 }
 
+class StocasticFantastic {
+  static async addToDialog(data) {
+    const encounterData = await SFHelpers.parseEncounter(data);
+    if (!canvas.sfDialog?.rendered) await canvas.sfDialog.rendered.render(true);
+    canvas.sfDialog.populateEncounters(encounterData);
+  }
+}
+
+
+StocasticFantastic.addToDialog(data)
