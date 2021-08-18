@@ -5,7 +5,7 @@ class SFHelpers {
 
   static async fetchData(params) {
     return await fetch(
-      `https://talacatt.com/encounterData.php?${new URLSearchParams(
+      `https://theripper93.com/encounterData.php?${new URLSearchParams(
         params
       ).toString()}`
     )
