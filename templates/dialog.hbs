@@ -1,0 +1,79 @@
+<form>
+	<div class="form-controls">
+		<div class="form-groups">
+			I'm looking for an encounter in a
+			<span id="environmentSelector" class="input-container">
+				<span class="placeholder">{{environments.[0]}}</span>
+				<span class="input selectbox">
+					<select class="fancy-select hidden" name="environmentSelector">
+					{{#each environments}}
+						<option value="{{this}}">{{this}}</option>
+					{{/each}}
+					</select>
+				</span>
+			</span>
+			for 
+			<span id="numberOfPlayers" class="input-container">
+				<span class="placeholder">4</span>
+				<span class="input selectbox">
+					<select class="fancy-select hidden" name="numberOfPlayers">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4" selected>4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+					</select>
+				</span>
+			</span>
+			players, who average around level 
+			<span id="averageLevelOfPlayers" class="input-container">
+				<span class="placeholder">5</span>
+				<span class="input selectbox">
+					<select class="fancy-select hidden" name="averageLevelOfPlayers">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5" selected>5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+					</select>
+				</span>
+			</span>. They will find  
+			<span id="lootType" class="input-container">
+				<span class="placeholder">Treasure Hoard</span>
+				<span class="input selectbox">
+					<select class="fancy-select hidden" name="lootType">
+						<option value="Individual Treasure">Individual Treasure</option>
+						<option value="Treasure Hoard" selected>Treasure Hoard</option>
+					</select>
+				</span>
+			</span>
+		</div>
+		<button class="generate-encounters"><i class="fas fa-bolt"></i> Generate Encounters</button>
+	</div>
+	<div class="form-encounters">
+		<ul></ul>
+	</div>
+</form>

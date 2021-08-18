@@ -5,25 +5,25 @@ const SFCONSTS = {
         numberOfPlayers: Number,//[1 - 13]
         averageLevelOfPlayers: Number,//[1 - 20]
         environment: [
-          "arctic",
-          "coastal",
-          "desert",
-          "forest",
-          "grassland",
-          "hill",
-          "jungle",
-          "mountain",
-          "underdark",
-          "swamp",
-          "underwater",
-          "urban",
-          "celestial",
-          "abyssal",
-          "infernal",
-          "air_elemental",
-          "earth_elemental",
-          "fire_elemental",
-          "water_elemental",
+          "Arctic",
+          "Coastal",
+          "Desert",
+          "Forest",
+          "Grassland",
+          "Hill",
+          "Jungle",
+          "Mountain",
+          "Underdark",
+          "Swamp",
+          "Underwater",
+          "Urban",
+          "Celestial",
+          "Abyssal",
+          "Infernal",
+          "Air Elemental",
+          "Earth Elemental",
+          "Fire Elemental",
+          "Water Elemental"
         ],
       }
 }
@@ -37,7 +37,6 @@ async function spawnTest(name,number){
 }
 
 async function dataTest(){
-
     const parsedData = await fetchTest();
     console.log(parsedData)
     const encounters = parsedData.reduce((a,v) => {
@@ -45,6 +44,7 @@ async function dataTest(){
         if(enc !== undefined) a.push(enc)
         return a
     },[])
+
     for(let encounter of encounters){
         await encounter.prepareData()
         await encounter.loadActors()

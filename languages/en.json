@@ -1,3 +1,7 @@
 {
-    "MODULE.hello": "hello"
+    "SF": {
+        "dialog": {
+            "title": "Stocchastic, Fantastic! Encounter Generator"
+        }
+    }
 }
