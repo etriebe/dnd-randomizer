@@ -31,6 +31,7 @@
       "./scripts/propagator.js",
       "./scripts/spawner.js",
       "./scripts/encounter.js",
+      "./scripts/dialog.js",
       "./scripts/fuzzyset.js"
   ],
   "styles": [

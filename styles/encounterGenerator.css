@@ -1,0 +1,404 @@
+
+/* =========================== DIALOG =========================== */
+#SFDialog .window-header * {
+	display: none !important;
+}
+#SFDialog .window-header h4,
+#SFDialog .window-header a.header-button.close {
+	display: flex !important;
+}
+#SFDialog .window-header {
+	line-height: normal;
+    flex: 0 0 58px;
+}
+#SFDialog .window-header h4 {
+	font-size: 1.3rem;
+	padding: 1rem 0.75rem;
+}
+
+#SFDialog .window-header a.header-button.close {
+	font-size: 0rem !important;
+}
+#SFDialog .window-header a.header-button.close i {
+    display: inline-block !important;
+    font-size: 1rem;
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+#SFDialog.window-app .window-content {
+    background-color: transparent;
+    background-image: none;
+    backdrop-filter: none;
+	font-size: 16px;
+	padding: 0rem;
+}
+#SFDialog.window-app .window-content form {
+	display: flex;
+    flex-direction: column;
+}
+#SFDialog .window-content .form-controls {
+	flex: 0;
+	padding: 1rem 0.5rem 2rem;
+	position: relative;
+}
+
+
+#SFDialog .window-content .form-controls .form-groups {
+	font-weight: 200;
+	font-size: 1.5rem;
+	line-height: normal;
+	color: var(--palette-app-background-contrast-text);
+	text-align: center;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container {
+	border-bottom: 1px dashed var(--palette-app-background-shaded-text);
+	color: var(--palette-app-background-shaded-text);
+	padding: 6px;
+	margin-left: -6px;
+	margin-right: -6px;
+	display: inline-block;
+	flex: 0;
+	position: relative;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container.no-overflow {
+	max-width: 100%;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container.no-overflow .input {
+	max-width: 100%;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container.no-overflow .input input {
+	max-width: 100%;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container:hover {
+	border-bottom: 1px dashed var(--palette-app-background-contrast-text);
+	color: var(--palette-app-background-contrast-text);
+	cursor: pointer;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container.active {
+	z-index: 5000;
+	border-bottom: 1px dashed var(--palette-app-background-contrast-text);
+	color: var(--palette-app-background-contrast-text);
+	cursor: default;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container.active:before {
+	content: "";
+	display: block;
+	background-color: rgba(0, 0, 0, 0.3);
+	position: fixed;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container.active .input {
+	box-shadow: 0rem 0rem 0.1rem var(--palette-app-background-contrast-text);
+	background: var(--palette-app-background-dark);
+	backdrop-filter: blur(8px);
+	visibility: visible;
+	opacity: 1;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container .newOption {
+	padding: 0.5rem 46px 0.5rem 1rem;
+	position: relative;
+	text-align: left;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container .newOption:hover {
+	background: var(--palette-primary);
+	color: var(--palette-primary-contrast-text);
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container .newOption:hover:after {
+	color: var(--palette-app-background-contrast-text) !important;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container .newOption.selected:after {
+	content: "\f00c";
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+	color: var(--palette-primary);
+	display: block;
+	top: 50%;
+	right: 0;
+	height: 1.5rem;
+	width: 46px;
+	font-size: 1.5rem;
+	text-align: center;
+	line-height: normal;
+	position: absolute;
+	transform: translateY(-50%);
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container .placeholder {
+	position: relative;
+	z-index: 1;
+  }
+  #SFDialog .window-content .form-controls .form-groups .input-container .input {
+	display: block;
+	visibility: hidden;
+	position: fixed;
+	z-index: 2;
+	opacity: 0;
+	transform: translateY(-0%);
+    max-height: 600px;
+    overflow: auto;
+  }
+  #SFDialog .window-content .form-controls .form-groups input[type=text], #SFDialog .window-content .form-controls .form-groups select[type=text] {
+	border: none;
+	outline: none;
+	margin: 0;
+	padding: 6px;
+	font-weight: 200;
+    font-size: 1.5rem;
+    line-height: normal;
+	display: block;
+  }
+  #SFDialog .window-content .form-controls .form-groups input.hidden, #SFDialog .window-content .form-controls .form-groups select.hidden {
+	position: absolute;
+	left: -5000px;
+  }
+  #SFDialog .window-content .form-controls .form-groups button {
+	display: block;
+	background: white;
+	border: none;
+	padding: 10px 55px 10px 20px;
+	font-size: 30px;
+	font-weight: 200;
+	margin: 30px 0 0 0;
+	box-shadow: inset 0px 0px 0px #ff202f;
+	position: relative;
+  }
+  #SFDialog .window-content .form-controls .form-groups button i {
+	transition: 0s 0s ease-in-out;
+  }
+  #SFDialog .window-content .form-controls .form-groups button:after {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 55px;
+	width: 55px;
+	font-family: FontAwesome;
+	line-height: 55px;
+	text-align: center;
+	color: #ff202f;
+  }
+  #SFDialog .window-content .form-controls .form-groups button:hover {
+	box-shadow: inset 350px 0 0 #ff202f;
+	color: white;
+	cursor: pointer;
+  }
+  #SFDialog .window-content .form-controls .form-groups button:hover:after {
+	color: white;
+  }
+
+
+
+#SFDialog .window-content .form-controls .generate-encounters {
+	background-color: var(--palette-primary);
+	border: 1px solid var(--palette-primary-dark);
+	bottom: 0px;
+    color: var(--palette-primary-contrast-text);
+	left: 50%;
+	padding: 0.25rem 1rem;
+	position: absolute;
+	transform: translate(-50%, 50%);
+	width: 200px;
+	z-index: 100;
+}
+
+#SFDialog .window-content .form-controls .generate-encounters:hover {
+	background-color: var(--palette-primary-hover);
+}
+#SFDialog .window-content .form-controls .generate-encounters:active,
+#SFDialog .window-content .form-controls .generate-encounters.active {
+	background-color: var(--palette-primary-active);
+}
+#SFDialog .window-content .form-controls .generate-encounters:disabled {
+	background-color: var(--palette-primary-dark);
+	cursor: not-allowed;
+}
+/*#SFDialog .window-content .form-controls .generate-encounters:disabled i.fas {
+	font-size: 14px;
+	width: 174px;
+}*/
+#SFDialog .window-content .form-encounters {
+	background-color: var(--palette-dialog-background);
+    background-image: var(--palette-dialog-background-image);
+    background-blend-mode: var(--palette-dialog-background-image-blend-mode, normal);
+    backdrop-filter: blur(8px);
+    color: var(--palette-dialog-background-contrast-text);
+	flex: 1
+}
+
+
+#SFDialog .window-content form .form-group {
+	flex-direction: column;
+}
+#SFDialog .window-content form .form-group .button-group input {
+	position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+#SFDialog .window-content form .form-group .button-group label {
+    border-radius: .25rem;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+	margin-bottom: 0.5rem;
+    padding: 1.5rem 1rem;
+    user-select: none;
+    text-align: center;
+    text-decoration: none;
+	text-transform: uppercase;
+    vertical-align: middle;
+	width: 200px;
+}
+
+
+#SFDialog .window-content .form-encounters ul {
+	display: flex;
+	flex-direction: column;
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+#SFDialog .window-content .form-encounters ul li {
+	border-bottom: 1px solid var(--palette-dialog-background-dark);
+	display: flex;
+	flex-direction: row;
+}
+#SFDialog .window-content .form-encounters ul li div {
+}
+#SFDialog .window-content .form-encounters ul li div.favorite-encounter,
+#SFDialog .window-content .form-encounters ul li div.create-encounter {
+	align-items: center;
+	display: flex;
+	font-size: 1.5rem;
+	justify-content: center;
+}
+#SFDialog .window-content .form-encounters ul li div.create-encounter {
+	flex-direction: column;
+    justify-content: space-evenly;
+}
+#SFDialog .window-content .form-encounters ul li div.favorite-encounter,
+#SFDialog .window-content .form-encounters ul li div.create-encounter {
+	flex: 0 0 60px;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details {
+	border: 1px solid var(--palette-dialog-background-light);
+	border-bottom-width: 0px;
+	border-top-width: 0px;
+	flex: 1 0;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info {
+	position: absolute;
+	width: 100%;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data {
+    background-color: var(--palette-app-background-dark);
+	border-bottom-left-radius: 0.25rem;
+    color: var(--palette-app-background-dark-contrast-text);
+	font-size: 0.7rem;
+	position: absolute;
+    right: 60px;
+    top: 0px;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data span.loot-button,
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty,
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp {
+    border-bottom: 1px solid var(--palette-app-background-dark);
+	border-top-width: 0px;
+	display: inline-block;
+	padding: 0.25rem;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty {
+	border-left: 1px solid var(--palette-app-background-dark);
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.easy {
+    background-color: var(--palette-success);
+    border-color: var(--palette-success-dark);
+    color: var(--palette-app-success-shaded-text);
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.medium {
+    background-color: var(--palette-info);
+    border-color: var(--palette-info-dark);
+    color: var(--palette-app-info-shaded-text);
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.hard {
+    background-color: var(--palette-warning);
+    border-color: var(--palette-warning-dark);
+    color: var(--palette-app-warning-shaded-text);
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.deadly {
+    background-color: var(--palette-danger);
+    border-color: var(--palette-danger-dark);
+    color: var(--palette-app-danger-shaded-text);
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp {
+	border-right: 1px solid var(--palette-app-background-dark);
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp:after {
+	content: ' xp'
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-header {
+	border-bottom: 0px solid var(--palette-dialog-background-light);
+	padding: 0.5rem 0.75rem;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button {
+    background-color: var(--palette-secondary);
+    border: 1px solid var(--palette-secondary-dark);
+	border-radius: 0.25rem;
+    bottom: 0px;
+    color: var(--palette-secondary-contrast-text);
+    display: inline-block;
+    margin-right: 0.5rem;
+    flex: 0 0;
+    z-index: 100;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button .creature-count {
+    padding: 0rem 0.5rem;
+}
+/* Unstyle Foundry Styles */
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link {
+    background-color: transparent;
+    border-color: transparent;
+	border-left: 1px solid var(--palette-secondary-dark);
+	border-radius: 0px;
+    color: inherit;
+	cursor: pointer;
+    display: inline-block;
+    font-size: 0.8rem;
+	padding: 0.25rem 0.5rem;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link i.fas {
+	color: inherit;
+	display: none;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:hover {
+    background-color: var(--palette-secondary-hover);
+	text-shadow: none;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:active,
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:focus {
+    background-color: var(--palette-secondary-active);
+	text-shadow: none;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot {
+	font-size: 0.8rem;
+	padding: 0.5rem 0.75rem;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot .loot-button {
+    margin-bottom: 0.75rem;
+    margin-right: 0.75rem;
+    display: inline-block;
+}
+#SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot .loot-button a.entity-link {
+	background-color: transparent;
+    border-width: 0px;
+    border-bottom: 1px dashed;
+    border-radius: 0px;
+    color: inherit;
+    padding: 0px;
+}
