@@ -159,8 +159,9 @@
 
 
 #SFDialog .window-content .form-controls .generate-encounters {
-	background-color: var(--palette-primary, #ff6400);
-	border: 1px solid var(--palette-primary-dark, #ff6400);
+	transition: background-color 0.2s ease-in-out;
+	background-color: var(--palette-primary, #333333);
+	border: 1px solid var(--palette-primary-dark, #116b86);
 	bottom: 0px;
     color: var(--palette-primary-contrast-text, #ffffff);
 	left: 50%;
@@ -172,14 +173,14 @@
 }
 
 #SFDialog .window-content .form-controls .generate-encounters:hover {
-	background-color: var(--palette-primary-hover, #ff6400);
+	background-color: var(--palette-primary-hover, #58818d);
 }
 #SFDialog .window-content .form-controls .generate-encounters:active,
 #SFDialog .window-content .form-controls .generate-encounters.active {
-	background-color: var(--palette-primary-active, #ff6400);
+	background-color: var(--palette-primary-active, #58818d);
 }
 #SFDialog .window-content .form-controls .generate-encounters:disabled {
-	background-color: var(--palette-primary-dark, #ff6400);
+	background-color: var(--palette-primary-dark, #5f5f5f);
 	cursor: not-allowed;
 }
 /*#SFDialog .window-content .form-controls .generate-encounters:disabled i.fas {
@@ -280,26 +281,28 @@
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty {
 	border-left: 1px solid var(--palette-app-background-dark, #191813);
+	text-transform: uppercase;
+	font-weight: 600;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.easy {
-    background-color: var(--palette-success, green);
-    border-color: var(--palette-success-dark, green);
-    color: var(--palette-app-success-shaded-text, white);
+    background-color: var(--palette-success, rgb(64, 194, 64));
+    border-color: var(--palette-success-dark, rgb(8, 87, 8));
+    color: var(--palette-app-success-shaded-text, rgb(255, 255, 255));
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.medium {
-    background-color: var(--palette-info, blue);
-    border-color: var(--palette-info-dark, blue);
+    background-color: var(--palette-info, rgb(14, 94, 185));
+    border-color: var(--palette-info-dark, rgb(8, 53, 95));
     color: var(--palette-app-info-shaded-text, white);
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.hard {
-    background-color: var(--palette-warning, yellow);
-    border-color: var(--palette-warning-dark, yellow);
-    color: var(--palette-app-warning-shaded-text, black);
+    background-color: var(--palette-warning, #ef6e00);
+    border-color: var(--palette-warning-dark, #b85600);
+    color: var(--palette-app-warning-shaded-text, rgb(255, 255, 255));
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.deadly {
-    background-color: var(--palette-danger, red);
-    border-color: var(--palette-danger-dark, red);
-    color: var(--palette-app-danger-shaded-text, black);
+    background-color: var(--palette-danger, #a00f0f);
+    border-color: var(--palette-danger-dark, #500808);
+    color: var(--palette-app-danger-shaded-text, white);
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp {
 	border-right: 1px solid var(--palette-app-background-dark, #191813);
@@ -312,8 +315,8 @@
 	padding: 0.5rem 0.75rem;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button {
-    background-color: var(--palette-secondary, #782e22);
-    border: 1px solid var(--palette-secondary-dark, #782e22);
+    background-color: var(--palette-secondary, #116b86);
+    border: 1px solid var(--palette-secondary-dark, #0d4557);
 	border-radius: 0.25rem;
     bottom: 0px;
     color: var(--palette-secondary-contrast-text, #f0f0e0);
@@ -329,7 +332,7 @@
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link {
     background-color: transparent;
     border-color: transparent;
-	border-left: 1px solid var(--palette-secondary-dark, #782e22);
+	border-left: 1px solid var(--palette-secondary-dark, #203a42);
 	border-radius: 0px;
     color: inherit;
 	cursor: pointer;
@@ -342,7 +345,7 @@
 	display: none;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:hover {
-    background-color: var(--palette-secondary-hover, #782e22cc);
+    background-color: var(--palette-secondary-hover, #4f7480);
 	text-shadow: none;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:active,

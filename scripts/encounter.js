@@ -2,6 +2,7 @@ class Encounter {
   constructor(data) {
     this.data = data;
     this.name = this.data.name;
+    this.difficulty = this.data.difficulty;
     this.currency = data.loot.currency;
     this.creatures = [];
     this.loot = [];

@@ -19,8 +19,16 @@ class SFDialog extends FormApplication {
 	getData() {
 		console.log(game.i18n.localize('SF.dialog.title'))
 		return {
-			environments: this.environments
+			environments: this.environments,
 		}
+	}
+
+	getDefaultsFromScene(){
+		const characters = canvas.tokens.placeables.filter(t => t.actor?.data.type === "character" && t.actor?.hasPlayerOwner)
+		let level = 0
+		characters.forEach((c) => level+=c.actor.data.data.details.level)
+		level = Math.round(level / characters.length)
+		return {chars: characters.length, level: level}
 	}
 
 	populateEncounters(encounterData) {
@@ -82,6 +90,8 @@ class SFDialog extends FormApplication {
 	activateListeners(html) {
 		super.activateListeners(html);
 		const _this=this;
+		const charData = this.getDefaultsFromScene()
+		console.log(charData)
 
 		html.find('button.generate-encounters').on('click', async (event) => {
 			event.preventDefault();
@@ -96,8 +106,15 @@ class SFDialog extends FormApplication {
 				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
 			}
 			
-			const fetchedData = await SFHelpers.fetchData(params);
-			const encounterData = await SFHelpers.parseEncounter(fetchedData, params);
+			let fetchedData = await SFHelpers.fetchData(params);
+			fetchedData = fetchedData.sort((a, b) => {
+				const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
+				const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
+				if(da > db) return -1;
+				if(da < db) return 1;
+				return 0;
+			});
+			const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
 
 			/* Structure
 			<li>

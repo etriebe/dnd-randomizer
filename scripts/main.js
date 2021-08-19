@@ -30,7 +30,14 @@ const SFCONSTS = {
         "systems/dnd5e/icons/items/inventory/pouch-sealed.jpg",
         "systems/dnd5e/icons/items/inventory/satchel.jpg",
         "systems/dnd5e/icons/items/inventory/briefcase.jpg"
-    ]
+    ],
+    DIFFICULTY:
+    {
+        "easy": 1,
+        "medium": 2,
+        "hard": 3,
+        "deadly": 4,
+    }
 }
 
 async function spawnTest(name,number){
