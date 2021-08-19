@@ -24,14 +24,26 @@ class SFCompendiumSorter extends FormApplication {
 
 	populateCompendiums(type) {
 		const html = this.element
-		const compendiums = game.packs.filter((p) => p.documentName === type);
+		const filteredCompendiums = game.packs.filter((p) => type.includes(p.documentName));
 		let $ul = html.find('ul').first();
+		const constCompFilter = game.settings.get(
+			SFCONSTS.MODULE_NAME,
+			"filterCompendiums"
+		  );
+		const compendiums = filteredCompendiums.sort((a, b) => {
+			const filterIndexA =
+			constCompFilter.indexOf(constCompFilter.find(i => Object.keys(i)[0] == a.collection));
+			const filterIndexB =
+			constCompFilter.indexOf(constCompFilter.find(i => Object.keys(i)[0] == b.collection))
+			return filterIndexA > filterIndexB ? 1 : -1;
+		  });
+
 
 		for (let compendium of compendiums) {
-			console.log(compendium);
+			const el = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection)
 			$ul.append(`<li>
-				<input type="checkbox" name="${compendium.metadata.package}.${compendium.metadata.name}" checked>
-				<span class="compendium-title">${compendium.metadata.label}</span>
+				<input type="checkbox" name="${compendium.metadata.package}.${compendium.metadata.name}" ${!el || el[compendium.collection] ? "checked" : ""}>
+				<span class="compendium-title">[${compendium.documentName}] - ${compendium.metadata.label}</span>
 			</li>`)
 		}
 
@@ -41,7 +53,7 @@ class SFCompendiumSorter extends FormApplication {
 	}
 	
 	async activateListeners(html) {
-		this.populateCompendiums("Actor")
+		this.populateCompendiums(["Actor","Item"])
 	}
 
 	async close(options) { 
@@ -58,7 +70,7 @@ class SFCompendiumSorter extends FormApplication {
 		});
 		console.log(settings)
 		
-		await game.settings.set(SFCONSTS.MODULE_NAME, 'actorCompendiums');
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterCompendiums',settings);
 
 		// Default Close
 		return await super.close(options);

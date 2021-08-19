@@ -22,7 +22,7 @@ Hooks.once("init", async function () {
     default: {},
   })
   
-  game.settings.register(SFCONSTS.MODULE_NAME, 'actorCompendiums', {
+  game.settings.register(SFCONSTS.MODULE_NAME, 'filterCompendiums', {
     scope: "world",
     config: false,
     type: Object,

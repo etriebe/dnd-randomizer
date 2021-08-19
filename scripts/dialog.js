@@ -35,11 +35,11 @@ class SFDialog extends FormApplication {
 		let $ul = html.find('.form-encounters ul').first();
 
 		for (const encounter of encounterData) {
-			$ul.append(`<li class="is-favorited-${encounter.data?.id ?? false ? 'true' : 'false' }">
+			$ul.append(`<li class="is-favorited-${encounter.data?.id ?? false ? 'true' : 'false' }" data-id="${encounter.id}">
 				<div class="favorite-encounter ${encounter.data?.id ?? false ? 'favorited': ''}"><i class="far fa-star"></i></div>
 				<div class="encounter-details">
 					<div class="encounter-details-header">
-						<input type="text" class="encounter-details-header-title" value="${encounter.encounterName ?? "Custom Name"}" />
+						<input type="text" class="encounter-details-header-title" value="${encounter.name ?? "Custom Name"}" />
 					</div>
 					<div class="encounter-details-loot"></div>
 				</div>
@@ -90,12 +90,9 @@ class SFDialog extends FormApplication {
 				let $element = $(event.currentTarget).closest('div');
 				let savedEncounters = game.settings.get(SFCONSTS.MODULE_NAME, 'favoritedEncounters');
 				let encounterDetails = {}; 
-				
-				encounterDetails[encounter.id] = {
-					...encounter.data,
-					id: encounter.id,
-					name: encounter.encounterName
-				}
+				encounter.data.id = encounter.id;
+				encounter.data.name = encounter.name;
+				encounterDetails[encounter.id] = encounter.data;
 
 				$element.toggleClass('favorited');
 
@@ -143,7 +140,7 @@ class SFDialog extends FormApplication {
 		// Check if there are Favorited Encounters, if so populate them
 		if (Object.entries(getFavoritedEncounters).length > 0) {
 			getFavoritedEncounters = await SFHelpers.parseEncounter(
-				Object.entries(getFavoritedEncounters).map(encounter => encounter[1])
+				Object.values(getFavoritedEncounters)
 			);
 			this.populateEncounters(getFavoritedEncounters);
 		}
@@ -186,6 +183,47 @@ class SFDialog extends FormApplication {
 		html.find('.filter-controller button').on('click', function(event) {
 			event.preventDefault();
 			$(event.currentTarget).closest('div').find('input').val('').trigger('change');
+		});
+
+		html.find('.filter-controller input').on('keyup change', function(event) {
+			event.preventDefault();
+			const query = $(event.currentTarget).val()
+			const lis = html.find('.form-encounters ul li')
+			let queryIndex = {}
+			let queryElements = []
+			lis.each((index, li) => {
+				li = $(li)
+				let encId = li.data("id")
+				let encName = li.find(".encounter-details-header-title").val()
+				queryElements.push(encName)
+				if(queryIndex[encName]) queryIndex[encName].push(encId)
+				else queryIndex[encName] = [encId]
+
+				li.find(".entity-link").each((index, link) =>{
+					let name = $(link).text()
+					queryElements.push(name)
+					if(queryIndex[name]) queryIndex[name].push(encId)
+					else queryIndex[name] = [encId]
+				})
+			})
+			const idsToShow = {}
+			let fs = FuzzySet(queryElements,true)
+			let res = fs.get(query,[],0.3).map(el => el[1]).forEach((el) => {
+				queryIndex[el].forEach(id => idsToShow[id] = true)
+			})
+			queryElements.forEach(el => {
+				if(el.toLowerCase().includes(query.toLowerCase()))
+				queryIndex[el].forEach(id => idsToShow[id] = true)
+			})
+			lis.each((index, li) => {
+				li = $(li)
+				if(idsToShow[li.data("id")] || !query) {
+					li.show(500)
+				}else{
+					li.hide(500)
+				}
+			})
+
 		});
 
 

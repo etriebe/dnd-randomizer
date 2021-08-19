@@ -1,8 +1,7 @@
 class Encounter {
   constructor(data) {
     this.data = data;
-    this.encounterName = data.name;
-    this.name = data.name
+    this.name = data.name;
     this.difficulty = data.difficulty;
     this.currency = data.loot.currency;
     this.creatures = [];
@@ -44,7 +43,22 @@ class Encounter {
 
   static getCompendiumEntryByName(name, type) {
     name = type == "Actor" ? name : Encounter.fuzzyMatch(name, type);
-    const compendiums = game.packs.filter((p) => p.documentName === type);
+    const constCompFilter = game.settings.get(
+      SFCONSTS.MODULE_NAME,
+      "filterCompendiums"
+    );
+    const filteredCompendiums = Array.from(game.packs).filter((p) => {
+      if (p.documentName !== type) return false;
+      const el = constCompFilter.find(i => Object.keys(i)[0] == p.collection)
+      return !el || el[p.collection] ? true : false;
+    });
+    const compendiums = filteredCompendiums.sort((a, b) => {
+      const filterIndexA =
+      constCompFilter.indexOf(constCompFilter.find(i => Object.keys(i)[0] == a.collection));
+      const filterIndexB =
+      constCompFilter.indexOf(constCompFilter.find(i => Object.keys(i)[0] == b.collection))
+      return filterIndexA > filterIndexB ? 1 : -1;
+    });
     let entries = [];
     for (let compendium of compendiums) {
       const entry = compendium.index.find((i) => i.name === name);
@@ -82,9 +96,9 @@ class Encounter {
     });
   }
 
-  async getRandomChestIcon(){    
-    const folder = await FilePicker.browse("public","icons/containers/chest")
-    return folder.files[Math.floor(Math.random() * folder.files.length)]
+  async getRandomChestIcon() {
+    const folder = await FilePicker.browse("public", "icons/containers/chest");
+    return folder.files[Math.floor(Math.random() * folder.files.length)];
   }
 
   async createLootSheet() {
@@ -96,15 +110,30 @@ class Encounter {
     const actorData = {
       name: this.name || this.id,
       type: "npc",
-      img: await this.getRandomChestIcon(),//"icons/svg/chest.svg",
+      img: await this.getRandomChestIcon(), //"icons/svg/chest.svg",
       data: {
         currency: {
           // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
-          cp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.cp } : this.currency.cp,
-          sp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.sp } : this.currency.sp,
-          ep: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.ep } : this.currency.ep,
-          gp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.gp } : this.currency.gp,
-          pp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.pp } : this.currency.pp,
+          cp:
+            game.modules.get("lootsheetnpc5f")?.active ?? false
+              ? { value: this.currency.cp }
+              : this.currency.cp,
+          sp:
+            game.modules.get("lootsheetnpc5f")?.active ?? false
+              ? { value: this.currency.sp }
+              : this.currency.sp,
+          ep:
+            game.modules.get("lootsheetnpc5f")?.active ?? false
+              ? { value: this.currency.ep }
+              : this.currency.ep,
+          gp:
+            game.modules.get("lootsheetnpc5f")?.active ?? false
+              ? { value: this.currency.gp }
+              : this.currency.gp,
+          pp:
+            game.modules.get("lootsheetnpc5f")?.active ?? false
+              ? { value: this.currency.pp }
+              : this.currency.pp,
         },
       },
       folder: folder.id,
@@ -186,8 +215,10 @@ class EncItem {
     }
   }
 
-  getRandomLootImg(){
-    return SFCONSTS.LOOT_ICONS[Math.floor(Math.random() * SFCONSTS.LOOT_ICONS.length)]
+  getRandomLootImg() {
+    return SFCONSTS.LOOT_ICONS[
+      Math.floor(Math.random() * SFCONSTS.LOOT_ICONS.length)
+    ];
   }
 
   async getItemData() {
@@ -223,7 +254,7 @@ class EncItem {
     this._itemDocument = {
       name: this.name,
       type: "loot",
-      img: this.getRandomLootImg(),//"icons/svg/item-bag.svg",
+      img: this.getRandomLootImg(), //"icons/svg/item-bag.svg",
       data: {
         quantity: 1,
         weight: 0,
