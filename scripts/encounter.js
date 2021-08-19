@@ -1,12 +1,13 @@
 class Encounter {
   constructor(data) {
     this.data = data;
-    this.name = this.data.name;
-    this.difficulty = this.data.difficulty;
+    this.encounterName = data.name;
+    this.name = data.name
+    this.difficulty = data.difficulty;
     this.currency = data.loot.currency;
     this.creatures = [];
     this.loot = [];
-    this.id = data.id || randomID(20);
+    this.id = data.id || randomID(40);
   }
 
   async prepareData(lootOnly = false) {
@@ -97,21 +98,12 @@ class Encounter {
       img: await this.getRandomChestIcon(),//"icons/svg/chest.svg",
       data: {
         currency: {
-          cp: {
-            value: this.currency.cp,
-          },
-          sp: {
-            value: this.currency.sp,
-          },
-          gp: {
-            value: this.currency.gp,
-          },
-          pp: {
-            value: this.currency.pp,
-          },
-          ep: {
-            value: this.currency.ep,
-          },
+          // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
+          cp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.cp } : this.currency.cp,
+          sp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.sp } : this.currency.sp,
+          ep: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.ep } : this.currency.ep,
+          gp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.gp } : this.currency.gp,
+          pp: game.modules.get('lootsheetnpc5f')?.active ?? false ? { value: this.currency.pp } : this.currency.pp,
         },
       },
       folder: folder.id,

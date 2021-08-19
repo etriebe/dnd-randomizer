@@ -17,7 +17,6 @@ class SFDialog extends FormApplication {
 	}
 
 	getData() {
-		console.log(game.i18n.localize('SF.dialog.title'))
 		return {
 			environments: this.environments,
 		}
@@ -36,11 +35,11 @@ class SFDialog extends FormApplication {
 		let $ul = html.find('.form-encounters ul').first();
 
 		for (const encounter of encounterData) {
-			$ul.append(`<li>
-				<div class="favorite-encounter"><i class="far fa-star"></i></div>
+			$ul.append(`<li class="is-favorited-${encounter.data?.id ?? false ? 'true' : 'false' }">
+				<div class="favorite-encounter ${encounter.data?.id ?? false ? 'favorited': ''}"><i class="far fa-star"></i></div>
 				<div class="encounter-details">
 					<div class="encounter-details-header">
-						<div class="encounter-details-header-title">${encounter.name ?? "Custom Name"}</div>
+						<input type="text" class="encounter-details-header-title" value="${encounter.encounterName ?? "Custom Name"}" />
 					</div>
 					<div class="encounter-details-loot"></div>
 				</div>
@@ -61,6 +60,54 @@ class SFDialog extends FormApplication {
 					<i class="fas fa-briefcase" data-trigger="loot"></i>
 				</div>
 			</li>`);
+
+			$ul.find('li:last-child .encounter-details-header-title').on('change', function(event) {
+				let $input = $(event.currentTarget);
+				let savedEncounters = game.settings.get(SFCONSTS.MODULE_NAME, 'favoritedEncounters');
+				let encounterDetails = {}; 
+
+				// If named is cleared set it back to default encounter name
+				$input.val($input.val().length > 0 ? $input.val() : encounter.name);
+
+				// Update Encounter Name
+				encounter.name = $input.val()
+				
+				// Build Encounter object to save Encounter data
+				encounterDetails[encounter.id] = {
+					...encounter.data,
+					name: $input.val()
+				}
+
+				// If encounter is favorited, update it
+				if ($input.closest('li').find('.favorite-encounter').hasClass('favorited')) {
+					savedEncounters = foundry.utils.mergeObject(savedEncounters, encounterDetails, { inplace:  false});
+				
+					game.settings.set(SFCONSTS.MODULE_NAME, 'favoritedEncounters', savedEncounters);
+				}
+			})
+
+			$ul.find('li:last-child .favorite-encounter i').on('click', function(event) {
+				let $element = $(event.currentTarget).closest('div');
+				let savedEncounters = game.settings.get(SFCONSTS.MODULE_NAME, 'favoritedEncounters');
+				let encounterDetails = {}; 
+				
+				encounterDetails[encounter.id] = {
+					...encounter.data,
+					id: encounter.id,
+					name: encounter.encounterName
+				}
+
+				$element.toggleClass('favorited');
+
+
+				if ($element.hasClass('favorited')) {
+					savedEncounters = foundry.utils.mergeObject(savedEncounters, encounterDetails, { inplace:  false});
+				}else{
+					delete savedEncounters[encounter.id]
+				}
+
+				game.settings.set(SFCONSTS.MODULE_NAME, 'favoritedEncounters', savedEncounters);
+			});
 
 			$ul.find('li:last-child .create-encounter i.fas[data-trigger="spawn"]').on('click', function(event) {
 				canvas.templates.activate()
@@ -87,11 +134,20 @@ class SFDialog extends FormApplication {
 		}
 	}
 
-	activateListeners(html) {
+	async activateListeners(html) {
 		super.activateListeners(html);
 		const _this=this;
-		const charData = this.getDefaultsFromScene()
-		console.log(charData)
+		const charData = this.getDefaultsFromScene();
+		let getFavoritedEncounters = game.settings.get(SFCONSTS.MODULE_NAME, 'favoritedEncounters');
+
+		// Check if there are Favorited Encounters, if so populate them
+		if (Object.entries(getFavoritedEncounters).length > 0) {
+			getFavoritedEncounters = await SFHelpers.parseEncounter(
+				Object.entries(getFavoritedEncounters).map(encounter => encounter[1])
+			);
+			this.populateEncounters(getFavoritedEncounters);
+		}
+			
 
 		html.find('button.generate-encounters').on('click', async (event) => {
 			event.preventDefault();
@@ -116,15 +172,6 @@ class SFDialog extends FormApplication {
 			});
 			const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
 
-			/* Structure
-			<li>
-				<div class="favorite-encounter"></div>
-				<div class="encounter-details"></div>
-				<div class="encounter-info">
-
-				</div>
-				<div class="create-encounter"></div>
-			</li>*/
 			_this.populateEncounters(encounterData);
 
 
@@ -132,36 +179,14 @@ class SFDialog extends FormApplication {
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
 		});
 
-		/*async function dataTest(){
+		html.find('.filter-controller select').on('change', function(event) {
+			$(event.currentTarget).closest('.form-encounters').attr('data-show', $(event.currentTarget).val());
+		});
 
-			const parsedData = await fetchTest();
-			console.log(parsedData)
-			const encounters = parsedData.reduce((a,v) => {
-				const enc = new Encounter(v).validate()
-				if(enc !== undefined) a.push(enc)
-				return a
-			},[])
-			for(let encounter of encounters){
-				await encounter.prepareData()
-				await encounter.loadActors()
-				await encounter.createLootSheet()
-			}
-		
-			return encounters
-		}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
+		html.find('.filter-controller button').on('click', function(event) {
+			event.preventDefault();
+			$(event.currentTarget).closest('div').find('input').val('').trigger('change');
+		});
 
 
 
