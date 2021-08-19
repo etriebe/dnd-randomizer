@@ -18,7 +18,7 @@ class SFDialog extends FormApplication {
 
 	getData() {
 		return {
-			environments: this.environments,
+			environments: this.environments
 		}
 	}
 
@@ -180,10 +180,15 @@ class SFDialog extends FormApplication {
 			$(event.currentTarget).closest('.form-encounters').attr('data-show', $(event.currentTarget).val());
 		});
 
-		html.find('.filter-controller button').on('click', function(event) {
+		html.find('.filter-controller input + button').on('click', function(event) {
 			event.preventDefault();
 			$(event.currentTarget).closest('div').find('input').val('').trigger('change');
 		});
+
+		html.find('.filter-controller input + button + button').on('click', (event) => {
+			event.preventDefault();
+			new SFCompendiumSorter().render(true);
+		})
 
 		html.find('.filter-controller input').on('keyup change', function(event) {
 			event.preventDefault();
@@ -217,11 +222,7 @@ class SFDialog extends FormApplication {
 			})
 			lis.each((index, li) => {
 				li = $(li)
-				if(idsToShow[li.data("id")] || !query) {
-					li.show(500)
-				}else{
-					li.hide(500)
-				}
+				li.toggleClass('hidden', !(idsToShow[li.data("id")] || !query));
 			})
 
 		});
@@ -300,6 +301,16 @@ class SFDialog extends FormApplication {
 			var target = $(this);
 			target.parent().find('select').change();
 		});
+
+		// Set Defaults
+		$(`#environmentSelector .newOptions .newOption[data-value="Arctic"]`).addClass('active selected');
+		$('#numberOfPlayers .placeholder').text(charData.chars);
+		$('#numberOfPlayers select').val(charData.chars).trigger('change');
+		$(`#numberOfPlayers .newOptions .newOption[data-value="${charData.chars}"]`).addClass('active selected');
+		$('#averageLevelOfPlayers .placeholder').text(charData.level);
+		$('#averageLevelOfPlayers select').val(charData.level);
+		$(`#averageLevelOfPlayers .newOptions .newOption[data-value="${charData.level}"]`).addClass('active selected');
+		$(`#lootType .newOptions .newOption[data-value="Treasure Hoard"]`).addClass('active selected');
 	}
 
 	async _updateObject(event, formData) {

@@ -9,7 +9,7 @@ class SFCompendiumSorter extends FormApplication {
 	static get defaultOptions() {
 		return { 
 			...super.defaultOptions,
-			title: game.i18n.localize('SF.dialog.compendium.title'),
+			title: `Stochastic, Fantastic! Filter & Sort Compendiums`,
 			id: "SFCompendiumSorter",
 			template: `modules/dnd-randomizer/templates/compendium.hbs`,
 			resizable: true,
@@ -43,7 +43,8 @@ class SFCompendiumSorter extends FormApplication {
 			const el = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection)
 			$ul.append(`<li>
 				<input type="checkbox" name="${compendium.metadata.package}.${compendium.metadata.name}" ${!el || el[compendium.collection] ? "checked" : ""}>
-				<span class="compendium-title">[${compendium.documentName}] - ${compendium.metadata.label}</span>
+				<span class="compendium-type" data-type="${compendium.documentName}">${compendium.documentName}</span>
+				<span class="compendium-title">${compendium.metadata.label}</span>
 			</li>`)
 		}
 
@@ -80,8 +81,3 @@ class SFCompendiumSorter extends FormApplication {
 
 	}
 }
-
-Hooks.on('ready', () => {
-	let example = new SFCompendiumSorter();
-	example.render(true);
-})
