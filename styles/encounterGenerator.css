@@ -119,9 +119,9 @@
 	display: block;
 	top: 50%;
 	right: 0;
-	height: 1.5rem;
+	height: 1rem;
 	width: 46px;
-	font-size: 1.5rem;
+	font-size: 1rem;
 	text-align: center;
 	line-height: normal;
 	position: absolute;
@@ -245,17 +245,16 @@
 }
 #SFDialog .window-content .form-encounters .filter-controller input {
 	border-left-width: 0px;
-	border-bottom-right-radius: 0.25rem;
-	border-top-right-radius: 0.25rem;
+	border-right-width: 0px;
 	padding: 0.5rem 1rem;
 }
-#SFDialog .window-content .form-encounters .filter-controller button {
+#SFDialog .window-content .form-encounters .filter-controller input + button {
     border-radius: 50%;
 	display: none;
     margin: 0px;
     padding: 0px;
     position: absolute;
-    right: calc(0.5rem - 1px + 5px);
+    right: calc(0.5rem - 1px + 35px);
     text-align: center;
     transform: scale(0.8);
     top: calc(2rem - 1px + 5px);
@@ -263,6 +262,14 @@
 }
 #SFDialog .window-content .form-encounters .filter-controller input:not(:placeholder-shown) + button {
 	display: inline-block;
+}
+#SFDialog .window-content .form-encounters .filter-controller input + button + button {
+	border: 1px solid rgb(122, 121, 113);
+	border-radius: 0;
+	border-bottom-right-radius: 0.25rem;
+	border-top-right-radius: 0.25rem;
+	flex: 0;
+	margin: 0px;
 }
 
 
@@ -279,6 +286,14 @@
 	flex-direction: row;
 	order: 1;
 	position: relative;
+	transform-origin: top;
+	transition: all 0.3s ease-in-out;
+	max-height: 300px;
+}
+#SFDialog .window-content .form-encounters ul li.hidden {
+	transform: scaleY(0);
+	max-height: 0px;
+	border-width: 0px;
 }
 #SFDialog .window-content .form-encounters[data-show="favorited"] li.is-favorited-false {
 	display: none;
@@ -296,12 +311,21 @@
 	justify-content: center;
 }
 #SFDialog .window-content .form-encounters ul li div.favorite-encounter.favorited i:before {
-	color: var(--palette-yellow, #ffff00);
+	color: var(--palette-yellow, #ffc800);
     font-weight: 600;
+    text-shadow: 0px 0px 3px black;
+}
+#SFDialog .window-content .form-encounters ul li div.favorite-encounter:not(.favorited) i:hover {
+	cursor: pointer;
+	text-shadow: 0 0 8px var(--palette-yellow, #ffc800);;
 }
 #SFDialog .window-content .form-encounters ul li div.create-encounter {
 	flex-direction: column;
     justify-content: space-evenly;
+}
+#SFDialog .window-content .form-encounters ul li div.create-encounter i:hover {
+	cursor: pointer;
+	text-shadow: 0 0 8px #FF000080;
 }
 #SFDialog .window-content .form-encounters ul li div.favorite-encounter,
 #SFDialog .window-content .form-encounters ul li div.create-encounter {
@@ -455,4 +479,17 @@
     position: relative;
     padding: 0.5rem;
     text-decoration: none;
+}
+#SFCompendiumSorter form ul li span.compendium-type {
+    background-color: var(--palette-primary, #116b86);
+    color: var(--palette-primary-contrast-text, #fff);
+    order: 2;
+    margin-left: auto;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+#SFCompendiumSorter form ul li span.compendium-type[data-type="Item"] {
+    background-color: var(--palette-secondary, #118655);
+    color: var(--palette-secondary-contrast-text, #fff);
 }
