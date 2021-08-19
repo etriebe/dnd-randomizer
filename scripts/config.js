@@ -15,6 +15,19 @@ Hooks.once("init", async function () {
     type: String,
     default: "SF - Loot",
   });
+  game.settings.register(SFCONSTS.MODULE_NAME, 'favoritedEncounters', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {},
+  })
+  
+  game.settings.register(SFCONSTS.MODULE_NAME, 'actorCompendiums', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: [],
+  })
 });
 
 Hooks.on("changeSidebarTab",(settings) => {
@@ -24,7 +37,7 @@ Hooks.on("changeSidebarTab",(settings) => {
   const button = `<button id="sfButton" style="flex-basis: auto;">
   <i class="fas fa-dice"></i> Generate Encounter
 </button>`
-  html.find(`.header-actions`).append(button)
+  html.find(`.header-actions`).first().append(button)
   html.find("#sfButton").on("click",async (e) => {
     e.preventDefault();
     if (!canvas.sfDialog?.rendered) await canvas.sfDialog.render(true);

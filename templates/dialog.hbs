@@ -74,6 +74,16 @@
 		<button class="generate-encounters"><i class="fas fa-dice"></i> Generate Encounters</button>
 	</div>
 	<div class="form-encounters">
-		<ul></ul>
+		<div class="filter-controller">
+			<select>
+				<option value="all">All</option>
+				<option value="favorited">Favorited</option>
+			</select>
+			<input type="text" spellcheck="false" placeholder="Start typing to filter Encounters">
+			<button title="Clear search field"><i class="fas fa-times"></i></button>
+		</div>
+		<div class="encounters">
+			<ul></ul>
+		</div>
 	</div>
 </form>

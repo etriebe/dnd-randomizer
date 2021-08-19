@@ -13,7 +13,7 @@ class SFHelpers {
       .then((data) => data);
   }
 
-  static async parseEncounter(data, params) {
+  static async parseEncounter(data, params={}) {
     const encounters = data.reduce((a, v) => {
       const enc = new Encounter(v).validate();
       if (enc !== undefined) a.push(enc);
