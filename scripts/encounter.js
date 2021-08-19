@@ -45,11 +45,12 @@ class Encounter {
   static getCompendiumEntryByName(name, type) {
     name = type == "Actor" ? name : Encounter.fuzzyMatch(name, type);
     const compendiums = game.packs.filter((p) => p.documentName === type);
+    let entries = [];
     for (let compendium of compendiums) {
       const entry = compendium.index.find((i) => i.name === name);
-      if (entry) return { entry: entry, compendium: compendium };
+      if (entry) entries.push({ entry: entry, compendium: compendium });
     }
-    return null;
+    return entries.length > 0 ? entries[0] : null;
   }
   //returns the most similar name in a compendium
   static fuzzyMatch(name, type) {

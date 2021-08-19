@@ -21,6 +21,13 @@ Hooks.once("init", async function () {
     type: Object,
     default: {},
   })
+  
+  game.settings.register(SFCONSTS.MODULE_NAME, 'actorCompendiums', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: [],
+  })
 });
 
 Hooks.on("changeSidebarTab",(settings) => {

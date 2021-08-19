@@ -431,3 +431,28 @@
     color: inherit;
     padding: 0px;
 }
+
+
+#SFCompendiumSorter .window-content h3 {
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    justify-content: space-between;
+    margin: 0px;
+    padding: 0.75rem 0.75rem 0rem;
+}
+#SFCompendiumSorter form ul {
+	display: flex;
+    flex-direction: column;
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+#SFCompendiumSorter form ul li {
+    align-items: center;
+    border: 1px solid #00000020;
+	display: flex;
+    position: relative;
+    padding: 0.5rem;
+    text-decoration: none;
+}
