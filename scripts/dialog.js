@@ -168,7 +168,6 @@ class SFDialog extends FormApplication {
 				return 0;
 			});
 			const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
-			console.log(fetchedData,encounterData);
 			_this.populateEncounters(encounterData);
 
 
