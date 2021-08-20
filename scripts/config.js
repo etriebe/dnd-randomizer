@@ -1,15 +1,15 @@
 Hooks.once("init", async function () {
   game.settings.register(SFCONSTS.MODULE_NAME, "actorFolder", {
-    name: game.i18n.localize("dr.settings.actorFolder.name"),
-    hint: game.i18n.localize("dr.settings.actorFolder.hint"),
+    name: "Actor Folder Name",
+    hint: "Sets the folder name that the actors will be added to when imported",
     scope: "world",
     config: true,
     type: String,
     default: "SF - Creatures",
   });
   game.settings.register(SFCONSTS.MODULE_NAME, "lootFolder", {
-    name: game.i18n.localize("dr.settings.lootFolder.name"),
-    hint: game.i18n.localize("dr.settings.lootFolder.hint"),
+    name: "Loot Folder Name",
+    hint: "Sets the folder name that the loot will be added to when imported",
     scope: "world",
     config: true,
     type: String,
@@ -27,6 +27,12 @@ Hooks.once("init", async function () {
     config: false,
     type: Object,
     default: [],
+  })
+  game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
   })
 });
 

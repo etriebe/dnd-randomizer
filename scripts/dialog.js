@@ -56,8 +56,8 @@ class SFDialog extends FormApplication {
 					</div>
 				</div>
 				<div class="create-encounter">
-					<i class="fas fa-angle-double-right" data-trigger="spawn"></i>
-					<i class="fas fa-briefcase" data-trigger="loot"></i>
+					<i class="fas ${game.settings.get(SFCONSTS.MODULE_NAME, 'secretEncounterIcon') ? 'fa-pastafarianism' : 'fa-angle-double-right' }" data-trigger="spawn" title="Spawn Encounter"></i>
+					<i class="fas fa-briefcase" data-trigger="loot" title="Generate Loot"></i>
 				</div>
 			</li>`);
 
@@ -344,6 +344,10 @@ class SFDialog extends FormApplication {
 Hooks.once('ready', async () => {
 	canvas.sfDialog = new SFDialog();
 	//canvas.sfDialog.render(true);
+
+	game.modules.get(SFCONSTS.MODULE_NAME).crab = () => {
+		 game.settings.set(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', !game.settings.get(SFCONSTS.MODULE_NAME, 'secretEncounterIcon'));
+	}
 
 	
 });
