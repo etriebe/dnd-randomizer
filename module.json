@@ -33,7 +33,8 @@
       "./scripts/encounter.js",
       "./scripts/dialog.js",
       "./scripts/compendium.js",
-      "./scripts/fuzzyset.js"
+      "./scripts/fuzzyset.js",
+      "./scripts/sortables.js"
   ],
   "styles": [
       "./styles/encounterGenerator.css"

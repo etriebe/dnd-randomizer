@@ -30,8 +30,8 @@ Hooks.once("init", async function () {
   })
 });
 
-Hooks.on("changeSidebarTab",(settings) => {
-  if(!game.user.isGM || settings.tabName != "actors") return
+Hooks.on("renderSidebarTab",(settings) => {
+  if(!game.user.isGM || settings.id != "actors") return
   const html = settings.element
   if(html.find("#sfButton").length !== 0) return
   const button = `<button id="sfButton" style="flex-basis: auto;">

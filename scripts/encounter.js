@@ -13,6 +13,13 @@ class Encounter {
     //Prepare loot data
     for (let loot of this.data.loot.items) {
       const item = new EncItem(loot, "item");
+      const itemData = await item.getData();
+      if (itemData && itemData.type !== "spell") this.loot.push(item);
+    }
+
+    //Prepare scroll data
+    for (let loot of this.data.loot.scrolls) {
+      const item = new EncItem(loot, "item", true);
       if (await item.getData()) this.loot.push(item);
     }
 
@@ -49,14 +56,16 @@ class Encounter {
     );
     const filteredCompendiums = Array.from(game.packs).filter((p) => {
       if (p.documentName !== type) return false;
-      const el = constCompFilter.find(i => Object.keys(i)[0] == p.collection)
+      const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
       return !el || el[p.collection] ? true : false;
     });
     const compendiums = filteredCompendiums.sort((a, b) => {
-      const filterIndexA =
-      constCompFilter.indexOf(constCompFilter.find(i => Object.keys(i)[0] == a.collection));
-      const filterIndexB =
-      constCompFilter.indexOf(constCompFilter.find(i => Object.keys(i)[0] == b.collection))
+      const filterIndexA = constCompFilter.indexOf(
+        constCompFilter.find((i) => Object.keys(i)[0] == a.collection)
+      );
+      const filterIndexB = constCompFilter.indexOf(
+        constCompFilter.find((i) => Object.keys(i)[0] == b.collection)
+      );
       return filterIndexA > filterIndexB ? 1 : -1;
     });
     let entries = [];
@@ -197,12 +206,13 @@ class EncCreature {
 }
 
 class EncItem {
-  constructor(item, type) {
+  constructor(item, type, isScroll = false) {
     this.name = item.name;
-    this.quantity = item.quantity;
+    this.quantity = item.quantity || 1;
     this.value = parseInt(item.name.replace(/[^\d]/g, ""));
     this.type = type;
     this.dynamicLink = "";
+    this.isScroll = isScroll;
     this._itemDocument = null;
   }
 
@@ -228,9 +238,12 @@ class EncItem {
 
     if (item) {
       this.name = item.data.name;
-      this._itemDocument = item.data;
-      this.dynamicLink = `@Item[${item.id}]{${item.data.name}}`;
-      return item.data;
+      this._itemDocument = this.isScroll
+        ? await this.toSpellScroll(item)
+        : item.toObject();
+      if (!this._itemDocument) return undefined;
+      this.dynamicLink = `@Item[${item.id}]{${this._itemDocument.name}}`;
+      return this._itemDocument;
     }
 
     if (!item) {
@@ -241,11 +254,14 @@ class EncItem {
       item = await game.packs
         .get(compData.compendium.collection)
         .getDocument(compData.entry._id);
-      delete item.data._id;
+      this._itemDocument = this.isScroll
+        ? await this.toSpellScroll(item)
+        : item.toObject();
+      if (!this._itemDocument) return undefined;
       this.name = item.data.name;
-      this._itemDocument = item.data;
-      this.dynamicLink = `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${item.data.name}}`;
-      return item;
+      this._itemDocument.data.quantity = this.quantity || 1;
+      this.dynamicLink = `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${this._itemDocument.name}}`;
+      return this._itemDocument;
     }
   }
 
@@ -256,7 +272,7 @@ class EncItem {
       type: "loot",
       img: this.getRandomLootImg(), //"icons/svg/item-bag.svg",
       data: {
-        quantity: 1,
+        quantity: this.quantity || 1,
         weight: 0,
         price: this.value || 0,
         equipped: false,
@@ -264,5 +280,38 @@ class EncItem {
       },
     };
     return this._itemDocument;
+  }
+
+  async toSpellScroll(item) {
+    if (item.data.type !== "spell") return undefined;
+    const itemData = item.toObject();
+    const level = itemData.data.level
+    // Get scroll data
+    const scrollUuid = `Compendium.${CONFIG.DND5E.sourcePacks.ITEMS}.${CONFIG.DND5E.spellScrollIds[level]}`;
+    const scrollItem = await fromUuid(scrollUuid);
+    const scrollData = scrollItem.data;
+
+    // Split the scroll description into an intro paragraph and the remaining details
+    const scrollDescription = scrollData.data.description.value;
+    const pdel = '</p>';
+    const scrollIntroEnd = scrollDescription.indexOf(pdel);
+    const scrollIntro = scrollDescription.slice(0, scrollIntroEnd + pdel.length);
+    const scrollDetails = scrollDescription.slice(scrollIntroEnd + pdel.length);
+
+    // Create a composite description from the scroll description and the spell details
+    const desc = `${scrollIntro}<hr/><h3>${itemData.name} (Level ${level})</h3><hr/>${itemData.data.description.value}<hr/><h3>Scroll Details</h3><hr/>${scrollDetails}`;
+    itemData.data.description.value = desc.trim()
+
+    itemData.type = "consumable";
+    itemData.name = `Spell Scroll: ${item.data.name}`;
+    itemData.data.price = SFCONSTS.SPELLCOST[itemData.data.level ?? 0];
+    itemData.data.weight = 0;
+    itemData.data.uses = {
+      value: 1,
+      max: 1,
+      per: "charges",
+      autoDestroy: true,
+    };
+    return itemData;
   }
 }

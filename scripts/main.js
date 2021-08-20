@@ -37,7 +37,19 @@ const SFCONSTS = {
         "medium": 2,
         "hard": 3,
         "deadly": 4,
-    }
+    },
+    SPELLCOST: [
+        50,
+        100,
+        250,
+        500,
+        750,
+        1500,
+        5000,
+        15000,
+        25000,
+        50000,
+    ]
 }
 
 async function spawnTest(name,number){

@@ -27,7 +27,7 @@ class SFDialog extends FormApplication {
 		let level = 0
 		characters.forEach((c) => level+=c.actor.data.data.details.level)
 		level = Math.round(level / characters.length)
-		return {chars: characters.length, level: level}
+		return {chars: characters.length || 4, level: level || 5}
 	}
 
 	populateEncounters(encounterData) {
@@ -168,7 +168,7 @@ class SFDialog extends FormApplication {
 				return 0;
 			});
 			const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
-
+			console.log(fetchedData,encounterData);
 			_this.populateEncounters(encounterData);
 
 
