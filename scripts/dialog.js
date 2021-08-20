@@ -188,6 +188,30 @@ class SFDialog extends FormApplication {
 			event.preventDefault();
 			new SFCompendiumSorter().render(true);
 		})
+		html.find('.filter-controller input + button + button + button').on('click', (event) => {
+			event.preventDefault();
+			new Dialog({
+				title: "Stochastic, Fantastic! Credits",
+				content: `<h1>Support Stochastic, Fantastic!</h1>
+				<p>Join the Discord for more Awesome modules: <a href="https://discord.gg/F53gBjR97G" target="_blank">Discord</a></p>
+				<p>Support on Patreon: <a href="https://www.patreon.com/theripper93">Patreon</a></p>
+				<p>This module uses a proxy to retrieve the data it needs (tl;dr it costs money) consider supporting on Patreon to keep the module alive.</p>
+				<hr/>
+				<h1>License / Credits</h1>
+				<h2>Donjon</h2>
+				<p>Stochastic, Fantastic! pulls it's data from <a href="https://donjon.bin.sh/" target="_blank">https://donjon.bin.sh/</a> with permission from the author (Some content used under the Open Gaming License). Support this amazing website here <a href="https://ko-fi.com/donjon" target="_blank"></a>https://ko-fi.com/donjon</a></p>
+				<h2>Sortable.Js</h2>
+				More info here <a href="https://github.com/SortableJS/Sortable" target="_blank">https://github.com/SortableJS/Sortable</a>
+				<h2>Fuzzyset.js</h2>
+				<p>This package is licensed under the Prosperity Public License 3.0. That means that this package is free to use for non-commercial projects. See <a href="https://github.com/Glench/fuzzyset.js" target="_blank">https://github.com/Glench/fuzzyset.js</a> for more details.</p>
+				<hr/>
+				<p style="font-style: italic;">Stochastic, Fantastic! is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
+				`,
+				buttons: {},
+				render: html => {},
+				close: html => {}
+			}).render(true);
+		});
 
 		html.find('.filter-controller input').on('keyup change', function(event) {
 			event.preventDefault();

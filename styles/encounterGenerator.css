@@ -15,7 +15,17 @@
 	font-size: 1.3rem;
 	padding: 1rem 0.75rem;
 }
-
+#SFDialog.minimized {
+	max-height: 30px;
+}
+#SFDialog.minimized .window-header {
+	flex: 0 0 30px;
+	line-height: 30px;
+}
+#SFDialog.minimized .window-header h4 {
+	font-size: 1rem;
+    padding: 0;
+}
 #SFDialog .window-header a.header-button.close {
 	font-size: 0rem !important;
 }
@@ -263,13 +273,17 @@
 #SFDialog .window-content .form-encounters .filter-controller input:not(:placeholder-shown) + button {
 	display: inline-block;
 }
-#SFDialog .window-content .form-encounters .filter-controller input + button + button {
+#SFDialog .window-content .form-encounters .filter-controller input + button + button,
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button {
 	border: 1px solid rgb(122, 121, 113);
 	border-radius: 0;
-	border-bottom-right-radius: 0.25rem;
-	border-top-right-radius: 0.25rem;
 	flex: 0;
 	margin: 0px;
+}
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button {
+	border-left-width: 0px;
+	border-bottom-right-radius: 0.25rem;
+	border-top-right-radius: 0.25rem;
 }
 
 
