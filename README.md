@@ -13,6 +13,10 @@ A random encounter generator with automatic creature importing (from your own co
 
 Stochastic, Fantastic! pulls it's data from https://donjon.bin.sh/ with permission from the author (Some content used under the Open Gaming License). Support this amazing website here https://ko-fi.com/donjon 
 
+## Sortable.Js
+
+More info here https://github.com/SortableJS/Sortable
+
 ## Fuzzyset.js
 
 This package is licensed under the Prosperity Public License 3.0.
