@@ -1,6 +1,6 @@
 {
   "name": "dnd-randomizer",
-  "title": "Stochastic, Fantastic!",
+  "title": "Stochastic, Fantastic! - Random Encounter Generator",
   "description": "desc",
   "version": "0.1",
   "system": ["dnd5e"],
