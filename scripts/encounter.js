@@ -124,23 +124,23 @@ class Encounter {
         currency: {
           // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
           cp:
-            game.modules.get("lootsheetnpc5f")?.active ?? false
+            game.modules.get("lootsheetnpc5e")?.active ?? false
               ? { value: this.currency.cp }
               : this.currency.cp,
           sp:
-            game.modules.get("lootsheetnpc5f")?.active ?? false
+            game.modules.get("lootsheetnpc5e")?.active ?? false
               ? { value: this.currency.sp }
               : this.currency.sp,
           ep:
-            game.modules.get("lootsheetnpc5f")?.active ?? false
+            game.modules.get("lootsheetnpc5e")?.active ?? false
               ? { value: this.currency.ep }
               : this.currency.ep,
           gp:
-            game.modules.get("lootsheetnpc5f")?.active ?? false
+            game.modules.get("lootsheetnpc5e")?.active ?? false
               ? { value: this.currency.gp }
               : this.currency.gp,
           pp:
-            game.modules.get("lootsheetnpc5f")?.active ?? false
+            game.modules.get("lootsheetnpc5e")?.active ?? false
               ? { value: this.currency.pp }
               : this.currency.pp,
         },

@@ -507,3 +507,10 @@
     background-color: var(--palette-secondary, #118655);
     color: var(--palette-secondary-contrast-text, #fff);
 }
+
+#SFCompendiumSorter form ul li span.compendium-title:after {
+    content: attr(data-name);
+    display: block;
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
