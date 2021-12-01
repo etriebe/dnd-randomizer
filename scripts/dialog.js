@@ -170,6 +170,27 @@ class SFDialog extends FormApplication {
 			const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
 			_this.populateEncounters(encounterData);
 
+			$button.prop('disabled', false).removeClass('disabled');
+			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
+		});
+			
+
+		html.find('button.generate-local-encounters').on('click', async (event) => {
+			event.preventDefault();
+			const $button = $(event.currentTarget);
+
+			$button.prop('disabled', true).addClass('disabled');
+			$button.find('i.fas').removeClass('fa-dice').addClass('fa-spinner fa-spin');
+			const params = {
+				loot_type: html.find('#lootType select[name="lootType"]').val(),
+				numberOfPlayers: html.find('#numberOfPlayers select[name="numberOfPlayers"]').val(),
+				averageLevelOfPlayers: html.find('#averageLevelOfPlayers select[name="averageLevelOfPlayers"]').val(),
+				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
+			}
+
+			await SFHelpers.populateMonstersFromCompendiums();
+			let filteredMonsters = await SFHelpers.filterMonstersFromCompendiums(params);
+			let generateEncounters = await SFHelpers.createEncounters(filteredMonsters, params, 30);
 
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
