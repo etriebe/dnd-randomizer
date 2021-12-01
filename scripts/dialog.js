@@ -191,6 +191,7 @@ class SFDialog extends FormApplication {
 			await SFHelpers.populateMonstersFromCompendiums();
 			let filteredMonsters = await SFHelpers.filterMonstersFromCompendiums(params);
 			let generateEncounters = await SFHelpers.createEncounters(filteredMonsters, params, 30);
+			_this.populateEncounters(generateEncounters);
 
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');

@@ -87,96 +87,180 @@ class SFHelpers {
     let numberOfPlayers = params.numberOfPlayers;
 
     let encounterList = [];
-    // Generate 5 deadly encounters
-    for (let i = 0; i < 5; i++) {
-      let currentEncounter = {};
-      currentEncounter["difficulty"] = "deadly";
-      currentEncounter["creatures"] = [];
-      let targetEncounterXP = SFCONSTS.ENCOUNTER_DIFFICULTY_XP_TABLES["deadly"][averageLevelOfPlayers] * numberOfPlayers;
-      let currentEncounterXP = 0;
-      let numberOfMonstersInCombat = 0;
-
-      let j = 0;
-      while (j < 50) // attempt to put in 50 monsters before giving up so we don't spin forever
-      {
-        let randomMonsterIndex = Math.floor((Math.random() * monsterList.length));
-        let randomMonster = monsterList[randomMonsterIndex];
-        let randomMonsterXP = randomMonster.data.data.details.xp.value;
-        let currentEncounterXPMultiplier = SFHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
-        let monsterName = randomMonster.name;
-        let monsterCR = randomMonster.data.data.details.cr;
-
-        // If we're within 10% of budget, let's stop
-        if (currentEncounterXP * currentEncounterXPMultiplier > targetEncounterXP * 0.9)
-        {
-          break;
-        }
-        if (!randomMonsterXP)
-        {
-          continue;
-        }
-
-        if (!monsterCR || monsterCR == 0)
-        {
-          // Boring monster
-          continue;
-        }
-
-        let numberOfMonstersAllowedInCombat = SFHelpers.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster);
-
-        if (numberOfMonstersAllowedInCombat == 0)
-        {
-          console.log(`Monster ${monsterName} too dangerous`);
-          continue;
-        }
-
-        let numberOfMonstersToPutInCombat = Math.floor((Math.random() * numberOfMonstersAllowedInCombat)) + 1;
-        let creatureCombatDetails = {};
-        creatureCombatDetails["name"] = monsterName;
-        creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
-        creatureCombatDetails["cr"] = monsterCR;
-        currentEncounter["creatures"].push(creatureCombatDetails);
-        numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
-        currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
-      }
-
+    for (let i = 0; i < 6; i++)
+    {
+      let currentEncounter = SFHelpers.createEncounter("deadly", monsterList, averageLevelOfPlayers, numberOfPlayers);
+      encounterList.push(currentEncounter);
+    }
+    for (let i = 0; i < 6; i++)
+    {
+      let currentEncounter = SFHelpers.createEncounter("hard", monsterList, averageLevelOfPlayers, numberOfPlayers);
+      encounterList.push(currentEncounter);
+    }
+    for (let i = 0; i < 6; i++)
+    {
+      let currentEncounter = SFHelpers.createEncounter("medium", monsterList, averageLevelOfPlayers, numberOfPlayers);
+      encounterList.push(currentEncounter);
+    }
+    for (let i = 0; i < 12; i++)
+    {
+      let currentEncounter = SFHelpers.createEncounter("easy", monsterList, averageLevelOfPlayers, numberOfPlayers);
       encounterList.push(currentEncounter);
     }
 
     return encounterList;
   }
 
+  static createEncounter(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers)
+  {
+    let currentEncounter = {};
+    currentEncounter["difficulty"] = targetedDifficulty;
+    currentEncounter["creatures"] = [];
+    let targetEncounterXP = SFCONSTS.ENCOUNTER_DIFFICULTY_XP_TABLES[targetedDifficulty][averageLevelOfPlayers - 1] * numberOfPlayers;
+    let currentEncounterXP = 0;
+    let numberOfMonstersInCombat = 0;
+
+    let j = 0;
+    while (j < 50) // attempt to put in 50 monsters before giving up so we don't spin forever
+    {
+      j++;
+      let randomMonsterIndex = Math.floor((Math.random() * monsterList.length));
+      let randomMonster = monsterList[randomMonsterIndex];
+      let randomMonsterXP = randomMonster.data.data.details.xp.value;
+      let currentEncounterXPMultiplier = SFHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
+      let monsterName = randomMonster.name;
+      let monsterCR = randomMonster.data.data.details.cr;
+      let currentEncounterAdjustedXP = SFHelpers.getAdjustedXPOfEncounter(currentEncounter);
+
+      // If we're within 10% of budget, let's stop
+      if (currentEncounterAdjustedXP > targetEncounterXP * 0.9)
+      {
+        break;
+      }
+
+      let nextEncounterXPMultiplier = SFHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat + 1);
+
+      // If adding a single extra creature with no added XP boosts us over the XP target, just exit now.
+      if (currentEncounterXP * nextEncounterXPMultiplier > targetEncounterXP)
+      {
+        break;
+      }
+
+      if (!randomMonsterXP)
+      {
+        continue;
+      }
+
+      if (!monsterCR || monsterCR == 0)
+      {
+        // Boring monster
+        continue;
+      }
+
+      let numberOfMonstersAllowedInCombat = SFHelpers.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster);
+
+      if (numberOfMonstersAllowedInCombat == 0)
+      {
+        console.log(`Monster: ${monsterName}, XP: ${randomMonsterXP}, CR: ${monsterCR} too dangerous`);
+        continue;
+      }
+
+      if (numberOfMonstersAllowedInCombat > 20)
+      {
+        console.log(`Monster: ${monsterName}, XP: ${randomMonsterXP}, CR: ${monsterCR} too weak to be interesting in combat...`);
+        continue;
+      }
+
+      // Choose a random number of creatures to put in combat based on the max allowed number but put a maximum of 10 in combat
+      let numberOfMonstersToPutInCombat = Math.min(Math.floor((Math.random() * numberOfMonstersAllowedInCombat)) + 1, 10);
+      let creatureCombatDetails = {};
+      creatureCombatDetails["name"] = monsterName;
+      creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
+      creatureCombatDetails["cr"] = monsterCR;
+      creatureCombatDetails["xp"] = randomMonsterXP;
+      currentEncounter["creatures"].push(creatureCombatDetails);
+      numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
+      currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
+    }
+
+    currentEncounter["adjustedxp"] = SFHelpers.getAdjustedXPOfEncounter(currentEncounter);
+    return currentEncounter;
+  }
+
   static getNumberOfMonstersAllowedInCombat(currentEncounter, fullMonsterList, targetEncounterXP, newMonster)
   {
     let currentEncounterMonsterCount = 0;
     let currentEncounterXP = 0;
-    for (const monsterName in currentEncounter["creatures"])
+    let newMonsterXP = newMonster.data.data.details.xp.value;
+    if (currentEncounter["creatures"].length > 0)
     {
-      let monster = fullMonsterList.find(m => m.name === monsterName);
-      if (!monster)
+      for (const monsterIndex in currentEncounter["creatures"])
       {
-        break;
+        let monsterDetails = currentEncounter["creatures"][monsterIndex];
+        let monsterName = monsterDetails.name;
+        let monsterCount = monsterDetails.quantity;
+        let monsterXP = monsterDetails.xp;
+        if (!monsterName || !monsterCount || !monsterXP)
+        {
+          // Encountered the end of the list. For some reason we get an empty iterator here at the end. 
+          break;
+        }
+        currentEncounterMonsterCount += monsterCount;
+        currentEncounterXP += monsterXP * monsterCount;
       }
-      let currentMonsterXP = monster.data.data.details.xp.value;
-      currentEncounterMonsterCount += count;
-      currentEncounterXP = currentMonsterXP * count;
     }
 
     let currentEncounterXPMultiplier = SFHelpers.getCurrentEncounterXPMultiplier(currentEncounterMonsterCount);
-    let currentAdjsutedEncounterXP = currentEncounterXPMultiplier * currentEncounterXP;
-
-    let newMonsterEncounterXPMultiplier = SFHelpers.getCurrentEncounterXPMultiplier(currentEncounterMonsterCount + 1);
-    let maximumAllowedMonsterXP = targetEncounterXP - currentEncounterXP * newMonsterEncounterXPMultiplier;
-    let numberOfNewMonstersAllowed = Math.floor(maximumAllowedMonsterXP / newMonster.data.data.details.xp.value);
+    let numberOfNewMonstersAllowed = 0;
+    while (true)
+    {
+      // figure out what our new encounter XP would be if we add another creature
+      let newMonsterEncounterXPMultiplier = SFHelpers.getCurrentEncounterXPMultiplier(currentEncounterMonsterCount + numberOfNewMonstersAllowed + 1);
+      let newEncounterAdjustedXP = (currentEncounterXP + (numberOfNewMonstersAllowed + 1) * newMonsterXP) * newMonsterEncounterXPMultiplier;
+      
+      // if it breaches the threshold our encounter is now too deadly
+      if (newEncounterAdjustedXP > targetEncounterXP)
+      {
+        break;
+      }
+      numberOfNewMonstersAllowed++;
+    }
+    
     return numberOfNewMonstersAllowed;
+  }
+
+  static getAdjustedXPOfEncounter(currentEncounter)
+  {
+    let currentEncounterMonsterCount = 0;
+    let currentEncounterXP = 0;
+    if (currentEncounter["creatures"].length > 0)
+    {
+      for (const monsterIndex in currentEncounter["creatures"])
+      {
+        let monsterDetails = currentEncounter["creatures"][monsterIndex];
+        let monsterName = monsterDetails.name;
+        let monsterCount = monsterDetails.quantity;
+        let monsterXP = monsterDetails.xp;
+        if (!monsterName || !monsterCount || !monsterXP)
+        {
+          // Encountered the end of the list. For some reason we get an empty iterator here at the end. 
+          break;
+        }
+        currentEncounterMonsterCount += monsterCount;
+        currentEncounterXP += monsterXP * monsterCount;
+      }
+    }
+
+    let currentEncounterXPMultiplier = SFHelpers.getCurrentEncounterXPMultiplier(currentEncounterMonsterCount);
+    return currentEncounterXPMultiplier * currentEncounterXP;
   }
 
   static getCurrentEncounterXPMultiplier(monsterCount)
   {
     let latestEncounterMultiplier;
-    for (const key in Object.keys(SFCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS))
+    for (var key in SFCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS)
     {
-      let value = SFCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS[key];
+      var value = SFCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS[key];
       latestEncounterMultiplier = value;
       if (monsterCount <= key)
       {
