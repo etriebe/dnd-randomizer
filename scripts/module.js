@@ -184,23 +184,28 @@ class SFHelpers {
     }
 
     currentEncounter["adjustedxp"] = SFHelpers.getAdjustedXPOfEncounter(currentEncounter);
-    currentEncounter["currency"] = SFHelpers.getCurrencyForEncounter(currentEncounter["adjustedxp"], currentEncounter)
+    // currentEncounter["currency"] =
+    let generatedLootObject = SFHelpers.getLootForEncounter(currentEncounter["adjustedxp"], currentEncounter)
+    
     return currentEncounter;
   }
 
-  static getCurrencyForEncounter(currentEncounter, params)
+  static getLootForEncounter(currentEncounter, params)
   {
     let adjustedXPOfEncounter = currentEncounter["adjustedxp"];
     let loopType = params.loot_type;
+    let generatedLoot;
 
     if (loopType === "Individual Treasure")
     {
-      let generatedLoot = SFHelpers.getIndividualTreasureForEncounter(currentEncounter);
+      generatedLoot = SFHelpers.getIndividualTreasureForEncounter(currentEncounter);
     }
     else
     {
-      let generatedLoot = SFHelpers.getTreasureHoardForEncounter(currentEncounter);
+      generatedLoot = SFHelpers.getTreasureHoardForEncounter(currentEncounter);
     }
+
+    return generatedLoot;
   }
 
   static getIndividualTreasureForEncounter(currentEncounter)
