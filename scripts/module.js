@@ -186,7 +186,7 @@ class SFHelpers {
     currentEncounter["adjustedxp"] = SFHelpers.getAdjustedXPOfEncounter(currentEncounter);
     // currentEncounter["currency"] =
     let generatedLootObject = SFHelpers.getLootForEncounter(currentEncounter["adjustedxp"], currentEncounter)
-    
+
     return currentEncounter;
   }
 
@@ -559,7 +559,7 @@ class SFHelpers {
 
   static getArtOrGemsResult(rowContents)
   {
-    let matchResult = rowContents.match(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (?<gemOrArtCost>\d+) gp (?<gemsOrArt>gems|art objects))/);
+    let matchResult = rowContents.match(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (?<gemOrArtCost>\d+) gp (?<gemsOrArt>gems|art objects)/);
     let matchResultGroups = matchResult.groups;
     let rollDescription = matchResultGroups.rollDescription;
 
