@@ -184,15 +184,14 @@ class SFHelpers {
     }
 
     currentEncounter["adjustedxp"] = SFHelpers.getAdjustedXPOfEncounter(currentEncounter);
-    // currentEncounter["currency"] =
-    let generatedLootObject = SFHelpers.getLootForEncounter(currentEncounter["adjustedxp"], currentEncounter)
-
+    
+    let generatedLootObject = SFHelpers.getLootForEncounter(currentEncounter, currentEncounter);
+    currentEncounter["loot"] = generatedLootObject;
     return currentEncounter;
   }
 
   static getLootForEncounter(currentEncounter, params)
   {
-    let adjustedXPOfEncounter = currentEncounter["adjustedxp"];
     let loopType = params.loot_type;
     let generatedLoot;
 
@@ -235,7 +234,7 @@ class SFHelpers {
 
         for (let i = 0; i < monsterCount; i++)
         {
-          let d100Roll = Math.floor(Math.random() * 100);
+          let d100Roll = this.getRollResult("1d100");
 
           if (monsterCR <= 4)
           {
@@ -340,7 +339,7 @@ class SFHelpers {
     let currencyResultObject = {};
     let itemsResultObject = {};
     let otherResultObject = {};
-    let scrollsResultObject = {};
+    let scrollsResultObject = [];
     currencyResultObject["pp"] = 0;
     currencyResultObject["gp"] = 0;
     currencyResultObject["ep"] = 0;
@@ -364,7 +363,7 @@ class SFHelpers {
         }
         maximumCRFromGroup = Math.max(maximumCRFromGroup, monsterCR);
       }
-      let d100Roll = Math.floor(Math.random() * 100);
+      let d100Roll = this.getRollResult("1d100");
 
       let treasureHoardRowContents;
       if (maximumCRFromGroup <= 4)
@@ -372,102 +371,26 @@ class SFHelpers {
         currencyResultObject["cp"] += this.getRollResult("6d6") * 100;
         currencyResultObject["sp"] += this.getRollResult("3d6") * 100;
         currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-
-        if (d100Roll <= 30)
-        {
-          currencyResultObject["cp"] += this.getRollResult("5d6");
-        }
-        else if (d100Roll <= 60)
-        {
-          currencyResultObject["sp"] += this.getRollResult("4d6");
-        }
-        else if (d100Roll <= 70)
-        {
-          currencyResultObject["ep"] += this.getRollResult("3d6");
-        }
-        else if (d100Roll <= 95)
-        {
-          currencyResultObject["gp"] += this.getRollResult("3d6");
-        }
-        else 
-        {
-          currencyResultObject["pp"] += this.getRollResult("1d6");
-        }
-
         treasureHoardRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_TREASURE_HOARD_CR4, d100Roll);
       }
       else if (maximumCRFromGroup <= 10)
       {
-        if (d100Roll <= 30)
-        {
-          currencyResultObject["cp"] += this.getRollResult("4d6") * 100;
-          currencyResultObject["ep"] += this.getRollResult("1d6") * 10;
-        }
-        else if (d100Roll <= 60)
-        {
-          currencyResultObject["sp"] += this.getRollResult("6d6") * 10;
-          currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-        }
-        else if (d100Roll <= 70)
-        {
-          currencyResultObject["ep"] += this.getRollResult("3d6") * 10;
-          currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-        }
-        else if (d100Roll <= 95)
-        {
-          currencyResultObject["gp"] += this.getRollResult("4d6") * 10;
-        }
-        else 
-        {
-          currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-          currencyResultObject["pp"] += this.getRollResult("3d6");
-        }
-
+        currencyResultObject["cp"] += this.getRollResult("2d6") * 100;
+        currencyResultObject["sp"] += this.getRollResult("2d6") * 1000;
+        currencyResultObject["gp"] += this.getRollResult("6d6") * 100;
+        currencyResultObject["pp"] += this.getRollResult("3d6") * 10;
         treasureHoardRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_TREASURE_HOARD_CR10, d100Roll);
       }
       else if (maximumCRFromGroup <= 16)
       {
-        if (d100Roll <= 20)
-        {
-          currencyResultObject["cp"] += this.getRollResult("4d6") * 100;
-          currencyResultObject["gp"] += this.getRollResult("1d6") * 100;
-        }
-        else if (d100Roll <= 35)
-        {
-          currencyResultObject["ep"] += this.getRollResult("1d6") * 100;
-          currencyResultObject["gp"] += this.getRollResult("1d6") * 100;
-        }
-        else if (d100Roll <= 75)
-        {
-          currencyResultObject["pp"] += this.getRollResult("1d6") * 10;
-          currencyResultObject["gp"] += this.getRollResult("2d6") * 100;
-        }
-        else 
-        {
-          currencyResultObject["pp"] += this.getRollResult("2d6") * 10;
-          currencyResultObject["gp"] += this.getRollResult("2d6") * 100;
-        }
-
+        currencyResultObject["gp"] += this.getRollResult("4d6") * 1000;
+        currencyResultObject["pp"] += this.getRollResult("5d6") * 100;
         treasureHoardRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_TREASURE_HOARD_CR16, d100Roll);
       }
       else
       {
-        if (d100Roll <= 15)
-        {
-          currencyResultObject["ep"] += this.getRollResult("2d6") * 1000;
-          currencyResultObject["gp"] += this.getRollResult("8d6") * 100;
-        }
-        else if (d100Roll <= 55)
-        {
-          currencyResultObject["gp"] += this.getRollResult("1d6") * 1000;
-          currencyResultObject["pp"] += this.getRollResult("1d6") * 100;
-        }
-        else 
-        {
-          currencyResultObject["gp"] += this.getRollResult("1d6") * 1000;
-          currencyResultObject["pp"] += this.getRollResult("2d6") * 100;
-        }
-
+        currencyResultObject["gp"] += this.getRollResult("12d6") * 1000;
+        currencyResultObject["pp"] += this.getRollResult("8d6") * 1000;
         treasureHoardRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_TREASURE_HOARD_CR17_PLUS, d100Roll);
       }
 
@@ -495,7 +418,8 @@ class SFHelpers {
       // if this is a single number
       if (key.indexOf("-") === -1)
       {
-        if (rollResult === key)
+        let keyInteger = parseInt(key);
+        if (rollResult === parseInt(key))
         {
           rowSelected = value;
           break;
@@ -504,8 +428,8 @@ class SFHelpers {
       else
       {
         let rollRange = key.split("-");
-        let lowerRange = rollRange[0];
-        let higherRange = rollRange[1];
+        let lowerRange = parseInt(rollRange[0]);
+        let higherRange = parseInt(rollRange[1]);
 
         if (lowerRange <= rollResult && rollResult <= higherRange)
         {
@@ -520,13 +444,13 @@ class SFHelpers {
 
   static getMagicItemResult(rowContents)
   {
-    let matches = rowContents.matchall(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (times)? ? on Magic Item Table (?<tableLetter>\w)/g);
+    let matches = rowContents.matchAll(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (times)? ? on Magic Item Table (?<tableLetter>\w)/g);
     let magicItemResultObject = [];
     let magicItemTrackerDictionary = {};
 
-    for (match in matches)
+    for (matchResult in matches)
     {
-      let matchResultGroups = match.groups;
+      let matchResultGroups = matchResult.groups;
       let rollDescription = matchResultGroups.groups.rollDescription;
   
       let rollResult = SFHelpers.getRollResult(rollDescription);
@@ -559,14 +483,19 @@ class SFHelpers {
 
   static getArtOrGemsResult(rowContents)
   {
+    let gemOrArtResultObject = [];
+    let gemOrArtTrackerDictionary = {};
     let matchResult = rowContents.match(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (?<gemOrArtCost>\d+) gp (?<gemsOrArt>gems|art objects)/);
+    if (!matchResult)
+    {
+      return gemOrArtResultObject;
+    }
     let matchResultGroups = matchResult.groups;
     let rollDescription = matchResultGroups.rollDescription;
 
     let rollResult = SFHelpers.getRollResult(rollDescription);
     let rollTableToUse = SFHelpers.getArtOrGemsTable(matchResultGroups);
-    let gemOrArtResultObject = [];
-    let gemOrArtTrackerDictionary = {};
+
 
     for(let i = 0; i < rollResult; i++)
     {
@@ -586,7 +515,7 @@ class SFHelpers {
 
       let currentObjectDictionary = {};
       currentObjectDictionary.quantity = countOfObjects;
-      currentObjectDictionary.name = objectName;
+      currentObjectDictionary.name = objectName + ` (${matchResultGroups.gemOrArtCost} gp)`;
       gemOrArtResultObject.push(currentObjectDictionary);
     }
 
@@ -611,7 +540,7 @@ class SFHelpers {
       maxNumberToRollFor = higherRange;
     }
 
-    let randomItemNumber = Math.floor(Math.random() * maxNumberToRollFor);
+    let randomItemNumber = Math.floor(Math.random() * maxNumberToRollFor) + 1;
     return SFHelpers.getResultFromTreasureHoardTable(rollTable, randomItemNumber);
   }
 
@@ -699,7 +628,7 @@ class SFHelpers {
     let totalDiceResult = 0;
     for (let i = 0; i < numberOfDice; i++)
     {
-      totalDiceResult += Math.floor(Math.random() * diceSize);
+      totalDiceResult += Math.floor(Math.random() * diceSize) + 1;
     }
 
     return totalDiceResult;

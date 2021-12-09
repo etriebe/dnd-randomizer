@@ -191,7 +191,15 @@ class SFDialog extends FormApplication {
 			await SFHelpers.populateMonstersFromCompendiums();
 			let filteredMonsters = await SFHelpers.filterMonstersFromCompendiums(params);
 			let generateEncounters = await SFHelpers.createEncounters(filteredMonsters, params, 30);
-			_this.populateEncounters(generateEncounters);
+			generateEncounters = generateEncounters.sort((a, b) => {
+				const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
+				const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
+				if(da > db) return -1;
+				if(da < db) return 1;
+				return 0;
+			});
+			const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
+			_this.populateEncounters(encounterData);
 
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
