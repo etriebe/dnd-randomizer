@@ -1,5 +1,7 @@
 class SFHelpers {
   static allMonsters = {};
+  static allSpells = {};
+  static spellsByLevel = {};
   static monstersByEnvironment = {};
   static dictionariesInitialized = false;
   static dictionariesPopulated = false;
@@ -14,55 +16,132 @@ class SFHelpers {
     });
     this.monstersByEnvironment["Any"] = [];
     this.dictionariesInitialized = true;
+    this.spellsByLevel["cantrip"] = [];
+    this.spellsByLevel["1st level"] = [];
+    this.spellsByLevel["2nd level"] = [];
+    this.spellsByLevel["3rd level"] = [];
+    this.spellsByLevel["4th level"] = [];
+    this.spellsByLevel["5th level"] = [];
+    this.spellsByLevel["6th level"] = [];
+    this.spellsByLevel["7th level"] = [];
+    this.spellsByLevel["8th level"] = [];
+    this.spellsByLevel["9th level"] = [];
   }
 
-  static async populateMonstersFromCompendiums() {
+  static async populateObjectsFromCompendiums() {
     if (!this.dictionariesInitialized)
     {
       this.initializeDictionaries();
     }
     if (!this.dictionariesPopulated)
     {
-      const currentCompendium = game.packs.get("SharedData.monsters");
-      for (const a of currentCompendium.index) {
-          try {
-            const actor = await currentCompendium.getDocument(a._id);
-            let actorName = actor.data.name;
-            actorName = actorName.replaceAll("\"", "");
-            if (actorName === "#[CF_tempEntity]")
-            {
-              console.log(`Skipping actor ${actorName}`);
-              continue;
-            }
-  
-            let environment = actor.data.data.details.environment;
-            if (!environment || environment.trim() === "")
-            {
-              environment = "Any";
-            }
-  
-            let environmentArray = environment.split(",");
-  
-            if (actorName in this.allMonsters)
-            {
-              console.log(`Already have actor ${actorName} in dictionary`);
-              continue;
-            }
-            this.allMonsters[actorName] = actor;
-  
-            environmentArray.forEach((e) => {
-              e = e.trim();
-              this.monstersByEnvironment[e].push(actor);
-            });
-          } 
-          catch (error) {
-            console.log(error);
-            console.log(`Actor id ${a._id} failed to load.`);
-          }
-      }
+      await this.populateItemsFromCompendiums();
+      await this.populateMonstersFromCompendiums();
       this.dictionariesPopulated = true;
     }
     return this.allMonsters;
+  }
+
+  static async populateItemsFromCompendiums()
+  {
+    let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item");
+
+    for (let compendium of filteredCompendiums) {
+      if (!compendium)
+      {
+        break;
+      }
+
+      for (let entry of compendium.index) {
+        if (!entry)
+        {
+          break;
+        }
+
+        if (entry.type != "spell")
+        {
+          continue;
+        }
+
+        try
+        {
+          const currentSpell = await compendium.getDocument(entry._id);
+          let spellName = entry.name;
+          if (spellName in this.allSpells)
+          {
+            console.log(`Already have spell ${spellName} in dictionary`);
+            continue;
+          }
+          let spellLevel = currentSpell.labels.level.toLowerCase();
+          this.allSpells[spellName] = currentSpell;
+          this.spellsByLevel[spellLevel].push(currentSpell);
+        }
+        catch (error)
+        {
+          console.log(error);
+          console.log(`Spell id ${entry._id} failed to get added.`);
+        }
+      }
+    }
+  }
+
+  static async populateMonstersFromCompendiums()
+  {
+    let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor");
+
+    for (let compendium of filteredCompendiums) {
+      if (!compendium)
+      {
+        break;
+      }
+
+      for (let entry of compendium.index) {
+        if (!entry)
+        {
+          break;
+        }
+
+        if (entry.type != "npc")
+        {
+          continue;
+        }
+
+        try {
+          const actor = await compendium.getDocument(entry._id);
+          let actorName = actor.data.name;
+          actorName = actorName.replaceAll("\"", "");
+          if (actorName === "#[CF_tempEntity]")
+          {
+            console.log(`Skipping actor ${actorName}`);
+            continue;
+          }
+
+          let environment = actor.data.data.details.environment;
+          if (!environment || environment.trim() === "")
+          {
+            environment = "Any";
+          }
+
+          let environmentArray = environment.split(",");
+
+          if (actorName in this.allMonsters)
+          {
+            console.log(`Already have actor ${actorName} in dictionary`);
+            continue;
+          }
+          this.allMonsters[actorName] = actor;
+
+          environmentArray.forEach((e) => {
+            e = e.trim();
+            this.monstersByEnvironment[e].push(actor);
+          });
+        } 
+        catch (error) {
+          console.log(error);
+          console.log(`Actor id ${entry._id} failed to get added.`);
+        }
+      }
+    }
   }
 
   static async filterMonstersFromCompendiums(params)
@@ -363,7 +442,12 @@ class SFHelpers {
         }
         maximumCRFromGroup = Math.max(maximumCRFromGroup, monsterCR);
       }
-      let d100Roll = this.getRollResult("1d100");
+
+      let d100Roll = this.getRollResult("1d100") - 1;
+      if (d100Roll === 100)
+      {
+        d100Roll = 0;
+      }
 
       let treasureHoardRowContents;
       if (maximumCRFromGroup <= 4)
@@ -444,21 +528,40 @@ class SFHelpers {
 
   static getMagicItemResult(rowContents)
   {
-    let matches = rowContents.matchAll(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (times)? ? on Magic Item Table (?<tableLetter>\w)/g);
+    let matches = [...rowContents.matchAll(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (times)? ? on Magic Item Table (?<tableLetter>\w)/g)];
     let magicItemResultObject = [];
     let magicItemTrackerDictionary = {};
 
-    for (matchResult in matches)
+    for (var i = 0; i < matches.length; i++)
     {
+      let matchResult = matches[0];
       let matchResultGroups = matchResult.groups;
-      let rollDescription = matchResultGroups.groups.rollDescription;
+      let rollDescription = matchResultGroups.rollDescription;
   
       let rollResult = SFHelpers.getRollResult(rollDescription);
       let rollTableToUse = SFHelpers.getMagicItemTable(matchResultGroups);
       for(let i = 0; i < rollResult; i++)
       {
         let magicItemResult = SFHelpers.getRandomItemFromRollTable(rollTableToUse);
-  
+        if (magicItemResult === "Figurine of wondrous power (roll d8)")
+        {
+          magicItemResult = SFHelpers.getRandomItemFromRollTable(SFCONSTS.MAGIC_ITEM_FIGURINE_OF_WONDEROUS_POWER_TABLE);
+        }
+        else if (magicItemResult === "Magic armor (roll d12)")
+        {
+          magicItemResult = SFHelpers.getRandomItemFromRollTable(SFCONSTS.MAGIC_ITEM_MAGIC_ARMOR_TABLE);
+        }
+        else if (magicItemResult.indexOf("Spell scroll") > -1)
+        {
+          let spellScrollMatch = magicItemResult.match(/Spell scroll \((?<fullSpellDescription>(?<spellLevel>\d+)(st|nd|rd|th) level|cantrip)\)/);
+          if (spellScrollMatch)
+          {
+            let spellLevelToGet = spellScrollMatch.groups.fullSpellDescription.toLowerCase();
+            let randomSpellChosen = this.getRandomItemFromRollTable(this.spellsByLevel[spellLevelToGet]);
+            magicItemResult = randomSpellChosen;
+          }
+        }
+
         // increment dictionary value
         magicItemTrackerDictionary[magicItemResult] = (magicItemTrackerDictionary[magicItemResult] || 0) + 1;
       }

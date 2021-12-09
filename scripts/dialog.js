@@ -188,7 +188,7 @@ class SFDialog extends FormApplication {
 				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
 			}
 
-			await SFHelpers.populateMonstersFromCompendiums();
+			await SFHelpers.populateObjectsFromCompendiums();
 			let filteredMonsters = await SFHelpers.filterMonstersFromCompendiums(params);
 			let generateEncounters = await SFHelpers.createEncounters(filteredMonsters, params, 30);
 			generateEncounters = generateEncounters.sort((a, b) => {
