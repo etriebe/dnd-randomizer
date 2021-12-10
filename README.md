@@ -1,4 +1,5 @@
 # Stochastic, Fantastic!
+## Before opening an issue read [THIS](https://github.com/theripper93/Levels/blob/v9/ISSUES.md)
 A random encounter generator with automatic creature importing (from your own compendiums) and spwaning plus loot generator (with automatic LootSheet creation)
 
 ## This module uses a proxy to retrieve the data it needs (tldr it costs money) consider supporting on patreon to keep the module alive
