@@ -292,8 +292,8 @@ class SFHelpers {
     let creatures = currentEncounter["creatures"];
     let lootResultObject = {};
     let currencyResultObject = {};
-    let itemsResultObject = {};
-    let otherResultObject = {};
+    let itemsResultObject = [];
+    let otherResultObject = [];
     let scrollsResultObject = [];
     currencyResultObject["pp"] = 0;
     currencyResultObject["gp"] = 0;
@@ -427,8 +427,8 @@ class SFHelpers {
     let creatures = currentEncounter["creatures"];
     let lootResultObject = {};
     let currencyResultObject = {};
-    let itemsResultObject = {};
-    let otherResultObject = {};
+    let itemsResultObject = [];
+    let otherResultObject = [];
     let scrollsResultObject = [];
     currencyResultObject["pp"] = 0;
     currencyResultObject["gp"] = 0;
