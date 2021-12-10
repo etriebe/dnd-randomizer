@@ -101,6 +101,9 @@ const SFCONSTS = {
         "29"    :    135000,
         "30"    :    155000,
     },
+    ENCOUNTER_INDIVIDUAL_TREASURE_CR4: {
+
+    },
     ENCOUNTER_TREASURE_HOARD_CR4: {
         "01-06" :   ["", ""],
         "07-16" :   ["2d6 10 gp gems",	""],
