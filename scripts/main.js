@@ -118,7 +118,7 @@ const SFCONSTS = {
         "86-92" :   ["2d4 25 gp art objects",	"Roll 1d4 times on Magic Item Table F."],
         "93-97" :   ["2d6 50 gp gems",	        "Roll 1d4 times on Magic Item Table F."],
         "98-99" :   ["2d4 25 gp art objects",	"Roll 1d1 on Magic Item Table G."],
-        "100"   :   ["2d6 50 gp gems",	        "Roll 1d1 on Magic Item Table G."],
+        "00"   :   ["2d6 50 gp gems",	        "Roll 1d1 on Magic Item Table G."],
     },
     ENCOUNTER_TREASURE_HOARD_CR10: {
         "01-04"	:   ["", ""],

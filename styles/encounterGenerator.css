@@ -171,7 +171,7 @@
 	background-color: var(--palette-primary, #333333);
 	border: 1px solid var(--palette-primary-dark, #116b86);
 	bottom: 0px;
-    color: var(--palette-primary-contrast-text, #ffffff);
+	color: var(--palette-primary-contrast-text, #ffffff);
 	left: 30%;
 	padding: 0.25rem 1rem;
 	position: absolute;
@@ -181,17 +181,7 @@
 }
 
 #SFDialog .window-content .form-controls .generate-local-encounters {
-	transition: background-color 0.2s ease-in-out;
-	background-color: var(--palette-primary, #333333);
-	border: 1px solid var(--palette-primary-dark, #116b86);
-	bottom: 0px;
-    color: var(--palette-primary-contrast-text, #ffffff);
 	left: 70%;
-	padding: 0.25rem 1rem;
-	position: absolute;
-	transform: translate(-50%, 50%);
-	width: 220px;
-	z-index: 100;
 }
 
 #SFDialog .window-content .form-controls .generate-encounters:hover {

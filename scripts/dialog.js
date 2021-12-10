@@ -173,7 +173,6 @@ class SFDialog extends FormApplication {
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
 		});
-			
 
 		html.find('button.generate-local-encounters').on('click', async (event) => {
 			event.preventDefault();

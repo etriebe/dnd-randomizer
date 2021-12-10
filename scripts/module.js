@@ -478,11 +478,17 @@ class SFHelpers {
         treasureHoardRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_TREASURE_HOARD_CR17_PLUS, d100Roll);
       }
 
-      let gemOrArtRowContents = treasureHoardRowContents[0];
-      otherResultObject = SFHelpers.getArtOrGemsResult(gemOrArtRowContents);
-
-      let magicItemsRowContents = treasureHoardRowContents[1];
-      itemsResultObject = SFHelpers.getMagicItemResult(magicItemsRowContents);
+      try
+      {
+        let gemOrArtRowContents = treasureHoardRowContents[0];
+        otherResultObject = SFHelpers.getArtOrGemsResult(gemOrArtRowContents);
+        let magicItemsRowContents = treasureHoardRowContents[1];
+        itemsResultObject = SFHelpers.getMagicItemResult(magicItemsRowContents);
+      }
+      catch (error)
+      {
+        console.error(`Unable to generate treasure hoard for maximum CR ${maximumCRFromGroup} and d100 roll of ${d100Roll}. Error: ${error}`);
+      }
     }
 
     lootResultObject["currency"] = currencyResultObject;
