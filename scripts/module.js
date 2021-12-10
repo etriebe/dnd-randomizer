@@ -35,11 +35,12 @@ class SFHelpers {
     }
     if (!this.dictionariesPopulated)
     {
-      await this.populateItemsFromCompendiums();
-      await this.populateMonstersFromCompendiums();
+      let promises = [];
+      promises.push(this.populateItemsFromCompendiums());
+      promises.push(this.populateMonstersFromCompendiums());
+      await Promise.all(promises);
       this.dictionariesPopulated = true;
     }
-    return this.allMonsters;
   }
 
   static async populateItemsFromCompendiums()
@@ -264,7 +265,7 @@ class SFHelpers {
 
     currentEncounter["adjustedxp"] = SFHelpers.getAdjustedXPOfEncounter(currentEncounter);
     
-    let generatedLootObject = SFHelpers.getLootForEncounter(currentEncounter, currentEncounter);
+    let generatedLootObject = SFHelpers.getLootForEncounter(currentEncounter, params);
     currentEncounter["loot"] = generatedLootObject;
     return currentEncounter;
   }
@@ -289,7 +290,11 @@ class SFHelpers {
   static getIndividualTreasureForEncounter(currentEncounter)
   {
     let creatures = currentEncounter["creatures"];
+    let lootResultObject = {};
     let currencyResultObject = {};
+    let itemsResultObject = {};
+    let otherResultObject = {};
+    let scrollsResultObject = [];
     currencyResultObject["pp"] = 0;
     currencyResultObject["gp"] = 0;
     currencyResultObject["ep"] = 0;
@@ -409,6 +414,12 @@ class SFHelpers {
         }
       }
     }
+    
+    lootResultObject["currency"] = currencyResultObject;
+    lootResultObject["items"] = itemsResultObject;
+    lootResultObject["other"] = otherResultObject;
+    lootResultObject["scrolls"] = scrollsResultObject;
+    return lootResultObject;
   }
 
   static getTreasureHoardForEncounter(currentEncounter)

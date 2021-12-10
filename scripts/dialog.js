@@ -146,7 +146,7 @@ class SFDialog extends FormApplication {
 		}
 			
 
-		html.find('button.generate-encounters').on('click', async (event) => {
+		html.find('button#generate-remote-encounters-button').on('click', async (event) => {
 			event.preventDefault();
 			const $button = $(event.currentTarget);
 
@@ -174,7 +174,7 @@ class SFDialog extends FormApplication {
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
 		});
 
-		html.find('button.generate-local-encounters').on('click', async (event) => {
+		html.find('button#generate-local-encounters-button').on('click', async (event) => {
 			event.preventDefault();
 			const $button = $(event.currentTarget);
 
