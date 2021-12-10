@@ -102,7 +102,29 @@ const SFCONSTS = {
         "30"    :    155000,
     },
     ENCOUNTER_INDIVIDUAL_TREASURE_CR4: {
-
+        "01-30" :   ["5d6", "", "", "", ""],
+        "31-60" :   ["", "4d6", "", "", ""],
+        "61-70" :   ["", "", "3d6", "", ""],
+        "71-95" :   ["", "", "", "2d6", ""],
+        "96-100" :   ["", "", "", "", "1d6"],
+    },
+    ENCOUNTER_INDIVIDUAL_TREASURE_CR10: {
+        "01-30":    ["4d6 x 100", "", "1d6 x 10", "", ""],
+        "31-60":    ["", "6d6 x 10", "", "2d6 x 10", ""],
+        "61-70":    ["", "", "3d6 x 10", "2d6 x 10", ""],
+        "71-95":    ["", "", "", "4d6 x 10", ""],
+        "96-100":    ["", "", "", "2d6 x 10", "3d6"],
+    },
+    ENCOUNTER_INDIVIDUAL_TREASURE_CR16: {
+        "01-20":    ["", "4d6 x 100", "", "1d6 x 100", ""],
+        "21-35":    ["", "", "1d6 x 100", "1d6 x 100", ""],
+        "36-75":    ["", "", "", "2d6 x 100", "1d6 x 10"],
+        "76-100":    ["", "", "", "2d6 x 100", "2d6 x 10"],
+    },
+    ENCOUNTER_INDIVIDUAL_TREASURE_CR17_PLUS: {
+        "01-15":    ["", "", "2d6 x 1000", "8d6 x 100", ""],
+        "16-55":    ["", "", "", "1d6 x 1000", "1d6 x 100"],
+        "56-100":    ["", "", "", "1d6 x 1000", "2d6 x 100"],
     },
     ENCOUNTER_TREASURE_HOARD_CR4: {
         "01-06" :   ["", ""],
@@ -121,7 +143,7 @@ const SFCONSTS = {
         "86-92" :   ["2d4 25 gp art objects",	"Roll 1d4 times on Magic Item Table F."],
         "93-97" :   ["2d6 50 gp gems",	        "Roll 1d4 times on Magic Item Table F."],
         "98-99" :   ["2d4 25 gp art objects",	"Roll 1d1 on Magic Item Table G."],
-        "00"   :   ["2d6 50 gp gems",	        "Roll 1d1 on Magic Item Table G."],
+        "100"   :   ["2d6 50 gp gems",	        "Roll 1d1 on Magic Item Table G."],
     },
     ENCOUNTER_TREASURE_HOARD_CR10: {
         "01-04"	:   ["", ""],
@@ -152,7 +174,7 @@ const SFCONSTS = {
         "95-96"	:   ["3d6 100 gp gems",	        "Roll 1d4 times on Magic Item Table G."],
         "97-98"	:   ["2d4 250 gp art objects",	"Roll 1d4 times on Magic Item Table G."],
         "99"	:   ["3d6 100 gp gems",	        "Roll 1d1 on Magic Item Table H."],
-        "00"	:   ["2d4 250 gp art objects",	"Roll 1d1 on Magic Item Table H."],
+        "100"	:   ["2d4 250 gp art objects",	"Roll 1d1 on Magic Item Table H."],
     },
     ENCOUNTER_TREASURE_HOARD_CR16: {
         "01-03" :	["",	""],
@@ -187,7 +209,7 @@ const SFCONSTS = {
         "93-94" :	["2d4 250 gp art objects",	"Roll 1d1 on Magic Item Table I."],
         "95-96" :	["2d4 750 gp art objects",	"Roll 1d1 on Magic Item Table I."],
         "97-98" :	["3d6 500 gp gems",	        "Roll 1d1 on Magic Item Table I."],
-        "99-00" :	["3d6 1,000 gp gems",	    "Roll 1d1 on Magic Item Table I."],
+        "99-100" :	["3d6 1,000 gp gems",	    "Roll 1d1 on Magic Item Table I."],
     },
     ENCOUNTER_TREASURE_HOARD_CR17_PLUS: {
         "01-04"	:   ["", ""],
@@ -218,7 +240,7 @@ const SFCONSTS = {
         "95-96"	:   ["3d6 100 gp gems",	        "Roll 1d4 times on Magic Item Table G."],
         "97-98"	:   ["2d4 250 gp art objects",	"Roll 1d4 times on Magic Item Table G."],
         "99"	:   ["3d6 100 gp gems",	        "Roll 1d1 on Magic Item Table H."],
-        "00"	:   ["2d4 250 gp art objects",	"Roll 1d1 on Magic Item Table H."],
+        "100"	:   ["2d4 250 gp art objects",	"Roll 1d1 on Magic Item Table H."],
     },
     ENCOUNTER_TREASURE_10GP_GEMSTONES: {
         "1":	"Azurite",
@@ -350,7 +372,7 @@ const SFCONSTS = {
         "91-94":	"Spell scroll (2nd level)",
         "95-98":	"Potion of healing (greater)",
         "99":	"Bag of holding",
-        "00":	"Driftglobe",
+        "100":	"Driftglobe",
     },
     MAGIC_ITEM_TABLE_B: {
         "01-15":	"Potion of healing (greater)",
@@ -387,7 +409,7 @@ const SFCONSTS = {
         "97":	"Rope of climbing",
         "98":	"Saddle of the cavalier",
         "99":	"Wand of magic detection",
-        "00":	"Wand of secrets",
+        "100":	"Wand of secrets",
     },
     MAGIC_ITEM_TABLE_C: {
         "01-15":	"Potion of healing (superior)",
@@ -417,7 +439,7 @@ const SFCONSTS = {
         "97":	"Horseshoes of speed",
         "98":	"Necklace of fireballs",
         "99":	"Periapt of health",
-        "00":	"Sending stones",
+        "100":	"Sending stones",
     },
     MAGIC_ITEM_TABLE_D: {
         "01-20":	"Potion of healing (supreme)",
@@ -435,7 +457,7 @@ const SFCONSTS = {
         "93-95":	"Horseshoes of a zephyr",
         "96-98":	"Nolzur’s marvelous pigments",
         "99":	"Bag of devouring",
-        "00":	"Portable hole",
+        "100":	"Portable hole",
     },
     MAGIC_ITEM_TABLE_E: {
         "01-30":	"Spell scroll (8th level)",
@@ -444,7 +466,7 @@ const SFCONSTS = {
         "71-85":	"Spell scroll (9th level)",
         "86-93":	"Universal solvent",
         "94-98":	"Arrow of slaying",
-        "99-00":	"Sovereign glue",
+        "99-100":	"Sovereign glue",
     },
     MAGIC_ITEM_TABLE_F: {
         "01-15":	"Weapon, +1",
@@ -506,7 +528,7 @@ const SFCONSTS = {
         "97":	"Quiver of Ehlonna",
         "98":	"Stone of good luck (luckstone)",
         "99":	"Wind fan",
-        "00":	"Winged boots",
+        "100":	"Winged boots",
     },
     MAGIC_ITEM_TABLE_G: {
         "01-11":	"Weapon, +2",
@@ -596,7 +618,7 @@ const SFCONSTS = {
         "97":	"Wand of paralysis",
         "98":	"Wand of the war mage, +2",
         "99":	"Wand of wonder",
-        "00":	"Wings of flying",
+        "100":	"Wings of flying",
     },
     MAGIC_ITEM_TABLE_H: {
         "01-10":	"Weapon, +3",
@@ -667,7 +689,7 @@ const SFCONSTS = {
         "97":	"Armor of resistance (studded leather)",
         "98":	"Tome of clear thought",
         "99":	"Tome of leadership and influence",
-        "00":	"Tome of understanding",
+        "100":	"Tome of understanding",
     },
     MAGIC_ITEM_TABLE_I: {
         "01-05":	"Defender",
@@ -722,7 +744,7 @@ const SFCONSTS = {
         "97":	"Talisman of pure good",
         "98":	"Talisman of the sphere",
         "99":	"Talisman of ultimate evil",
-        "00":	"Tome of the stilled tongue",
+        "100":	"Tome of the stilled tongue",
     },
     MAGIC_ITEM_FIGURINE_OF_WONDEROUS_POWER_TABLE: {
         "1": "Figurine of wondrous power (Bronze griffon)",

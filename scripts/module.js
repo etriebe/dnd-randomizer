@@ -320,97 +320,29 @@ class SFHelpers {
         {
           let d100Roll = this.getRollResult("1d100");
 
+          let individualTreasureRowContents;
           if (monsterCR <= 4)
           {
-            if (d100Roll <= 30)
-            {
-              currencyResultObject["cp"] += this.getRollResult("5d6");
-            }
-            else if (d100Roll <= 60)
-            {
-              currencyResultObject["sp"] += this.getRollResult("4d6");
-            }
-            else if (d100Roll <= 70)
-            {
-              currencyResultObject["ep"] += this.getRollResult("3d6");
-            }
-            else if (d100Roll <= 95)
-            {
-              currencyResultObject["gp"] += this.getRollResult("3d6");
-            }
-            else 
-            {
-              currencyResultObject["pp"] += this.getRollResult("1d6");
-            }
+            individualTreasureRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR4, d100Roll);
           }
           else if (monsterCR <= 10)
           {
-            if (d100Roll <= 30)
-            {
-              currencyResultObject["cp"] += this.getRollResult("4d6") * 100;
-              currencyResultObject["ep"] += this.getRollResult("1d6") * 10;
-            }
-            else if (d100Roll <= 60)
-            {
-              currencyResultObject["sp"] += this.getRollResult("6d6") * 10;
-              currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-            }
-            else if (d100Roll <= 70)
-            {
-              currencyResultObject["ep"] += this.getRollResult("3d6") * 10;
-              currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-            }
-            else if (d100Roll <= 95)
-            {
-              currencyResultObject["gp"] += this.getRollResult("4d6") * 10;
-            }
-            else 
-            {
-              currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-              currencyResultObject["pp"] += this.getRollResult("3d6");
-            }
+            individualTreasureRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR10, d100Roll);
           }
           else if (monsterCR <= 16)
           {
-            if (d100Roll <= 20)
-            {
-              currencyResultObject["cp"] += this.getRollResult("4d6") * 100;
-              currencyResultObject["gp"] += this.getRollResult("1d6") * 100;
-            }
-            else if (d100Roll <= 35)
-            {
-              currencyResultObject["ep"] += this.getRollResult("1d6") * 100;
-              currencyResultObject["gp"] += this.getRollResult("1d6") * 100;
-            }
-            else if (d100Roll <= 75)
-            {
-              currencyResultObject["pp"] += this.getRollResult("1d6") * 10;
-              currencyResultObject["gp"] += this.getRollResult("2d6") * 100;
-            }
-            else 
-            {
-              currencyResultObject["pp"] += this.getRollResult("2d6") * 10;
-              currencyResultObject["gp"] += this.getRollResult("2d6") * 100;
-            }
+            individualTreasureRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR16, d100Roll);
           }
           else
           {
-            if (d100Roll <= 15)
-            {
-              currencyResultObject["ep"] += this.getRollResult("2d6") * 1000;
-              currencyResultObject["gp"] += this.getRollResult("8d6") * 100;
-            }
-            else if (d100Roll <= 55)
-            {
-              currencyResultObject["gp"] += this.getRollResult("1d6") * 1000;
-              currencyResultObject["pp"] += this.getRollResult("1d6") * 100;
-            }
-            else 
-            {
-              currencyResultObject["gp"] += this.getRollResult("1d6") * 1000;
-              currencyResultObject["pp"] += this.getRollResult("2d6") * 100;
-            }
+            individualTreasureRowContents = SFHelpers.getResultFromTreasureHoardTable(SFCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR17_PLUS, d100Roll);
           }
+
+          currencyResultObject["cp"] += SFHelpers.getCoinsResultFromRollTable(individualTreasureRowContents[0]);
+          currencyResultObject["sp"] += SFHelpers.getCoinsResultFromRollTable(individualTreasureRowContents[1]);
+          currencyResultObject["ep"] += SFHelpers.getCoinsResultFromRollTable(individualTreasureRowContents[2]);
+          currencyResultObject["gp"] += SFHelpers.getCoinsResultFromRollTable(individualTreasureRowContents[3]);
+          currencyResultObject["pp"] += SFHelpers.getCoinsResultFromRollTable(individualTreasureRowContents[4]);
         }
       }
     }
@@ -420,6 +352,20 @@ class SFHelpers {
     lootResultObject["other"] = otherResultObject;
     lootResultObject["scrolls"] = scrollsResultObject;
     return lootResultObject;
+  }
+
+  static getCoinsResultFromRollTable(treasureRowDescription)
+  {
+    let matchResult = treasureRowDescription.match(/(?<rollDescription>\dd\d)( x (?<multiplierAmount>\d+))?/);
+    if (!matchResult)
+    {
+      return 0;
+    }
+    let matchResultGroups = matchResult.groups;
+    let multiplierAmount = matchResultGroups.multiplierAmount || 1;
+    let rollResult = SFHelpers.getRollResult(matchResultGroups.rollDescription);
+    let totalCoins = rollResult * multiplierAmount;
+    return totalCoins;
   }
 
   static getTreasureHoardForEncounter(currentEncounter)
@@ -454,11 +400,7 @@ class SFHelpers {
         maximumCRFromGroup = Math.max(maximumCRFromGroup, monsterCR);
       }
 
-      let d100Roll = this.getRollResult("1d100") - 1;
-      if (d100Roll === 100)
-      {
-        d100Roll = 0;
-      }
+      let d100Roll = this.getRollResult("1d100");
 
       let treasureHoardRowContents;
       if (maximumCRFromGroup <= 4)
