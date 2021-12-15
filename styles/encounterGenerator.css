@@ -260,21 +260,24 @@
 	border-right-width: 0px;
 	padding: 0.5rem 1rem;
 }
-#SFDialog .window-content .form-encounters .filter-controller input + button {
+
+#clear-button {
     border-radius: 50%;
 	display: none;
     margin: 0px;
     padding: 0px;
     position: absolute;
-    right: calc(0.5rem - 1px + 35px);
+    right: calc(0.5rem - 1px + 65px);
     text-align: center;
     transform: scale(0.8);
     top: calc(2rem - 1px + 5px);
     width: 32px;
 }
+
 #SFDialog .window-content .form-encounters .filter-controller input:not(:placeholder-shown) + button {
 	display: inline-block;
 }
+
 #SFDialog .window-content .form-encounters .filter-controller input + button + button,
 #SFDialog .window-content .form-encounters .filter-controller input + button + button + button {
 	border: 1px solid rgb(122, 121, 113);
@@ -287,7 +290,6 @@
 	border-bottom-right-radius: 0.25rem;
 	border-top-right-radius: 0.25rem;
 }
-
 
 #SFDialog .window-content .form-encounters ul {
 	display: flex;

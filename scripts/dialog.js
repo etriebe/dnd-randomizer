@@ -208,9 +208,9 @@ class SFDialog extends FormApplication {
 			$(event.currentTarget).closest('.form-encounters').attr('data-show', $(event.currentTarget).val());
 		});
 
-		html.find('.filter-controller input + button').on('click', function(event) {
+		html.find('button#clear-button').on('click', function(event) {
 			event.preventDefault();
-			$(event.currentTarget).closest('div').find('input').val('').trigger('change');
+			html.find('input#search-box').val('').trigger('change');
 		});
 
 		html.find('button#filter-button').on('click', (event) => {
