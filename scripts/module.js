@@ -10,6 +10,10 @@ class SFHelpers {
     return game.settings.get(SFCONSTS.MODULE_NAME, `${type}Folder`);
   }
 
+  static useLocalEncounterGenerator() {
+    return game.settings.get(SFCONSTS.MODULE_NAME, "useLocalEncounterGenerator");
+  }
+
   static initializeDictionaries() {
     SFCONSTS.GEN_OPT.environment.forEach((env) => {
       this.monstersByEnvironment[env] = [];

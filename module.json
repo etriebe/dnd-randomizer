@@ -25,16 +25,18 @@
       }
   ],
   "scripts": [
-      "./scripts/main.js",
+      "./scripts/compendium.js",
       "./scripts/config.js",
+      "./scripts/dialog.js",
+      "./scripts/encounter.js",
+      "./scripts/fuzzyset.js",
+      "./scripts/localconst.js",
+      "./scripts/localmodule.js",
+      "./scripts/main.js",
       "./scripts/module.js",
       "./scripts/propagator.js",
-      "./scripts/spawner.js",
-      "./scripts/encounter.js",
-      "./scripts/dialog.js",
-      "./scripts/compendium.js",
-      "./scripts/fuzzyset.js",
-      "./scripts/sortables.js"
+      "./scripts/sortables.js",
+      "./scripts/spawner.js"
   ],
   "styles": [
       "./styles/encounterGenerator.css"

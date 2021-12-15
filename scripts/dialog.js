@@ -159,46 +159,35 @@ class SFDialog extends FormApplication {
 				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
 			}
 			
-			let fetchedData = await SFHelpers.fetchData(params);
-			fetchedData = fetchedData.sort((a, b) => {
-				const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
-				const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
-				if(da > db) return -1;
-				if(da < db) return 1;
-				return 0;
-			});
-			const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
-			_this.populateEncounters(encounterData);
 
-			$button.prop('disabled', false).removeClass('disabled');
-			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
-		});
-
-		html.find('button#generate-local-encounters-button').on('click', async (event) => {
-			event.preventDefault();
-			const $button = $(event.currentTarget);
-
-			$button.prop('disabled', true).addClass('disabled');
-			$button.find('i.fas').removeClass('fa-dice').addClass('fa-spinner fa-spin');
-			const params = {
-				loot_type: html.find('#lootType select[name="lootType"]').val(),
-				numberOfPlayers: html.find('#numberOfPlayers select[name="numberOfPlayers"]').val(),
-				averageLevelOfPlayers: html.find('#averageLevelOfPlayers select[name="averageLevelOfPlayers"]').val(),
-				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
+			if (SFHelpers.useLocalEncounterGenerator())
+			{
+				await SFLocalHelpers.populateObjectsFromCompendiums();
+				let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums(params);
+				let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, params, 30);
+				generateEncounters = generateEncounters.sort((a, b) => {
+					const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
+					const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
+					if(da > db) return -1;
+					if(da < db) return 1;
+					return 0;
+				});
+				const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
+				_this.populateEncounters(encounterData);	
 			}
-
-			await SFHelpers.populateObjectsFromCompendiums();
-			let filteredMonsters = await SFHelpers.filterMonstersFromCompendiums(params);
-			let generateEncounters = await SFHelpers.createEncounters(filteredMonsters, params, 30);
-			generateEncounters = generateEncounters.sort((a, b) => {
-				const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
-				const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
-				if(da > db) return -1;
-				if(da < db) return 1;
-				return 0;
-			});
-			const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
-			_this.populateEncounters(encounterData);
+			else
+			{
+				let fetchedData = await SFHelpers.fetchData(params);
+				fetchedData = fetchedData.sort((a, b) => {
+					const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
+					const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
+					if(da > db) return -1;
+					if(da < db) return 1;
+					return 0;
+				});
+				const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
+				_this.populateEncounters(encounterData);
+			}
 
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
