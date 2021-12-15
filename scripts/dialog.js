@@ -146,7 +146,7 @@ class SFDialog extends FormApplication {
 		}
 			
 
-		html.find('button.generate-encounters').on('click', async (event) => {
+		html.find('button#generate-remote-encounters-button').on('click', async (event) => {
 			event.preventDefault();
 			const $button = $(event.currentTarget);
 
@@ -159,17 +159,35 @@ class SFDialog extends FormApplication {
 				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
 			}
 			
-			let fetchedData = await SFHelpers.fetchData(params);
-			fetchedData = fetchedData.sort((a, b) => {
-				const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
-				const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
-				if(da > db) return -1;
-				if(da < db) return 1;
-				return 0;
-			});
-			const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
-			_this.populateEncounters(encounterData);
 
+			if (SFHelpers.useLocalEncounterGenerator())
+			{
+				await SFLocalHelpers.populateObjectsFromCompendiums();
+				let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums(params);
+				let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, params, 30);
+				generateEncounters = generateEncounters.sort((a, b) => {
+					const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
+					const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
+					if(da > db) return -1;
+					if(da < db) return 1;
+					return 0;
+				});
+				const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
+				_this.populateEncounters(encounterData);	
+			}
+			else
+			{
+				let fetchedData = await SFHelpers.fetchData(params);
+				fetchedData = fetchedData.sort((a, b) => {
+					const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ","")]	
+					const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ","")]
+					if(da > db) return -1;
+					if(da < db) return 1;
+					return 0;
+				});
+				const encounterData = await SFHelpers.parseEncounter(fetchedData, params)
+				_this.populateEncounters(encounterData);
+			}
 
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
@@ -179,16 +197,17 @@ class SFDialog extends FormApplication {
 			$(event.currentTarget).closest('.form-encounters').attr('data-show', $(event.currentTarget).val());
 		});
 
-		html.find('.filter-controller input + button').on('click', function(event) {
+		html.find('button#clear-button').on('click', function(event) {
 			event.preventDefault();
-			$(event.currentTarget).closest('div').find('input').val('').trigger('change');
+			html.find('input#search-box').val('').trigger('change');
 		});
 
-		html.find('.filter-controller input + button + button').on('click', (event) => {
+		html.find('button#filter-button').on('click', (event) => {
 			event.preventDefault();
 			new SFCompendiumSorter().render(true);
-		})
-		html.find('.filter-controller input + button + button + button').on('click', (event) => {
+		});
+
+		html.find('button#license-and-credits').on('click', (event) => {
 			event.preventDefault();
 			new Dialog({
 				title: "Stochastic, Fantastic! Credits",

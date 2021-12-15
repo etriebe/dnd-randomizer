@@ -166,19 +166,17 @@
 	left: -5000px;
   }
 
-
-
 #SFDialog .window-content .form-controls .generate-encounters {
 	transition: background-color 0.2s ease-in-out;
 	background-color: var(--palette-primary, #333333);
 	border: 1px solid var(--palette-primary-dark, #116b86);
 	bottom: 0px;
-    color: var(--palette-primary-contrast-text, #ffffff);
+	color: var(--palette-primary-contrast-text, #ffffff);
 	left: 50%;
 	padding: 0.25rem 1rem;
 	position: absolute;
 	transform: translate(-50%, 50%);
-	width: 200px;
+	width: 220px;
 	z-index: 100;
 }
 
@@ -258,21 +256,24 @@
 	border-right-width: 0px;
 	padding: 0.5rem 1rem;
 }
-#SFDialog .window-content .form-encounters .filter-controller input + button {
+
+#clear-button {
     border-radius: 50%;
 	display: none;
     margin: 0px;
     padding: 0px;
     position: absolute;
-    right: calc(0.5rem - 1px + 35px);
+    right: calc(0.5rem - 1px + 65px);
     text-align: center;
     transform: scale(0.8);
     top: calc(2rem - 1px + 5px);
     width: 32px;
 }
+
 #SFDialog .window-content .form-encounters .filter-controller input:not(:placeholder-shown) + button {
 	display: inline-block;
 }
+
 #SFDialog .window-content .form-encounters .filter-controller input + button + button,
 #SFDialog .window-content .form-encounters .filter-controller input + button + button + button {
 	border: 1px solid rgb(122, 121, 113);
@@ -285,7 +286,6 @@
 	border-bottom-right-radius: 0.25rem;
 	border-top-right-radius: 0.25rem;
 }
-
 
 #SFDialog .window-content .form-encounters ul {
 	display: flex;

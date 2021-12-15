@@ -1,55 +1,4 @@
-const SFCONSTS = {
-    MODULE_NAME: "dnd-randomizer",
-    GEN_OPT: {
-        loot_type: ["individual treasure", "treasure hoard"],
-        numberOfPlayers: Number,//[1 - 13]
-        averageLevelOfPlayers: Number,//[1 - 20]
-        environment: [
-          "Arctic",
-          "Coastal",
-          "Desert",
-          "Forest",
-          "Grassland",
-          "Hill",
-          "Jungle",
-          "Mountain",
-          "Underdark",
-          "Swamp",
-          "Underwater",
-          "Urban",
-          "Celestial",
-          "Abyssal",
-          "Infernal",
-          "Air Elemental",
-          "Earth Elemental",
-          "Fire Elemental",
-          "Water Elemental"
-        ],
-      },
-    LOOT_ICONS: [
-        "systems/dnd5e/icons/items/inventory/pouch-sealed.jpg",
-        "systems/dnd5e/icons/items/inventory/satchel.jpg",
-        "systems/dnd5e/icons/items/inventory/briefcase.jpg"
-    ],
-    DIFFICULTY:
-    {
-        "easy": 1,
-        "medium": 2,
-        "hard": 3,
-        "deadly": 4,
-    },
-    SPELLCOST: [
-        50,
-        100,
-        250,
-        500,
-        750,
-        1500,
-        5000,
-        15000,
-        25000,
-        50000,
-    ],
+const SFLOCALCONSTS = {
     ENCOUNTER_DIFFICULTY_XP_TABLES: {
         "easy": [25, 50, 75, 125, 250, 300, 350, 450, 550, 600, 800, 1000, 1100, 1250, 1400, 1600, 2000, 2100, 2400, 2800],
         'medium': [50, 100, 150, 250, 500, 600, 750, 900, 1100, 1200, 1600, 2000, 2200, 2500, 2800, 3200, 3900, 4200, 4900, 5700],
@@ -764,34 +713,4 @@ const SFCONSTS = {
         "11": "Armor, +3 half plate",
         "12": "Armor, +3 plate",
     }
-}
-
-async function spawnTest(name,number){
-    let encounterData = await new Encounter([{name: name, number: number}]).validate().prepareData();
-    Hooks.once("createMeasuredTemplate", async (template) => {
-        await CreatureSpawner.fromTemplate(template.object, encounterData);
-        template.object.delete()
-    })
-}
-
-async function dataTest(){
-    const parsedData = await fetchTest();
-    console.log(parsedData)
-    const encounters = parsedData.reduce((a,v) => {
-        const enc = new Encounter(v).validate()
-        if(enc !== undefined) a.push(enc)
-        return a
-    },[])
-
-    for(let encounter of encounters){
-        await encounter.prepareData()
-        await encounter.loadActors()
-        await encounter.createLootSheet()
-    }
-
-    return encounters
-}
-
-async function fetchTest(){
-    return await fetch('https://theripper93.com/encounterData.php?loot_type=Treasure+Hoard').then(response => response.json()).then(data => data);
 }

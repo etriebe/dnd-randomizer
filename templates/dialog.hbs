@@ -71,7 +71,7 @@
 				</span>
 			</span>
 		</div>
-		<button class="generate-encounters"><i class="fas fa-dice"></i> Generate Encounters</button>
+		<button id="generate-remote-encounters-button" class="generate-encounters"><i class="fas fa-dice"></i> Generate Encounters</button>
 	</div>
 	<div class="form-encounters">
 		<div class="filter-controller">
@@ -79,10 +79,10 @@
 				<option value="all">All</option>
 				<option value="favorited">Favorited</option>
 			</select>
-			<input type="text" spellcheck="false" placeholder="Start typing to filter Encounters">
-			<button title="Clear search field"><i class="fas fa-times"></i></button>
-			<button class="filter-compendiums"><i class="fas fa-filter"></i></button>
-			<button class="license-and-credits" title="licensing & Credits"><i class="fas fa-info-circle"></i></button>
+			<input id="search-box" type="text" spellcheck="false" placeholder="Start typing to filter Encounters">
+			<button title="Clear search field" id="clear-button"><i class="fas fa-times"></i></button>
+			<button class="filter-compendiums" id="filter-button"><i class="fas fa-filter"></i></button>
+			<button class="license-and-credits" id="license-and-credits" title="licensing & Credits"><i class="fas fa-info-circle"></i></button>
 		</div>
 		<div class="encounters">
 			<ul></ul>
