@@ -596,7 +596,7 @@ class SFHelpers {
     }
     else
     {
-      let rollRange = key.split("-");
+      let rollRange = lastRowInTableKeyValue.split("-");
       let higherRange = rollRange[1];
 
       maxNumberToRollFor = higherRange;
