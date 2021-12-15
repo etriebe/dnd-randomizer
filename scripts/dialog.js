@@ -213,11 +213,12 @@ class SFDialog extends FormApplication {
 			$(event.currentTarget).closest('div').find('input').val('').trigger('change');
 		});
 
-		html.find('.filter-controller input + button + button').on('click', (event) => {
+		html.find('button#filter-button').on('click', (event) => {
 			event.preventDefault();
 			new SFCompendiumSorter().render(true);
-		})
-		html.find('.filter-controller input + button + button + button').on('click', (event) => {
+		});
+
+		html.find('button#license-and-credits').on('click', (event) => {
 			event.preventDefault();
 			new Dialog({
 				title: "Stochastic, Fantastic! Credits",
