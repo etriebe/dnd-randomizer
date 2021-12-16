@@ -207,7 +207,7 @@ class SFLocalHelpers {
         try
         {
           monsterName = randomMonster.name;
-          if (!randomMonster.data || randomMonster.data.data)
+          if (!randomMonster.data || !randomMonster.data.data)
           {
             console.warn(`Monster chosen ${randomMonster.name} didn't have a valid data property.`)
             continue;
