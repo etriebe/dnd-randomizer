@@ -259,7 +259,7 @@ class SFLocalHelpers {
         currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
       }
   
-      currentEncounter["adjustedxp"] = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
+      currentEncounter["xp"] = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
       
       let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
       currentEncounter["loot"] = generatedLootObject;
