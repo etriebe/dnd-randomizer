@@ -41,7 +41,7 @@ class SFLocalHelpers {
   
     static async populateItemsFromCompendiums()
     {
-      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item");
+      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
   
       for (let compendium of filteredCompendiums) {
         if (!compendium)
@@ -84,7 +84,7 @@ class SFLocalHelpers {
   
     static async populateMonstersFromCompendiums()
     {
-      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor");
+      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
   
       for (let compendium of filteredCompendiums) {
         if (!compendium)
