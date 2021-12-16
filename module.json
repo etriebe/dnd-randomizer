@@ -2,7 +2,7 @@
   "name": "dnd-randomizer",
   "title": "Stochastic, Fantastic! - Random Encounter Generator",
   "description": "desc",
-  "version": "0.11",
+  "version": "0.12",
   "system": ["dnd5e"],
   "author": "theripper93, Mouse0270, etriebe",
   "authors": [
