@@ -126,11 +126,14 @@ class SFLocalHelpers {
               console.log(`Already have actor ${actorName} in dictionary`);
               continue;
             }
-            this.allMonsters[actorName] = actor;
+            let monsterObject = {};
+            monsterObject["actor"] = actor;
+            monsterObject["compendiumname"] = compendium.metadata.label;
+            this.allMonsters[actorName] = monsterObject;
   
             environmentArray.forEach((e) => {
               e = e.trim();
-              this.monstersByEnvironment[e].push(actor);
+              this.monstersByEnvironment[e].push(monsterObject);
             });
           } 
           catch (error) {
@@ -145,15 +148,37 @@ class SFLocalHelpers {
     {
       let environment = params.environment;
       let filteredMonsters = [];
-      for (const monster of this.monstersByEnvironment[environment])
+
+      const constCompFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterCompendiums"
+      );
+      const filteredCompendiums = Array.from(game.packs).filter((p) => {
+        if (p.documentName !== "Actor") return false;
+        const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
+        return !el || el[p.collection] ? true : false;
+      });
+
+      for (const monsterObject of this.monstersByEnvironment[environment])
       {
-        filteredMonsters.push(monster);
+        if (filteredCompendiums.filter((c) => c.metadata.label === monsterObject.compendiumname).length === 0) 
+        {
+          continue;
+        }
+
+        filteredMonsters.push(monsterObject.actor);
       }
-      for (const monster of this.monstersByEnvironment["Any"])
+
+      for (const monsterObject of this.monstersByEnvironment["Any"])
       {
-        filteredMonsters.push(monster);
+        if (filteredCompendiums.filter((c) => c.metadata.label === monsterObject.compendiumname).length === 0) 
+        {
+          continue;
+        }
+
+        filteredMonsters.push(monsterObject.actor);
       }
-  
+
       return filteredMonsters;
     }
   
