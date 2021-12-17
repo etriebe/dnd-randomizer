@@ -1,16 +1,11 @@
 class SFLocalHelpers {
-    static allMonsters = {};
+    static allMonsters = [];
     static allSpells = {};
     static spellsByLevel = {};
-    static monstersByEnvironment = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
   
     static initializeDictionaries() {
-      SFCONSTS.GEN_OPT.environment.forEach((env) => {
-        this.monstersByEnvironment[env] = [];
-      });
-      this.monstersByEnvironment["Any"] = [];
       this.dictionariesInitialized = true;
       this.spellsByLevel["cantrip"] = [];
       this.spellsByLevel["1st level"] = [];
@@ -120,18 +115,20 @@ class SFLocalHelpers {
             }
   
             let environmentArray = environment.split(",");
+            environmentArray = environmentArray.map(e => e.trim());
   
-            if (actorName in this.allMonsters)
+            if (this.allMonsters.filter((m) => m.actor.data.name === actorName).length > 0)
             {
-              console.log(`Already have actor ${actorName} in dictionary`);
+              console.log(`Already have actor ${actorName}, actor id ${actor.data._id} in dictionary`);
               continue;
             }
-            this.allMonsters[actorName] = actor;
-  
-            environmentArray.forEach((e) => {
-              e = e.trim();
-              this.monstersByEnvironment[e].push(actor);
-            });
+            let monsterObject = {};
+            monsterObject["actor"] = actor;
+            monsterObject["actorid"] = actor.data._id;
+            monsterObject["compendiumname"] = compendium.metadata.label;
+            monsterObject["environment"] = environmentArray;
+
+            this.allMonsters.push(monsterObject);
           } 
           catch (error) {
             console.log(error);
@@ -145,15 +142,30 @@ class SFLocalHelpers {
     {
       let environment = params.environment;
       let filteredMonsters = [];
-      for (const monster of this.monstersByEnvironment[environment])
+
+      const constCompFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterCompendiums"
+      );
+      const filteredCompendiums = Array.from(game.packs).filter((p) => {
+        if (p.documentName !== "Actor") return false;
+        const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
+        return !el || el[p.collection] ? true : false;
+      });
+
+      for (const monsterObject of this.allMonsters)
       {
-        filteredMonsters.push(monster);
+        if (filteredCompendiums.filter((c) => c.metadata.label === monsterObject.compendiumname).length === 0) 
+        {
+          continue;
+        }
+
+        if (monsterObject.environment.indexOf(environment) > -1 || monsterObject.environment.indexOf("Any") > -1)
+        {
+          filteredMonsters.push(monsterObject.actor);
+        }
       }
-      for (const monster of this.monstersByEnvironment["Any"])
-      {
-        filteredMonsters.push(monster);
-      }
-  
+
       return filteredMonsters;
     }
   
