@@ -23,7 +23,7 @@ class SFCompendiumSorter extends FormApplication {
 	populateCompendiums(type) {
 		const html = this.element
 		const filteredCompendiums = game.packs.filter((p) => type.includes(p.documentName));
-		let $ul = html.find('ul').first();
+		let $ul = html.find('ul#compendium_filter').first();
 		const constCompFilter = game.settings.get(
 			SFCONSTS.MODULE_NAME,
 			"filterCompendiums"
@@ -40,7 +40,7 @@ class SFCompendiumSorter extends FormApplication {
 		for (let compendium of compendiums) {
 			const el = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection)
 			console.log(compendium);
-			$ul.append(`<li>
+			$ul.append(`<li class="compendiumTypeLi">
 				<input type="checkbox" name="${compendium.metadata.package}.${compendium.metadata.name}" ${!el || el[compendium.collection] ? "checked" : ""}>
 				<span class="compendium-type" data-type="${compendium.documentName}">${compendium.documentName}</span>
 				<span class="compendium-title" data-name="${compendium.metadata.package}.${compendium.metadata.name}">${compendium.metadata.label}</span>
@@ -51,29 +51,79 @@ class SFCompendiumSorter extends FormApplication {
 			forcePlaceholderSize: true
 		});
 	}
+
+	populateCreatureTypes() {
+		const html = this.element
+		let $ul = html.find('ul#creature_filter').first();
+		const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
+		const constMonsterTypeFilter = game.settings.get(
+			SFCONSTS.MODULE_NAME,
+			"filterMonsterTypes"
+		  );
+		
+		for (let currentType of creatureTypes) {
+			const el = constMonsterTypeFilter.find(i => Object.keys(i)[0] === currentType);
+			console.log(currentType);
+			let currentTypeCasedCorrect = currentType.charAt(0).toUpperCase() + currentType.slice(1);
+			$ul.append(`<li class="monsterTypeLi">
+				<input type="checkbox" name="${currentType}" ${!el || el[currentType] ? "checked" : ""}>
+				<span class="monster-type">${currentTypeCasedCorrect}</span>
+			</li>`)
+		}
+
+		sortable('#SFCompendiumSorter .sortable-compendiums', {
+			forcePlaceholderSize: true
+		});
+	}
 	
 	async activateListeners(html) {
-		this.populateCompendiums(["Actor","Item"])
+		this.populateCompendiums(["Actor","Item"]);
+		// await SFLocalHelpers.populateObjectsFromCompendiums();
+		this.populateCreatureTypes();
 	}
 
 	async close(options) { 
-		const html = this.element
-		let settings = [];
-		let $ul = html.find('ul').first();
+		await this.saveCompendiumSetting();
+		await this.saveMonsterTypeSetting();
 
-		$ul.find('li').each((index, item) => {
+		// Default Close
+		return await super.close(options);
+	}
+
+	async saveCompendiumSetting()
+	{
+		const html = this.element;
+		let filterCompendiumSettings = [];
+		let $ul = html.find('ul#compendium_filter').first();
+
+		$ul.find('li.compendiumTypeLi').each((index, item) => {
 			let $element = $(item).find('input');
 			let setting = {};
 			setting[$element.attr('name')] = $element.is(':checked');
 
-			settings.push(setting);
+			filterCompendiumSettings.push(setting);
 		});
-		console.log(settings)
+		console.log(filterCompendiumSettings)
 		
-		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterCompendiums',settings);
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterCompendiums',filterCompendiumSettings);
+	}
 
-		// Default Close
-		return await super.close(options);
+	async saveMonsterTypeSetting()
+	{
+		const html = this.element;
+		let $ul = html.find('ul#creature_filter').first();
+		let filterMonsterSettings = [];
+
+		$ul.find('li.monsterTypeLi').each((index, item) => {
+			let $element = $(item).find('input');
+			let setting = {};
+			setting[$element.attr('name')] = $element.is(':checked');
+
+			filterMonsterSettings.push(setting);
+		});
+		console.log(filterMonsterSettings)
+		
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterMonsterTypes',filterMonsterSettings);
 	}
 
 	async _updateObject(event, formData) {
