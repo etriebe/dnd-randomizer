@@ -33,6 +33,11 @@ class SFLocalHelpers {
         this.dictionariesPopulated = true;
       }
     }
+
+    static async populateCurrentActors() {
+      let pcs = game.actors.filter(a=>a.type === "character");
+      let pcs2 = game.actors.filter(a=>a.hasPlayerOwner === true);
+    }
   
     static async populateItemsFromCompendiums()
     {
@@ -135,6 +140,28 @@ class SFLocalHelpers {
             console.log(`Actor id ${entry._id} failed to get added.`);
           }
         }
+      }
+    }
+
+    static getActorTraits(actor)
+    {
+      let characterTraits = {};
+
+      if (actor.data.data.traits.ci.value.length > 0)
+      {
+        characterTraits["conditionimmunities"] = actor.data.data.traits.ci.value;
+      }
+      if (actor.data.data.traits.di.value.length > 0)
+      {
+        characterTraits["damageimmunities"] = actor.data.data.traits.di.value;
+      }
+      if (actor.data.data.traits.dr.value.length > 0)
+      {
+        characterTraits["damageresistances"] = actor.data.data.traits.dr.value;
+      }
+      if (actor.data.data.traits.dv.value.length > 0)
+      {
+        characterTraits["damagevulnerabilities"] = actor.data.data.traits.dv.value;
       }
     }
   
