@@ -132,6 +132,7 @@ class SFLocalHelpers {
             monsterObject["actorid"] = actor.data._id;
             monsterObject["compendiumname"] = compendium.metadata.label;
             monsterObject["environment"] = environmentArray;
+            monsterObject["creaturetype"] = actor.data.data.details.type.value;
 
             this.allMonsters.push(monsterObject);
           } 
@@ -174,15 +175,31 @@ class SFLocalHelpers {
         SFCONSTS.MODULE_NAME,
         "filterCompendiums"
       );
+
+      const constMonsterTypeFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterMonsterTypes"
+      );
+
       const filteredCompendiums = Array.from(game.packs).filter((p) => {
         if (p.documentName !== "Actor") return false;
         const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
         return !el || el[p.collection] ? true : false;
       });
 
+      const filteredMonsterTypes = Array.from(SFLOCALCONSTS.CREATURE_TYPES).filter((p) => {
+        const el = constMonsterTypeFilter.find((i) => Object.keys(i)[0] == p);
+        return !el || el[p] ? true : false;
+      });
+
       for (const monsterObject of this.allMonsters)
       {
         if (filteredCompendiums.filter((c) => c.metadata.label === monsterObject.compendiumname).length === 0) 
+        {
+          continue;
+        }
+
+        if (filteredMonsterTypes.filter(m => m === monsterObject.creaturetype).length === 0)
         {
           continue;
         }
