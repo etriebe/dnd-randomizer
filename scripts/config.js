@@ -43,6 +43,13 @@ Hooks.once("init", async function () {
     type: Object,
     default: [],
   })
+  
+  game.settings.register(SFCONSTS.MODULE_NAME, 'pcsToCreateEncountersFor', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: [],
+  })
   game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {
     scope: "world",
     config: false,
