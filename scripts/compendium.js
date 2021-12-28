@@ -67,22 +67,19 @@ class SFCompendiumSorter extends FormApplication {
 			const el = savedPlayerSettings.find(i => Object.keys(i)[0] === playerName);
 			let playerClasses = player.classes;
 			let playerClassList = Object.keys(playerClasses);
-			let playerClassDescriptionList = [];
+			let playerClassSpans = [];
 			for (let i = 0; i < playerClassList.length; i++)
 			{
 				let currentClassName = playerClassList[i];
 				let currentClassNameCasedCorrect = currentClassName.charAt(0).toUpperCase() + currentClassName.slice(1);
 				let currentClass = playerClasses[currentClassName];
 				let currentClassLevel = currentClass.data.data.levels;
-				let currentClassDescription = `${currentClassNameCasedCorrect}: Level ${currentClassLevel}`;
-				console.log(currentClassDescription);
-				playerClassDescriptionList.push(currentClassDescription);
+				let currentClassSpan = `<span class="player-character-info" data-type="${currentClassName}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
+				playerClassSpans.push(currentClassSpan);
 			}
-			let fullDescription = playerClassDescriptionList.join(", ");
-			console.log(playerName);
 			$ul.append(`<li class="playerCharacterLi">
 				<input type="checkbox" name="${playerName}" ${!el || el[playerName] ? "checked" : ""}>
-				<span class="player-character-info">${fullDescription}</span>
+				${playerClassSpans.join("")}
 				<span class="player-character">${playerName}</span>
 			</li>`)
 		}

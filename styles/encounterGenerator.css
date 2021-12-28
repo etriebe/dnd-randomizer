@@ -524,3 +524,59 @@
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
 }
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="artificer"] {
+    background-color: var(--palette-primary, #7D673C);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="barbarian"] {
+    background-color: var(--palette-primary, #D1775F);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="blood-hunter"] {
+    background-color: var(--palette-primary, #5A0505);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="bard"] {
+    background-color: var(--palette-primary, #B087B1);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="cleric"] {
+    background-color: var(--palette-primary, #8E8F91);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="druid"] {
+    background-color: var(--palette-primary, #8A9554);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="fighter"] {
+    background-color: var(--palette-primary, #715348);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="monk"] {
+    background-color: var(--palette-primary, #81C1DA);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="paladin"] {
+    background-color: var(--palette-primary, #BCA863);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="ranger"] {
+    background-color: var(--palette-primary, #48795B);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="rogue"] {
+    background-color: var(--palette-primary, #494A44);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="sorcerer"] {
+    background-color: var(--palette-primary, #C4545A);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="warlock"] {
+    background-color: var(--palette-primary, #8050B1);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="wizard"] {
+    background-color: var(--palette-primary, #3E6EBE);
+}
