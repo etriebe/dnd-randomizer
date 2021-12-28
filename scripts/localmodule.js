@@ -35,8 +35,7 @@ class SFLocalHelpers {
     }
 
     static async populateCurrentActors() {
-      let pcs = game.actors.filter(a=>a.type === "character");
-      let pcs2 = game.actors.filter(a=>a.hasPlayerOwner === true);
+      let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
     }
   
     static async populateItemsFromCompendiums()

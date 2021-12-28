@@ -52,6 +52,46 @@ class SFCompendiumSorter extends FormApplication {
 		});
 	}
 
+	populatePlayerCharacters() {
+		const html = this.element
+		let $ul = html.find('ul#player_filter').first();
+		let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
+		
+		const savedPlayerSettings = game.settings.get(
+			SFCONSTS.MODULE_NAME,
+			"pcsToCreateEncountersFor"
+		  );
+		
+		for (let player of playerCharacters) {
+			let playerName = player.name;
+			const el = savedPlayerSettings.find(i => Object.keys(i)[0] === playerName);
+			let playerClasses = player.classes;
+			let playerClassList = Object.keys(playerClasses);
+			let playerClassDescriptionList = [];
+			for (let i = 0; i < playerClassList.length; i++)
+			{
+				let currentClassName = playerClassList[i];
+				let currentClassNameCasedCorrect = currentClassName.charAt(0).toUpperCase() + currentClassName.slice(1);
+				let currentClass = playerClasses[currentClassName];
+				let currentClassLevel = currentClass.data.data.levels;
+				let currentClassDescription = `${currentClassNameCasedCorrect}: Level ${currentClassLevel}`;
+				console.log(currentClassDescription);
+				playerClassDescriptionList.push(currentClassDescription);
+			}
+			let fullDescription = playerClassDescriptionList.join(", ");
+			console.log(playerName);
+			$ul.append(`<li class="playerCharacterLi">
+				<input type="checkbox" name="${playerName}" ${!el || el[playerName] ? "checked" : ""}>
+				<span class="player-character-info">${fullDescription}</span>
+				<span class="player-character">${playerName}</span>
+			</li>`)
+		}
+
+		sortable('#SFCompendiumSorter .sortable-compendiums', {
+			forcePlaceholderSize: true
+		});
+	}
+
 	populateCreatureTypes() {
 		const html = this.element
 		let $ul = html.find('ul#creature_filter').first();
@@ -77,6 +117,7 @@ class SFCompendiumSorter extends FormApplication {
 	}
 	
 	async activateListeners(html) {
+		this.populatePlayerCharacters();
 		this.populateCompendiums(["Actor","Item"]);
 		// await SFLocalHelpers.populateObjectsFromCompendiums();
 		this.populateCreatureTypes();
@@ -124,6 +165,24 @@ class SFCompendiumSorter extends FormApplication {
 		console.log(filterMonsterSettings)
 		
 		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterMonsterTypes',filterMonsterSettings);
+	}
+
+	async savePlayerCharacterSetting()
+	{
+		const html = this.element;
+		let $ul = html.find('ul#player_filter').first();
+		let playerCharacterSettings = [];
+
+		$ul.find('li.playerCharacterLi').each((index, item) => {
+			let $element = $(item).find('input');
+			let setting = {};
+			setting[$element.attr('name')] = $element.is(':checked');
+
+			playerCharacterSettings.push(setting);
+		});
+		console.log(playerCharacterSettings)
+		
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'pcsToCreateEncountersFor',playerCharacterSettings);
 	}
 
 	async _updateObject(event, formData) {

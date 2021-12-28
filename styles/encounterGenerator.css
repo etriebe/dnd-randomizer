@@ -514,3 +514,13 @@
     font-size: 0.7rem;
     opacity: 0.8;
 }
+
+#SFCompendiumSorter form ul li span.player-character-info {
+    background-color: var(--palette-primary, #116b86);
+    color: var(--palette-primary-contrast-text, #fff);
+    order: 2;
+    margin-left: auto;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
