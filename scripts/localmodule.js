@@ -34,6 +34,44 @@ class SFLocalHelpers {
       }
     }
 
+    static getActivePlayersCountAndLevels() {
+      let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
+      const savedPlayerSettings = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "playerCharactersToCreateEncountersFor"
+        );
+      let levelList = [];
+
+      for (let player of playerCharacters) {
+        let playerName = player.name;
+        const el = savedPlayerSettings.find(i => Object.keys(i)[0] === playerName);
+        if (el[playerName] === false)
+        {
+          continue;
+        }
+
+        let playerClasses = player.classes;
+        let playerClassList = Object.keys(playerClasses);
+        let totalLevelCount = 0;
+        for (let i = 0; i < playerClassList.length; i++)
+        {
+          let currentClassLevel = playerClasses[playerClassList[i]].data.data.levels;
+          totalLevelCount += currentClassLevel;
+        }
+
+        levelList.push(totalLevelCount);
+      }
+      var total = 0;
+      for(var i = 0; i < levelList.length; i++) {
+          total += levelList[i];
+      }
+      var avg = Math.floor(total / levelList.length);
+      let resultObject = {};
+      resultObject["numberofplayers"] = levelList.length;
+      resultObject["averageplayerlevel"] = avg;
+      return resultObject;
+    }
+
     static async populateCurrentActors() {
       let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
     }

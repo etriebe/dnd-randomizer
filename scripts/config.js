@@ -23,39 +23,47 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: true,
   });
+  game.settings.register(SFCONSTS.MODULE_NAME, "usePlayerOwnedCharactersForGeneration", {
+    name: "Use Player-owned Actors in-game to generate encounters.",
+    hint: "If checked, we will find all player-owned characters and use that to generate encounters. Select/deselect individuals in Filter dialog.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
   game.settings.register(SFCONSTS.MODULE_NAME, 'favoritedEncounters', {
     scope: "world",
     config: false,
     type: Object,
     default: {},
-  })
+  });
   
   game.settings.register(SFCONSTS.MODULE_NAME, 'filterCompendiums', {
     scope: "world",
     config: false,
     type: Object,
     default: [],
-  })
+  });
   
   game.settings.register(SFCONSTS.MODULE_NAME, 'filterMonsterTypes', {
     scope: "world",
     config: false,
     type: Object,
     default: [],
-  })
+  });
   
   game.settings.register(SFCONSTS.MODULE_NAME, 'playerCharactersToCreateEncountersFor', {
     scope: "world",
     config: false,
     type: Object,
     default: [],
-  })
+  });
   game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {
     scope: "world",
     config: false,
     type: Boolean,
     default: false,
-  })
+  });
 });
 
 Hooks.on("renderSidebarTab",(settings) => {

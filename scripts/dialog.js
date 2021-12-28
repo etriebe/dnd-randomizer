@@ -5,11 +5,13 @@ class SFDialog extends FormApplication {
 	}
 
 	static get defaultOptions() {
+		let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
+		let dialogTemplate = useLocalPCs ? `modules/dnd-randomizer/templates/usePCsDialog.hbs` : `modules/dnd-randomizer/templates/dialog.hbs`;
 		return { 
 			...super.defaultOptions,
 			title: game.i18n.localize('SF.dialog.title'),
 			id: "SFDialog",
-			template: `modules/dnd-randomizer/templates/dialog.hbs`,
+			template: dialogTemplate,
 			resizable: true,
 			width: window.innerWidth > 700 ? 700 : window.innerWidth - 100,
 			height: window.innerHeight > 800 ? 800 : window.innerHeight - 100
@@ -152,13 +154,27 @@ class SFDialog extends FormApplication {
 
 			$button.prop('disabled', true).addClass('disabled');
 			$button.find('i.fas').removeClass('fa-dice').addClass('fa-spinner fa-spin');
-			const params = {
-				loot_type: html.find('#lootType select[name="lootType"]').val(),
-				numberOfPlayers: html.find('#numberOfPlayers select[name="numberOfPlayers"]').val(),
-				averageLevelOfPlayers: html.find('#averageLevelOfPlayers select[name="averageLevelOfPlayers"]').val(),
-				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
+			let numberOfPlayers = 0;
+			let averageLevelOfPlayers = 0;
+			let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
+			if (useLocalPCs)
+			{
+				let activePlayerInfo = SFLocalHelpers.getActivePlayersCountAndLevels();
+				numberOfPlayers = activePlayerInfo["numberofplayers"];
+				averageLevelOfPlayers = activePlayerInfo["averageplayerlevel"];
+			}
+			else
+			{
+				numberOfPlayers = html.find('#numberOfPlayers select[name="numberOfPlayers"]').val();
+				averageLevelOfPlayers = html.find('#averageLevelOfPlayers select[name="averageLevelOfPlayers"]').val();
 			}
 			
+			const params = {
+				loot_type: html.find('#lootType select[name="lootType"]').val(),
+				numberOfPlayers: numberOfPlayers,
+				averageLevelOfPlayers: averageLevelOfPlayers,
+				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
+			}
 
 			if (SFHelpers.useLocalEncounterGenerator())
 			{

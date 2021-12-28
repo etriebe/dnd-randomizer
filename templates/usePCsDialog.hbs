@@ -1,0 +1,44 @@
+<form>
+	<div class="form-controls">
+		<div class="form-groups">
+			I'm looking for an encounter in a
+			<span id="environmentSelector" class="input-container">
+				<span class="placeholder">{{environments.[0]}}</span>
+				<span class="input selectbox">
+					<select class="fancy-select hidden" name="environmentSelector">
+					{{#each environments}}
+						<option value="{{this}}">{{this}}</option>
+					{{/each}}
+					</select>
+				</span>
+			</span>
+			environment. They will find 
+			<span id="lootType" class="input-container">
+				<span class="placeholder">Treasure Hoard</span>
+				<span class="input selectbox">
+					<select class="fancy-select hidden" name="lootType">
+						<option value="Individual Treasure">Individual Treasure</option>
+						<option value="Treasure Hoard" selected>Treasure Hoard</option>
+					</select>
+				</span>
+			</span>
+			.
+		</div>
+		<button id="generate-remote-encounters-button" class="generate-encounters"><i class="fas fa-dice"></i> Generate Encounters</button>
+	</div>
+	<div class="form-encounters">
+		<div class="filter-controller">
+			<select>
+				<option value="all">All</option>
+				<option value="favorited">Favorited</option>
+			</select>
+			<input id="search-box" type="text" spellcheck="false" placeholder="Start typing to filter Encounters">
+			<button title="Clear search field" id="clear-button"><i class="fas fa-times"></i></button>
+			<button class="filter-compendiums" id="filter-button"><i class="fas fa-filter"></i></button>
+			<button class="license-and-credits" id="license-and-credits" title="licensing & Credits"><i class="fas fa-info-circle"></i></button>
+		</div>
+		<div class="encounters">
+			<ul></ul>
+		</div>
+	</div>
+</form>

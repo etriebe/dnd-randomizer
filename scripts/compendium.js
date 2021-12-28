@@ -55,6 +55,14 @@ class SFCompendiumSorter extends FormApplication {
 	populatePlayerCharacters() {
 		const html = this.element
 		let $ul = html.find('ul#player_filter').first();
+		let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
+
+		if (!useLocalPCs)
+		{
+			$ul.append("Filtering not available because setting wasn't specified to use player-owned actors for generation.");
+			return;
+		}
+
 		let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
 		
 		const savedPlayerSettings = game.settings.get(
