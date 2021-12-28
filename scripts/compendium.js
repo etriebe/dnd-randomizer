@@ -59,7 +59,7 @@ class SFCompendiumSorter extends FormApplication {
 		
 		const savedPlayerSettings = game.settings.get(
 			SFCONSTS.MODULE_NAME,
-			"pcsToCreateEncountersFor"
+			"playerCharactersToCreateEncountersFor"
 		  );
 		
 		for (let player of playerCharacters) {
@@ -116,14 +116,13 @@ class SFCompendiumSorter extends FormApplication {
 	async activateListeners(html) {
 		this.populatePlayerCharacters();
 		this.populateCompendiums(["Actor","Item"]);
-		// await SFLocalHelpers.populateObjectsFromCompendiums();
 		this.populateCreatureTypes();
 	}
 
 	async close(options) { 
 		await this.saveCompendiumSetting();
 		await this.saveMonsterTypeSetting();
-
+		await this.savePlayerCharacterSetting();
 		// Default Close
 		return await super.close(options);
 	}
@@ -179,7 +178,7 @@ class SFCompendiumSorter extends FormApplication {
 		});
 		console.log(playerCharacterSettings)
 		
-		await game.settings.set(SFCONSTS.MODULE_NAME, 'pcsToCreateEncountersFor',playerCharacterSettings);
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'playerCharactersToCreateEncountersFor',playerCharacterSettings);
 	}
 
 	async _updateObject(event, formData) {

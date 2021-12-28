@@ -44,7 +44,7 @@ Hooks.once("init", async function () {
     default: [],
   })
   
-  game.settings.register(SFCONSTS.MODULE_NAME, 'pcsToCreateEncountersFor', {
+  game.settings.register(SFCONSTS.MODULE_NAME, 'playerCharactersToCreateEncountersFor', {
     scope: "world",
     config: false,
     type: Object,
