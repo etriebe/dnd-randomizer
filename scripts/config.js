@@ -1,4 +1,5 @@
 Hooks.once("init", async function () {
+	const debouncedReload = foundry.utils.debounce(function () { window.location.reload(); }, 100);
   game.settings.register(SFCONSTS.MODULE_NAME, "actorFolder", {
     name: "Actor Folder Name",
     hint: "Sets the folder name that the actors will be added to when imported",
@@ -30,6 +31,7 @@ Hooks.once("init", async function () {
     config: true,
     type: Boolean,
     default: true,
+    onChange:debouncedReload,
   });
   game.settings.register(SFCONSTS.MODULE_NAME, 'favoritedEncounters', {
     scope: "world",
