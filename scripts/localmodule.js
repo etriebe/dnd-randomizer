@@ -183,12 +183,81 @@ class SFLocalHelpers {
 
     static getCombatDataPerRound(actor)
     {
-      let attackList = actor.items.filter(i => i.type.toLowerCase() === "weapon");
+      let attackList = actor.items.filter(i => i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat");
       // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
       let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
       let allAttackResultObjects = [];
       if (multiAttack && multiAttack.length > 0)
       {
+        // Description types supported:
+        // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
+        // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
+        let multiAttackDescription = multiAttack[0].data.data.description.value.toLowerCase();
+
+        var parsedAttackList = [];
+        for (var i = 0; i < attackList.length; i++)
+        {
+          var currentAttack = attackList[i];
+          var attackName = currentAttack.name.toLowerCase();
+          var sanitizedAttackName = attackName.replaceAll(/\(.+\)/gm, "").trim();
+          sanitizedAttackName = sanitizedAttackName.replaceAll(/\+\d/gm, "").trim();
+          sanitizedAttackName = sanitizedAttackName.replaceAll(/\)/gm, "").trim(); // currently creatures with a recharge attack have the recharge attack named incorrectly
+          parsedAttackList.push(sanitizedAttackName);
+        }
+        var parsedAttackRegex = parsedAttackList.join("|");
+
+        var attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
+        var numberMatches = [...multiAttackDescription.matchAll(`(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten)`)];
+        var orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
+
+        var previousAttackIndex = -1;
+        for (var i = 0; i < attackMatches.length; i++)
+        {
+          var currentAttackMatch = attackMatches[i];
+          var attackObject = attackList.find(a => a.name.toLowerCase().match(currentAttackMatch[0]));
+          var currentAttackIndex = currentAttackMatch.index;
+          var numberMatchesBeforeAttack = numberMatches.filter(n => n.index < currentAttackIndex);
+          var correctNumberMatch = numberMatchesBeforeAttack[numberMatchesBeforeAttack.length - 1];
+          let actualNumberOfAttacks = 1;
+          if (correctNumberMatch)
+          {
+            actualNumberOfAttacks = this.getIntegerFromWordNumber(correctNumberMatch[0]);
+          }
+          let currentAttackObject = this.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
+
+          if (previousAttackIndex != -1)
+          {
+            let previousAttackObject = allAttackResultObjects.pop();
+
+            // Check to see if an or is between the previous attack object and the current
+            let orMatchesBetweenAttacks = orMatches.filter(o => o.index > previousAttackIndex && o.index < currentAttackIndex);
+            if (orMatchesBetweenAttacks.length > 0)
+            {
+              // decide which object is better and push that one.
+              if ((currentAttackObject.numberofattacks * currentAttackObject.averagedamage) > 
+              (previousAttackObject.numberofattacks * previousAttackObject.averagedamage))
+              {
+                allAttackResultObjects.push(currentAttackObject);
+              }
+              else
+              {
+                allAttackResultObjects.push(previousAttackObject);
+              }
+            }
+            else
+            {
+              allAttackResultObjects.push(previousAttackObject);
+              allAttackResultObjects.push(currentAttackObject);
+            }
+            
+          }
+          else
+          {
+            allAttackResultObjects.push(currentAttackObject)
+          }
+          previousAttackIndex = currentAttackIndex;
+        }
+        /*
         let allAttackNamesRegex = `${attackList.map(
           a => a.name.toLowerCase().replaceAll("(", "\\(").replaceAll(")", "\\)").replaceAll("+", "\\+")).join("|")}`;
         
@@ -200,21 +269,19 @@ class SFLocalHelpers {
             b => b.name.toLowerCase().replaceAll(/\(.+\)/gm, "").trim()).join("|");
           allAttackNamesRegex += `|${extraAttacks}`;
         }
+        */
 
         /*
         if (attackList.filter(a => a.name.match(/\+/)))
         {
-
+          
         }
         */
-
-        // Description types supported:
-        // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
-        // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
-        let multiAttackDescription = multiAttack[0].data.data.description.value.toLowerCase();
+       
         // let matches = [...multiAttackDescription.matchAll(`(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten) [\w\s]*?(?<attackDescription>${allAttackNamesRegex})( attack)?`)];
-        let matches = [...multiAttackDescription.matchAll(`(?<attackDescription>${allAttackNamesRegex})`)];
-        let wordsInDescription = multiAttackDescription.split(" ");
+        // let matches = [...multiAttackDescription.matchAll(`(?<attackDescription>${allAttackNamesRegex})`)];
+        
+        /*let wordsInDescription = multiAttackDescription.split(" ");
 
         let previousNumber = -1;
         let sawOrWord = false;
@@ -289,6 +356,7 @@ class SFLocalHelpers {
             }
           }
         }
+        */
       }
       else
       {
@@ -396,6 +464,9 @@ class SFLocalHelpers {
         let totalDiceRollAverage = diceTypeAverage * diceCount;
         damageDescription = damageDescription.replaceAll(entireMatchValue, totalDiceRollAverage);
       }
+
+      // deal with modules that use a Math.floor function but Math. isn't specified
+      damageDescription = damageDescription.replaceAll("floor(", "Math.floor(");
       let totalAverageRollResult = eval(damageDescription);
       return totalAverageRollResult;
     }
