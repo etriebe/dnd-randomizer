@@ -277,7 +277,7 @@ class SFLocalHelpers {
 
       if (allAttackResultObjects.length === 0)
       {
-        console.log(`Parsed no attack data for actor: ${actor.name}`);
+        console.warn(`Parsed no attack data for actor: ${actor.name}`);
       }
       else
       {
