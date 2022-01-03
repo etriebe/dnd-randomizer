@@ -168,6 +168,7 @@ class EncCreature {
   constructor(creature) {
     this.name = creature.name;
     this.quantity = creature.quantity;
+    this.combatdata = creature.combatdata ?? [];
     this.dynamicLink = this.getDLink();
     this._actor = null;
   }

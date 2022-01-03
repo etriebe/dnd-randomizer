@@ -166,6 +166,7 @@ class SFLocalHelpers {
             }
             let monsterObject = {};
             monsterObject["actor"] = actor;
+            monsterObject["actorname"] = actorName;
             monsterObject["actorid"] = actor.data._id;
             monsterObject["compendiumname"] = compendium.metadata.label;
             monsterObject["environment"] = environmentArray;
@@ -596,6 +597,7 @@ class SFLocalHelpers {
           creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
+          creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
