@@ -170,15 +170,234 @@ class SFLocalHelpers {
             monsterObject["compendiumname"] = compendium.metadata.label;
             monsterObject["environment"] = environmentArray;
             monsterObject["creaturetype"] = actor.data.data.details.type.value;
-
+            monsterObject["combatdata"] = this.getCombatDataPerRound(actor);
             this.allMonsters.push(monsterObject);
           } 
           catch (error) {
-            console.log(error);
-            console.log(`Actor id ${entry._id} failed to get added.`);
+            console.warn(error);
+            console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
           }
         }
       }
+    }
+
+    static getCombatDataPerRound(actor)
+    {
+      let attackList = actor.items.filter(i => i.type.toLowerCase() === "weapon");
+      // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
+      let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
+      let allAttackResultObjects = [];
+      if (multiAttack && multiAttack.length > 0)
+      {
+        let allAttackNamesRegex = `${attackList.map(
+          a => a.name.toLowerCase().replaceAll("(", "\\(").replaceAll(")", "\\)").replaceAll("+", "\\+")).join("|")}`;
+        
+        // if any attacks listed had parenthesis, let's parse them out and add more to the end of allAttackNamesRegex
+        if (attackList.filter(a => a.name.match(/\(/)))
+        {
+          // strip out any piece in (), e.g. (+3 dagger) in case the description doesn't have any information but the item name does
+          let extraAttacks = attackList.filter(a => a.name.toLowerCase().match(/\(/)).map(
+            b => b.name.toLowerCase().replaceAll(/\(.+\)/gm, "").trim()).join("|");
+          allAttackNamesRegex += `|${extraAttacks}`;
+        }
+
+        /*
+        if (attackList.filter(a => a.name.match(/\+/)))
+        {
+
+        }
+        */
+
+        // Description types supported:
+        // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
+        // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
+        let multiAttackDescription = multiAttack[0].data.data.description.value.toLowerCase();
+        // let matches = [...multiAttackDescription.matchAll(`(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten) [\w\s]*?(?<attackDescription>${allAttackNamesRegex})( attack)?`)];
+        let matches = [...multiAttackDescription.matchAll(`(?<attackDescription>${allAttackNamesRegex})`)];
+        let wordsInDescription = multiAttackDescription.split(" ");
+
+        let previousNumber = -1;
+        let sawOrWord = false;
+        for (var i = 0; i < wordsInDescription.length; i++)
+        {
+          let currentWord = wordsInDescription[i];
+          
+          if (currentWord === "or")
+          {
+            sawOrWord = true;
+          }
+
+          let matchNumber = currentWord.match(/^(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten)$/);
+          if (matchNumber)
+          {
+            previousNumber = this.getIntegerFromWordNumber(matchNumber[0]);
+          }
+
+          let matchAttack = currentWord.match(`(?<attackDescription>${allAttackNamesRegex})`);
+          if (matchAttack)
+          {
+            if (sawOrWord)
+            {
+              let previousAttackObject = allAttackResultObjects.pop();
+              if (previousNumber === -1)
+              {
+                previousNumber = previousAttackObject.numberofattacks;
+              }
+              let attackDescription = matchAttack[0];
+              let attackObject = attackList.find(a => a.name.toLowerCase().match(attackDescription));
+  
+              if (!attackObject)
+              {
+                continue;
+              }
+
+              let currentAttackObject = this.getInfoForAttackObject(attackObject, previousNumber);
+
+              // decide which object is better and push that one.
+              if ((currentAttackObject.numberofattacks * currentAttackObject.averagedamage) > 
+                  (previousAttackObject.numberofattacks * previousAttackObject.averagedamage))
+              {
+                allAttackResultObjects.push(currentAttackObject);
+              }
+              else
+              {
+                allAttackResultObjects.push(previousAttackObject);
+              }
+
+              previousNumber = -1;
+              sawOrWord = false;
+            }
+            else
+            {
+              if (previousNumber === -1)
+              {
+                previousNumber = 1;
+              }
+              let attackDescription = matchAttack[0];
+              let attackObject = attackList.find(a => a.name.toLowerCase().match(attackDescription));
+  
+              if (!attackObject)
+              {
+                continue;
+              }
+  
+              let currentAttackResult = this.getInfoForAttackObject(attackObject, previousNumber);
+              allAttackResultObjects.push(currentAttackResult);
+  
+              // make sure the number of attacks used here isn't used for the next attack
+              previousNumber = -1;
+            }
+          }
+        }
+      }
+      else
+      {
+        let bestAttackObject = null;
+        let maxDamage = 0;
+        for (var i = 0; i < attackList.length; i++)
+        {
+          let currentAttackObject = this.getInfoForAttackObject(attackList[i], 1);
+          let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
+          if (maxDamage < totalDamage)
+          {
+            bestAttackObject = currentAttackObject;
+            maxDamage = totalDamage;
+          }
+        }
+        allAttackResultObjects.push(bestAttackObject);
+      }
+
+      if (allAttackResultObjects.length === 0)
+      {
+        console.log(`Parsed no attack data for actor: ${actor.name}`);
+      }
+      else
+      {
+        // console.log(`Parsed ${actor.name} to have ${allAttackResultObjects.length} attacks`);
+      }
+      return allAttackResultObjects;
+    }
+
+    static getIntegerFromWordNumber(number)
+    {
+      // This feels stupid but parseInt can't work with text format like we have.
+      switch (number.toLowerCase())
+      {
+        case "one":
+          return 1;
+        case "two":
+          return 2;
+        case "three":
+          return 3;
+        case "four":
+          return 4;
+        case "five":
+          return 5;
+        case "six":
+          return 6;
+        case "seven":
+          return 7;
+        case "eight":
+          return 8;
+        case "nine":
+          return 9;
+        case "ten":
+          return 10;
+        default:
+          return null;
+      }
+    }
+
+    static getInfoForAttackObject(attackObject, numberOfAttacks)
+    {
+      let abilityModType = attackObject.abilityMod;
+      let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
+      let damageList = attackObject.data.data.damage.parts;
+
+      let totalDamageForAttack = 0;
+      for (var j = 0; j < damageList.length; j++)
+      {
+        let damageArray = damageList[j];
+        let damageDescription = damageArray[0];
+        let damageType = damageArray[1];
+        damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+        let totalAverageRollResult = this.getAverageDamageFromDescription(damageDescription, abilityModValue);
+
+        totalDamageForAttack += totalAverageRollResult;
+      }
+      let currentAttackResult = {};
+      currentAttackResult["averagedamage"] = totalDamageForAttack;
+      let isProficient = attackObject.data.data.proficient;
+      let attackBonus = 0;
+      if (isProficient)
+      {
+        attackBonus += attackObject.data.data.prof.flat;
+      }
+
+      attackBonus += abilityModValue;
+      currentAttackResult["attackbonustohit"] = attackBonus;
+      currentAttackResult["numberofattacks"] = numberOfAttacks;
+      currentAttackResult["attackdescription"] = attackObject.name;
+      return currentAttackResult;
+    }
+
+    static getAverageDamageFromDescription(damageDescription, abilityModValue)
+    {
+      damageDescription = damageDescription.replaceAll("@mod", abilityModValue);
+      let matches = [...damageDescription.matchAll(/((?<diceCount>\d+)d(?<diceType>\d+))/gm)];
+      for (var i = 0; i < matches.length; i++)
+      {
+        let matchResult = matches[i];
+        let entireMatchValue = matchResult[0];
+        let matchResultGroups = matchResult.groups;
+        let diceCount = matchResultGroups.diceCount;
+        let diceType = matchResultGroups.diceType;
+        let diceTypeAverage = (parseInt(diceType) + 1) / 2;
+        let totalDiceRollAverage = diceTypeAverage * diceCount;
+        damageDescription = damageDescription.replaceAll(entireMatchValue, totalDiceRollAverage);
+      }
+      let totalAverageRollResult = eval(damageDescription);
+      return totalAverageRollResult;
     }
 
     static getActorTraits(actor)
