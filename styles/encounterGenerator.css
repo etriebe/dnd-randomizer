@@ -371,6 +371,9 @@
     top: 0px;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data span.loot-button,
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-numberofattacks,
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-totaldamage,
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-averageattackbonus,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp {
     border-bottom: 1px solid var(--palette-app-background-dark, #191813cc);
@@ -402,6 +405,26 @@
     background-color: var(--palette-danger, #a00f0f);
     border-color: var(--palette-danger-dark, #500808);
     color: var(--palette-app-danger-shaded-text, white);
+}
+
+#SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary {
+    background-color: var(--palette-app-background-dark, #191813);
+	border-bottom-left-radius: 0.25rem;
+    color: var(--palette-app-background-dark-contrast-text, #f0f0e0);
+	font-size: 0.7rem;
+	position: absolute;
+    right: 60px;
+    top: 20px;
+}
+
+#SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary .encounter-numberofattacks,
+#SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary .encounter-totaldamage,
+#SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary .encounter-averageattackbonus {
+    border-bottom: 1px solid var(--palette-app-background-dark, #191813cc);
+	border-top-width: 0px;
+	display: inline-block;
+	padding: 0.25rem;
+    top: 20px;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp {
 	border-right: 1px solid var(--palette-app-background-dark, #191813);

@@ -4,6 +4,7 @@ class SFLocalHelpers {
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
+    static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
   
     static initializeDictionaries() {
       this.dictionariesInitialized = true;
@@ -61,11 +62,11 @@ class SFLocalHelpers {
 
         levelList.push(totalLevelCount);
       }
-      var total = 0;
-      for(var i = 0; i < levelList.length; i++) {
+      let total = 0;
+      for(let i = 0; i < levelList.length; i++) {
           total += levelList[i];
       }
-      var avg = Math.floor(total / levelList.length);
+      let avg = Math.floor(total / levelList.length);
       let resultObject = {};
       resultObject["numberofplayers"] = levelList.length;
       resultObject["averageplayerlevel"] = avg;
@@ -141,7 +142,7 @@ class SFLocalHelpers {
           }
   
           try {
-            const actor = await compendium.getDocument(entry._id);
+            let actor = await compendium.getDocument(entry._id);
             let actorName = actor.data.name;
             actorName = actorName.replaceAll("\"", "");
             if (actorName === "#[CF_tempEntity]")
@@ -166,19 +167,275 @@ class SFLocalHelpers {
             }
             let monsterObject = {};
             monsterObject["actor"] = actor;
+            monsterObject["actorname"] = actorName;
             monsterObject["actorid"] = actor.data._id;
             monsterObject["compendiumname"] = compendium.metadata.label;
             monsterObject["environment"] = environmentArray;
             monsterObject["creaturetype"] = actor.data.data.details.type.value;
-
+            monsterObject["combatdata"] = this.getCombatDataPerRound(actor);
             this.allMonsters.push(monsterObject);
           } 
           catch (error) {
-            console.log(error);
-            console.log(`Actor id ${entry._id} failed to get added.`);
+            console.warn(error);
+            console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
           }
         }
       }
+    }
+
+    static getCombatDataPerRound(actor)
+    {
+      let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat") 
+        && i.name.toLowerCase() != "multiattack"
+        && i.hasAttack);
+      // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
+      let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
+      let allAttackResultObjects = [];
+      if (multiAttack && multiAttack.length > 0)
+      {
+        // Description types supported:
+        // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
+        // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
+        let multiAttackDescription = multiAttack[0].data.data.description.value.toLowerCase();
+
+        let parsedAttackList = [];
+        for (let i = 0; i < attackList.length; i++)
+        {
+          let currentAttack = attackList[i];
+          let attackName = currentAttack.name.toLowerCase();
+          let sanitizedAttackName = attackName.replaceAll(/\(.+\)/gm, "").trim();
+          sanitizedAttackName = sanitizedAttackName.replaceAll(/\+\d/gm, "").trim();
+          sanitizedAttackName = sanitizedAttackName.replaceAll(/\)/gm, "").trim(); // currently creatures with a recharge attack have the recharge attack named incorrectly
+          // skip if we've removed anything interesting from the attack name
+          if (sanitizedAttackName === "")
+          {
+            continue;
+          }
+          parsedAttackList.push(sanitizedAttackName);
+        }
+        parsedAttackList.push("melee attack");
+        let parsedAttackRegex = parsedAttackList.join("|");
+
+        let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
+        let numberMatches = [...multiAttackDescription.matchAll(this.numberRegex)];
+        let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
+
+        let previousAttackIndex = -1;
+        for (let i = 0; i < attackMatches.length; i++)
+        {
+          let currentAttackMatch = attackMatches[i];
+          let attackObject = attackList.find(a => a.name.toLowerCase().match(currentAttackMatch[0]));
+          if (!attackObject || currentAttackMatch[0] === "melee attack")
+          {
+            attackObject = attackList.find(a => a.type === "weapon");
+          }
+          let currentAttackIndex = currentAttackMatch.index;
+          let numberMatchesBeforeAttack = numberMatches.filter(n => n.index < currentAttackIndex);
+          let correctNumberMatch = numberMatchesBeforeAttack[numberMatchesBeforeAttack.length - 1];
+          let actualNumberOfAttacks = 1;
+          if (correctNumberMatch)
+          {
+            actualNumberOfAttacks = this.getIntegerFromWordNumber(correctNumberMatch[0]);
+          }
+          let currentAttackObject = this.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
+
+          if (!currentAttackObject || currentAttackObject.averagedamage === 0)
+          {
+            // Skip because attack is boring and likely is some type of charm feature. 
+            continue;
+          }
+
+          if (previousAttackIndex != -1)
+          {
+            let previousAttackObject = allAttackResultObjects.pop();
+
+            // Check to see if an or is between the previous attack object and the current
+            let orMatchesBetweenAttacks = orMatches.filter(o => o.index > previousAttackIndex && o.index < currentAttackIndex);
+            if (orMatchesBetweenAttacks.length > 0)
+            {
+              // decide which object is better and push that one.
+              if ((currentAttackObject.numberofattacks * currentAttackObject.averagedamage) > 
+              (previousAttackObject.numberofattacks * previousAttackObject.averagedamage))
+              {
+                allAttackResultObjects.push(currentAttackObject);
+              }
+              else
+              {
+                allAttackResultObjects.push(previousAttackObject);
+              }
+            }
+            else
+            {
+              allAttackResultObjects.push(previousAttackObject);
+              allAttackResultObjects.push(currentAttackObject);
+            }
+          }
+          else
+          {
+            allAttackResultObjects.push(currentAttackObject)
+            // console.log(`Adding attack ${attackObject.name} for ${actor.name}`);
+          }
+          previousAttackIndex = currentAttackIndex;
+        }
+
+        if (allAttackResultObjects.length === 0)
+        {
+          let guessedAttack = this.guessActorMultiAttack(attackList, multiAttackDescription);
+          if (guessedAttack)
+          {
+            console.log(`Attempted to guess attack for ${actor.name}: ${guessedAttack.numberofattacks} ${guessedAttack.attackdescription} attacks.`)
+            allAttackResultObjects.push(guessedAttack);
+          }
+        }
+      }
+      else
+      {
+        let bestAttackObject = null;
+        let maxDamage = 0;
+        for (let i = 0; i < attackList.length; i++)
+        {
+          try 
+          {
+            let currentAttackObject = this.getInfoForAttackObject(attackList[i], 1);
+            let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
+            if (maxDamage < totalDamage)
+            {
+              bestAttackObject = currentAttackObject;
+              maxDamage = totalDamage;
+            }
+          }
+          catch (error)
+          {
+            console.warn(`Unable to parse attack ${attackList[i].name}: ${error}`);
+          }
+        }
+        allAttackResultObjects.push(bestAttackObject);
+      }
+
+      if (allAttackResultObjects.length === 0)
+      {
+        console.warn(`Parsed no attack data for actor: ${actor.name}`);
+      }
+      return allAttackResultObjects;
+    }
+
+    static guessActorMultiAttack(attackList, multiAttackDescription)
+    {
+      let firstAttack = attackList.find(a => a.type === "weapon");
+      let actualNumber = 1;
+      let numberMatch = multiAttackDescription.match(this.numberRegex);
+      if (numberMatch)
+      {
+        actualNumber = this.getIntegerFromWordNumber(numberMatch[0]);
+      }
+
+      return this.getInfoForAttackObject(firstAttack, actualNumber);
+    }
+
+    static getIntegerFromWordNumber(number)
+    {
+      // This feels stupid but parseInt can't work with text format like we have.
+      switch (number.toLowerCase())
+      {
+        case "one":
+        case "1":
+          return 1;
+        case "two":
+        case "twice":
+        case "2":
+          return 2;
+        case "three":
+        case "thrice":
+        case "3":
+          return 3;
+        case "four":
+        case "4":
+          return 4;
+        case "five":
+        case "5":
+          return 5;
+        case "six":
+        case "6":
+          return 6;
+        case "seven":
+        case "7":
+          return 7;
+        case "eight":
+        case "8":
+          return 8;
+        case "nine":
+        case "9":
+          return 9;
+        case "ten":
+        case "10":
+          return 10;
+        default:
+          return null;
+      }
+    }
+
+    static getInfoForAttackObject(attackObject, numberOfAttacks)
+    {
+      let abilityModType = attackObject.abilityMod;
+      let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
+      let damageList = attackObject.data.data.damage.parts;
+
+      let totalDamageForAttack = 0;
+      for (let i = 0; i < damageList.length; i++)
+      {
+        let damageArray = damageList[i];
+        let damageDescription = damageArray[0];
+        let damageType = damageArray[1];
+        damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+        let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
+        for (let j = 0; j < abilitiesModMatches.length; j++)
+        {
+          let abilitiesDescription = abilitiesModMatches[j][0];
+          let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "attackObject.parent.data.data.abilities.");
+          let abilitiesModValue = eval(newAbilitiesDescription);
+          damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
+        }
+
+        let totalAverageRollResult = this.getAverageDamageFromDescription(damageDescription, abilityModValue);
+
+        totalDamageForAttack += totalAverageRollResult;
+      }
+      let currentAttackResult = {};
+      currentAttackResult["averagedamage"] = totalDamageForAttack;
+      let isProficient = attackObject.data.data.proficient;
+      let attackBonus = 0;
+      if (isProficient)
+      {
+        attackBonus += attackObject.data.data.prof.flat;
+      }
+
+      attackBonus += abilityModValue;
+      currentAttackResult["attackbonustohit"] = attackBonus;
+      currentAttackResult["numberofattacks"] = numberOfAttacks;
+      currentAttackResult["attackdescription"] = attackObject.name;
+      return currentAttackResult;
+    }
+
+    static getAverageDamageFromDescription(damageDescription, abilityModValue)
+    {
+      damageDescription = damageDescription.replaceAll("@mod", abilityModValue);
+      let matches = [...damageDescription.matchAll(/((?<diceCount>\d+)d(?<diceType>\d+))/gm)];
+      for (let i = 0; i < matches.length; i++)
+      {
+        let matchResult = matches[i];
+        let entireMatchValue = matchResult[0];
+        let matchResultGroups = matchResult.groups;
+        let diceCount = matchResultGroups.diceCount;
+        let diceType = matchResultGroups.diceType;
+        let diceTypeAverage = (parseInt(diceType) + 1) / 2;
+        let totalDiceRollAverage = diceTypeAverage * diceCount;
+        damageDescription = damageDescription.replaceAll(entireMatchValue, totalDiceRollAverage);
+      }
+
+      // deal with modules that use a Math.floor function but Math. isn't specified
+      damageDescription = damageDescription.replaceAll("floor(", "Math.floor(");
+      let totalAverageRollResult = eval(damageDescription);
+      return totalAverageRollResult;
     }
 
     static getActorTraits(actor)
@@ -204,7 +461,7 @@ class SFLocalHelpers {
 
       let actorSpells = actor.data.data.spells;
       let maxSpellLevel = 0;
-      for (var i = 1; i <= 9; i++)
+      for (let i = 1; i <= 9; i++)
       {
         let currentSpellLevelObject = eval("actorsSpells.spell" + i);
         if (currentSpellLevelObject.max > 0)
@@ -406,6 +663,7 @@ class SFLocalHelpers {
           creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
+          creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
@@ -607,9 +865,9 @@ class SFLocalHelpers {
     static getResultFromTreasureHoardTable(rollTable, rollResult)
     {
       let rowSelected;
-      for (var key in rollTable)
+      for (let key in rollTable)
       {
-        var value = rollTable[key];
+        let value = rollTable[key];
   
         // if this is a single number
         if (key.indexOf("-") === -1)
@@ -644,7 +902,7 @@ class SFLocalHelpers {
       let magicItemResultObject = [];
       let magicItemTrackerDictionary = {};
   
-      for (var i = 0; i < matches.length; i++)
+      for (let i = 0; i < matches.length; i++)
       {
         let matchResult = matches[0];
         let matchResultGroups = matchResult.groups;
@@ -678,8 +936,8 @@ class SFLocalHelpers {
           magicItemTrackerDictionary[magicItemResult] = (magicItemTrackerDictionary[magicItemResult] || 0) + 1;
         }
     
-        for(var objectName in magicItemTrackerDictionary) {
-          var countOfObjects = magicItemTrackerDictionary[objectName];
+        for(let objectName in magicItemTrackerDictionary) {
+          let countOfObjects = magicItemTrackerDictionary[objectName];
     
           if (!countOfObjects)
           {
@@ -720,8 +978,8 @@ class SFLocalHelpers {
         gemOrArtTrackerDictionary[gemOrArtResult] = (gemOrArtTrackerDictionary[gemOrArtResult] || 0) + 1;
       }
   
-      for(var objectName in gemOrArtTrackerDictionary) {
-        var countOfObjects = gemOrArtTrackerDictionary[objectName];
+      for(let objectName in gemOrArtTrackerDictionary) {
+        let countOfObjects = gemOrArtTrackerDictionary[objectName];
   
         if (!countOfObjects)
         {
@@ -920,9 +1178,9 @@ class SFLocalHelpers {
     static getCurrentEncounterXPMultiplier(monsterCount)
     {
       let latestEncounterMultiplier;
-      for (var key in SFLOCALCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS)
+      for (let key in SFLOCALCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS)
       {
-        var value = SFLOCALCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS[key];
+        let value = SFLOCALCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS[key];
         latestEncounterMultiplier = value;
         if (monsterCount <= key)
         {
