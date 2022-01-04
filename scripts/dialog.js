@@ -40,7 +40,7 @@ class SFDialog extends FormApplication {
 			let combatSummaryHTML = ``;
 			if (encounter.combatsummary.totalattacks > 0)
 			{
-				combatSummaryHTML = `<div class="combat-summary">
+				combatSummaryHTML = `<div class="combat-summary">Per Round: 
 					<span class="combat-numberofattacks">${encounter.combatsummary.totalattacks} attacks</span>
 					<span class="combat-totaldamage"> | ${encounter.combatsummary.totaldamage} dmg</span>
 					<span class="combat-averageattackbonus"> | ${encounter.combatsummary.averageattackbonus.toFixed(0)} average attack bonus</span>
