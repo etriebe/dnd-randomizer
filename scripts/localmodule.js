@@ -46,7 +46,7 @@ class SFLocalHelpers {
       for (let player of playerCharacters) {
         let playerName = player.name;
         const el = savedPlayerSettings.find(i => Object.keys(i)[0] === playerName);
-        if (el[playerName] === false)
+        if (el && el[playerName] === false)
         {
           continue;
         }
