@@ -320,9 +320,13 @@ class SFLocalHelpers {
     static guessActorMultiAttack(attackList, multiAttackDescription)
     {
       let firstAttack = attackList.find(a => a.type === "weapon");
+      let actualNumber = 1;
       let numberMatch = multiAttackDescription.match(this.numberRegex);
-      let actualNumber = this.getIntegerFromWordNumber(numberMatch[0]);
-      
+      if (numberMatch)
+      {
+        actualNumber = this.getIntegerFromWordNumber(numberMatch[0]);
+      }
+
       return this.getInfoForAttackObject(firstAttack, actualNumber);
     }
 
