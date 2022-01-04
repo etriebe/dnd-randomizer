@@ -56,6 +56,11 @@ class SFDialog extends FormApplication {
 						<span class="encounter-difficulty ${encounter.data.difficulty}">${encounter.data.difficulty}</span>
 						<span class="encounter-xp">${encounter.data.xp}</span>
 					</div>
+					<div class="combat-summary">
+						<span class="combat-numberofattacks">${encounter.combatsummary.totalattacks} attacks</span>
+						<span class="combat-totaldamage"> | ${encounter.combatsummary.totaldamage} dmg</span>
+						<span class="combat-averageattackbonus"> | ${encounter.combatsummary.averageattackbonus.toFixed(0)} average attack bonus</span>
+					</div>
 				</div>
 				<div class="create-encounter">
 					<i class="fas ${game.settings.get(SFCONSTS.MODULE_NAME, 'secretEncounterIcon') ? 'fa-pastafarianism' : 'fa-angle-double-right' }" data-trigger="spawn" title="Spawn Encounter"></i>

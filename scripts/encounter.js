@@ -5,6 +5,7 @@ class Encounter {
     this.difficulty = data.difficulty;
     this.currency = data.loot.currency;
     this.creatures = [];
+    this.combatsummary = {};
     this.loot = [];
     this.id = data.id || randomID(40);
   }
@@ -34,6 +35,45 @@ class Encounter {
     for (let creature of this.data.creatures) {
       this.creatures.push(new EncCreature(creature));
     }
+
+    let totalAttacks = 0;
+    let totalDamage = 0;
+    let allAttackBonuses = [];
+    for (let creature of this.creatures)
+    {
+      let creatureCombatData = creature.combatdata;
+      for (var i = 0; i < creature.quantity; i++)
+      {
+        for (let attack of creatureCombatData)
+        {
+          try
+          {
+            let attackBonus = attack.attackbonustohit;
+            let averageDamage = attack.averagedamage;
+            let numberOfAttacks = attack.numberofattacks;
+            for (var j = 0; j < numberOfAttacks; j++)
+            {
+              totalAttacks++;
+              totalDamage += averageDamage;
+              allAttackBonuses.push(attackBonus);
+            }
+          }
+          catch (error)
+          {
+            console.warn(`Failed to add combat summary for creature ${creature.name}`);
+          }
+        }
+      }
+    }
+
+    var attackBonusTotal = 0;
+    for(var i = 0; i < allAttackBonuses.length; i++) {
+      attackBonusTotal += allAttackBonuses[i];
+    }
+    let allAttackBonusAverage = attackBonusTotal / allAttackBonuses.length;
+    this.combatsummary["totalattacks"] = totalAttacks;
+    this.combatsummary["totaldamage"] = totalDamage;
+    this.combatsummary["averageattackbonus"] = allAttackBonusAverage;
     return this;
   }
 
