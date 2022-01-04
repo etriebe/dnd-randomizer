@@ -185,7 +185,9 @@ class SFLocalHelpers {
 
     static getCombatDataPerRound(actor)
     {
-      let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat") && i.name.toLowerCase() != "multiattack");
+      let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat") 
+        && i.name.toLowerCase() != "multiattack"
+        && i.hasAttack);
       // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
       let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
       let allAttackResultObjects = [];
