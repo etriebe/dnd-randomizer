@@ -4,6 +4,7 @@ class SFLocalHelpers {
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
+    static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice)`;
   
     static initializeDictionaries() {
       this.dictionariesInitialized = true;
@@ -195,21 +196,22 @@ class SFLocalHelpers {
         // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
         let multiAttackDescription = multiAttack[0].data.data.description.value.toLowerCase();
 
-        var parsedAttackList = [];
-        for (var i = 0; i < attackList.length; i++)
+        let parsedAttackList = [];
+        for (let i = 0; i < attackList.length; i++)
         {
-          var currentAttack = attackList[i];
-          var attackName = currentAttack.name.toLowerCase();
-          var sanitizedAttackName = attackName.replaceAll(/\(.+\)/gm, "").trim();
+          let currentAttack = attackList[i];
+          let attackName = currentAttack.name.toLowerCase();
+          let sanitizedAttackName = attackName.replaceAll(/\(.+\)/gm, "").trim();
           sanitizedAttackName = sanitizedAttackName.replaceAll(/\+\d/gm, "").trim();
           sanitizedAttackName = sanitizedAttackName.replaceAll(/\)/gm, "").trim(); // currently creatures with a recharge attack have the recharge attack named incorrectly
           parsedAttackList.push(sanitizedAttackName);
         }
-        var parsedAttackRegex = parsedAttackList.join("|");
+        let parsedAttackRegex = parsedAttackList.join("|");
 
-        var attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
-        var numberMatches = [...multiAttackDescription.matchAll(`(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten)`)];
-        var orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
+        let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
+        let numberMatches = [...multiAttackDescription.matchAll(this.numberRegex)];
+        let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
+
 
         var previousAttackIndex = -1;
         for (var i = 0; i < attackMatches.length; i++)
@@ -258,6 +260,16 @@ class SFLocalHelpers {
           }
           previousAttackIndex = currentAttackIndex;
         }
+
+        if (allAttackResultObjects.length === 0)
+        {
+          let guessedAttack = this.guessActorMultiAttack(attackList, multiAttackDescription);
+          if (guessedAttack)
+          {
+            console.log(`Attempted to guess attack for ${actor.name}: ${guessedAttack.numberofattacks} ${guessedAttack.attackdescription} attacks.`)
+            allAttackResultObjects.push(guessedAttack);
+          }
+        }
       }
       else
       {
@@ -265,12 +277,19 @@ class SFLocalHelpers {
         let maxDamage = 0;
         for (var i = 0; i < attackList.length; i++)
         {
-          let currentAttackObject = this.getInfoForAttackObject(attackList[i], 1);
-          let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
-          if (maxDamage < totalDamage)
+          try 
           {
-            bestAttackObject = currentAttackObject;
-            maxDamage = totalDamage;
+            let currentAttackObject = this.getInfoForAttackObject(attackList[i], 1);
+            let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
+            if (maxDamage < totalDamage)
+            {
+              bestAttackObject = currentAttackObject;
+              maxDamage = totalDamage;
+            }
+          }
+          catch (error)
+          {
+            console.warn(`Unable to parse attack ${attackList[i].name}: ${error}`);
           }
         }
         allAttackResultObjects.push(bestAttackObject);
@@ -280,11 +299,16 @@ class SFLocalHelpers {
       {
         console.warn(`Parsed no attack data for actor: ${actor.name}`);
       }
-      else
-      {
-        // console.log(`Parsed ${actor.name} to have ${allAttackResultObjects.length} attacks`);
-      }
       return allAttackResultObjects;
+    }
+
+    static guessActorMultiAttack(attackList, multiAttackDescription)
+    {
+      let firstAttack = attackList.find(a => a.type === "weapon");
+      let numberMatch = multiAttackDescription.match(this.numberRegex);
+      let actualNumber = this.getIntegerFromWordNumber(numberMatch[0]);
+      
+      return this.getInfoForAttackObject(firstAttack, actualNumber);
     }
 
     static getIntegerFromWordNumber(number)
@@ -295,8 +319,10 @@ class SFLocalHelpers {
         case "one":
           return 1;
         case "two":
+        case "twice":
           return 2;
         case "three":
+        case "thrice":
           return 3;
         case "four":
           return 4;
@@ -324,12 +350,21 @@ class SFLocalHelpers {
       let damageList = attackObject.data.data.damage.parts;
 
       let totalDamageForAttack = 0;
-      for (var j = 0; j < damageList.length; j++)
+      for (var i = 0; i < damageList.length; i++)
       {
-        let damageArray = damageList[j];
+        let damageArray = damageList[i];
         let damageDescription = damageArray[0];
         let damageType = damageArray[1];
         damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+        let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
+        for (var j = 0; j < abilitiesModMatches.length; j++)
+        {
+          let abilitiesDescription = abilitiesModMatches[j][0];
+          let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "attackObject.parent.data.data.abilities.");
+          let abilitiesModValue = eval(newAbilitiesDescription);
+          damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
+        }
+
         let totalAverageRollResult = this.getAverageDamageFromDescription(damageDescription, abilityModValue);
 
         totalDamageForAttack += totalAverageRollResult;
