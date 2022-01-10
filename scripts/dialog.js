@@ -160,6 +160,19 @@ class SFDialog extends FormApplication {
 
 		html.find('button#generate-remote-encounters-button').on('click', async (event) => {
 			event.preventDefault();
+			let clearOldEncounters = game.settings.get(SFCONSTS.MODULE_NAME, 'clearOldEncountersOnGeneration');
+			if (clearOldEncounters)
+			{
+				const $li = html.find('.form-encounters li');
+				for (var i = 0; i < $li.length; i++)
+				{
+					let currentEncounter = $li[i];
+					if (currentEncounter.classList.contains("is-favorited-false"))
+					{
+						currentEncounter.remove();
+					}
+				}
+			}
 			const $button = $(event.currentTarget);
 
 			$button.prop('disabled', true).addClass('disabled');
@@ -231,6 +244,11 @@ class SFDialog extends FormApplication {
 		html.find('button#filter-button').on('click', (event) => {
 			event.preventDefault();
 			new SFCompendiumSorter().render(true);
+		});
+
+		html.find('button#clear-encounters-button').on('click', function(event) {
+			event.preventDefault();
+			// html.find('input#search-box').val('').trigger('change');
 		});
 
 		html.find('button#license-and-credits').on('click', (event) => {
