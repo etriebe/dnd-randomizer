@@ -33,6 +33,14 @@ Hooks.once("init", async function () {
     default: true,
     onChange:debouncedReload,
   });
+  game.settings.register(SFCONSTS.MODULE_NAME, "clearOldEncountersOnGeneration", {
+    name: "Clear existing encounters when generating new ones (besides favorited encounters).",
+    hint: "If checked, we will clear the existing encounters when we generate new ones. Else these will be populated below the current list.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
   game.settings.register(SFCONSTS.MODULE_NAME, 'favoritedEncounters', {
     scope: "world",
     config: false,
