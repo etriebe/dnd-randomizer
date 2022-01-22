@@ -60,6 +60,11 @@ class SFLocalHelpers {
           totalLevelCount += currentClassLevel;
         }
 
+        if (totalLevelCount === 0)
+        {
+          console.log(`Player ${player.name} has no class level so skipping them.`);
+          continue;
+        }
         levelList.push(totalLevelCount);
       }
       let total = 0;
