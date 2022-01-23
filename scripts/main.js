@@ -1,7 +1,7 @@
 const SFCONSTS = {
     MODULE_NAME: "dnd-randomizer",
     GEN_OPT: {
-        loot_type: ["individual treasure", "treasure horde"],
+        loot_type: ["individual treasure", "Treasure Horde"],
         numberOfPlayers: Number,//[1 - 13]
         averageLevelOfPlayers: Number,//[1 - 20]
         environment: [

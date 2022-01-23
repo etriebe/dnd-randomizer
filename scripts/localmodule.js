@@ -918,7 +918,7 @@ class SFLocalHelpers {
         }
         catch (error)
         {
-          console.error(`Unable to generate treasure horde for maximum CR ${maximumCRFromGroup} and d100 roll of ${d100Roll}. Error: ${error}`);
+          console.error(`Unable to generate Treasure Horde for maximum CR ${maximumCRFromGroup} and d100 roll of ${d100Roll}. Error: ${error}`);
         }
       }
   
