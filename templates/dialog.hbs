@@ -1,7 +1,17 @@
 <form>
 	<div class="form-controls">
 		<div class="form-groups">
-			I'm looking for an encounter in a
+			I'm looking for an encounter (Type: 
+			<span id="encounterType" class="input-container">
+				<span class="placeholder">Single BBEG</span>
+				<span class="input selectbox">
+					<select class="fancy-select hidden" name="encounterType">
+						<option value="Random">Random</option>
+						<option value="Single BBEG" selected>Single BBEG</option>
+					</select>
+				</span>
+			</span>
+			) in a
 			<span id="environmentSelector" class="input-container">
 				<span class="placeholder">{{environments.[0]}}</span>
 				<span class="input selectbox">
