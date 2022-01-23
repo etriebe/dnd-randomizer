@@ -397,7 +397,7 @@ class SFDialog extends FormApplication {
 		$('#averageLevelOfPlayers .placeholder').text(charData.level);
 		$('#averageLevelOfPlayers select').val(charData.level);
 		$(`#averageLevelOfPlayers .newOptions .newOption[data-value="${charData.level}"]`).addClass('active selected');
-		$(`#lootType .newOptions .newOption[data-value="Treasure Hoard"]`).addClass('active selected');
+		$(`#lootType .newOptions .newOption[data-value="Treasure horde"]`).addClass('active selected');
 	}
 
 	async _updateObject(event, formData) {

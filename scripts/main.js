@@ -1,7 +1,7 @@
 const SFCONSTS = {
     MODULE_NAME: "dnd-randomizer",
     GEN_OPT: {
-        loot_type: ["individual treasure", "treasure hoard"],
+        loot_type: ["individual treasure", "treasure horde"],
         numberOfPlayers: Number,//[1 - 13]
         averageLevelOfPlayers: Number,//[1 - 20]
         environment: [
@@ -79,5 +79,5 @@ async function dataTest(){
 }
 
 async function fetchTest(){
-    return await fetch('https://theripper93.com/encounterData.php?loot_type=Treasure+Hoard').then(response => response.json()).then(data => data);
+    return await fetch('https://theripper93.com/encounterData.php?loot_type=Treasure+horde').then(response => response.json()).then(data => data);
 }
