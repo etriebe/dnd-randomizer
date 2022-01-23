@@ -801,19 +801,19 @@ class SFLocalHelpers {
             let individualTreasureRowContents;
             if (monsterCR <= 4)
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR4, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR4, d100Roll);
             }
             else if (monsterCR <= 10)
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR10, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR10, d100Roll);
             }
             else if (monsterCR <= 16)
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR16, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR16, d100Roll);
             }
             else
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR17_PLUS, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR17_PLUS, d100Roll);
             }
   
             currencyResultObject["cp"] += SFLocalHelpers.getCoinsResultFromRollTable(individualTreasureRowContents[0]);
@@ -886,7 +886,7 @@ class SFLocalHelpers {
           currencyResultObject["cp"] += this.getRollResult("6d6") * 100;
           currencyResultObject["sp"] += this.getRollResult("3d6") * 100;
           currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR4, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR4, d100Roll);
         }
         else if (maximumCRFromGroup <= 10)
         {
@@ -894,19 +894,19 @@ class SFLocalHelpers {
           currencyResultObject["sp"] += this.getRollResult("2d6") * 1000;
           currencyResultObject["gp"] += this.getRollResult("6d6") * 100;
           currencyResultObject["pp"] += this.getRollResult("3d6") * 10;
-          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR10, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR10, d100Roll);
         }
         else if (maximumCRFromGroup <= 16)
         {
           currencyResultObject["gp"] += this.getRollResult("4d6") * 1000;
           currencyResultObject["pp"] += this.getRollResult("5d6") * 100;
-          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR16, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR16, d100Roll);
         }
         else
         {
           currencyResultObject["gp"] += this.getRollResult("12d6") * 1000;
           currencyResultObject["pp"] += this.getRollResult("8d6") * 1000;
-          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR17_PLUS, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR17_PLUS, d100Roll);
         }
   
         try
@@ -929,7 +929,7 @@ class SFLocalHelpers {
       return lootResultObject;
     }
   
-    static getResultFromTreasurehordeTable(rollTable, rollResult)
+    static getResultFromTreasureHordeTable(rollTable, rollResult)
     {
       let rowSelected;
       for (let key in rollTable)
@@ -1081,7 +1081,7 @@ class SFLocalHelpers {
       }
   
       let randomItemNumber = Math.floor(Math.random() * maxNumberToRollFor) + 1;
-      return SFLocalHelpers.getResultFromTreasurehordeTable(rollTable, randomItemNumber);
+      return SFLocalHelpers.getResultFromTreasureHordeTable(rollTable, randomItemNumber);
     }
   
     static getMagicItemTable(regexMatchResultGroups)
