@@ -759,7 +759,7 @@ class SFLocalHelpers {
       }
       else
       {
-        generatedLoot = SFLocalHelpers.getTreasurehordeForEncounter(currentEncounter);
+        generatedLoot = SFLocalHelpers.getTreasureHordeForEncounter(currentEncounter);
       }
   
       return generatedLoot;
@@ -846,7 +846,7 @@ class SFLocalHelpers {
       return totalCoins;
     }
   
-    static getTreasurehordeForEncounter(currentEncounter)
+    static getTreasureHordeForEncounter(currentEncounter)
     {
       let creatures = currentEncounter["creatures"];
       let lootResultObject = {};
@@ -880,13 +880,13 @@ class SFLocalHelpers {
   
         let d100Roll = this.getRollResult("1d100");
   
-        let treasurehordeRowContents;
+        let treasureHordeRowContents;
         if (maximumCRFromGroup <= 4)
         {
           currencyResultObject["cp"] += this.getRollResult("6d6") * 100;
           currencyResultObject["sp"] += this.getRollResult("3d6") * 100;
           currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-          treasurehordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_horde_CR4, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR4, d100Roll);
         }
         else if (maximumCRFromGroup <= 10)
         {
@@ -894,26 +894,26 @@ class SFLocalHelpers {
           currencyResultObject["sp"] += this.getRollResult("2d6") * 1000;
           currencyResultObject["gp"] += this.getRollResult("6d6") * 100;
           currencyResultObject["pp"] += this.getRollResult("3d6") * 10;
-          treasurehordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_horde_CR10, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR10, d100Roll);
         }
         else if (maximumCRFromGroup <= 16)
         {
           currencyResultObject["gp"] += this.getRollResult("4d6") * 1000;
           currencyResultObject["pp"] += this.getRollResult("5d6") * 100;
-          treasurehordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_horde_CR16, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR16, d100Roll);
         }
         else
         {
           currencyResultObject["gp"] += this.getRollResult("12d6") * 1000;
           currencyResultObject["pp"] += this.getRollResult("8d6") * 1000;
-          treasurehordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_horde_CR17_PLUS, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasurehordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR17_PLUS, d100Roll);
         }
   
         try
         {
-          let gemOrArtRowContents = treasurehordeRowContents[0];
+          let gemOrArtRowContents = treasureHordeRowContents[0];
           otherResultObject = SFLocalHelpers.getArtOrGemsResult(gemOrArtRowContents);
-          let magicItemsRowContents = treasurehordeRowContents[1];
+          let magicItemsRowContents = treasureHordeRowContents[1];
           itemsResultObject = SFLocalHelpers.getMagicItemResult(magicItemsRowContents);
         }
         catch (error)
