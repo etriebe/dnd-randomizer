@@ -728,5 +728,13 @@ const SFLOCALCONSTS = {
         "9-10": "Armor, +3 splint",
         "11": "Armor, +3 half plate",
         "12": "Armor, +3 plate",
+    },
+    ENCOUNTER_TYPE_DESCRIPTIONS: {
+        // Formula format ["1:.3*x","2:.1*x"] - This will create an encounter 
+        "Single BBEG": ["1:1*x"],
+        "BBEG + 2 Minions": ["1:0.3*x","2:0.1*x"],
+        "2 Semi-BBEG": ["2:0.3333*x"],
+        "Monster Hoard": ["6:0.08333*x"],
+        "Random": ["*"],
     }
 }
