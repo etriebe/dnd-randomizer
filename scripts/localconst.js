@@ -730,7 +730,7 @@ const SFLOCALCONSTS = {
         "12": "Armor, +3 plate",
     },
     ENCOUNTER_TYPE_DESCRIPTIONS: {
-        // Formula format ["1:.3*x","2:.1*x"] - This will create an encounter 
+        // Formula format ["1:.3*x","2:.1*x"] - This will create an encounter with 1 creature that is 30% of target XP and 2 creatures that are 10% target XP
         "Single BBEG": ["1:1*x"],
         "BBEG + 2 Minions": ["1:0.3*x","2:0.1*x"],
         "2 Semi-BBEG": ["2:0.3333*x"],
