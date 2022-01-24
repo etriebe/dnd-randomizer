@@ -91,7 +91,7 @@ const SFLOCALCONSTS = {
         "16-55":    ["", "", "", "1d6 x 1000", "1d6 x 100"],
         "56-100":    ["", "", "", "1d6 x 1000", "2d6 x 100"],
     },
-    ENCOUNTER_TREASURE_HOARD_CR4: {
+    ENCOUNTER_TREASURE_HORDE_CR4: {
         "01-06" :   ["", ""],
         "07-16" :   ["2d6 10 gp gems",	""],
         "17-26" :   ["2d4 25 gp art objects", ""],
@@ -110,7 +110,7 @@ const SFLOCALCONSTS = {
         "98-99" :   ["2d4 25 gp art objects",	"Roll 1d1 on Magic Item Table G."],
         "100"   :   ["2d6 50 gp gems",	        "Roll 1d1 on Magic Item Table G."],
     },
-    ENCOUNTER_TREASURE_HOARD_CR10: {
+    ENCOUNTER_TREASURE_HORDE_CR10: {
         "01-04"	:   ["", ""],
         "05-10"	:   ["2d4 25 gp art objects",	""],
         "11-16"	:   ["3d6 50 gp gems",	""],
@@ -141,7 +141,7 @@ const SFLOCALCONSTS = {
         "99"	:   ["3d6 100 gp gems",	        "Roll 1d1 on Magic Item Table H."],
         "100"	:   ["2d4 250 gp art objects",	"Roll 1d1 on Magic Item Table H."],
     },
-    ENCOUNTER_TREASURE_HOARD_CR16: {
+    ENCOUNTER_TREASURE_HORDE_CR16: {
         "01-03" :	["",	""],
         "04-06" :	["2d4 250 gp art objects",	""],
         "07-09" :	["2d4 750 gp art objects",	""],
@@ -176,7 +176,7 @@ const SFLOCALCONSTS = {
         "97-98" :	["3d6 500 gp gems",	        "Roll 1d1 on Magic Item Table I."],
         "99-100" :	["3d6 1,000 gp gems",	    "Roll 1d1 on Magic Item Table I."],
     },
-    ENCOUNTER_TREASURE_HOARD_CR17_PLUS: {
+    ENCOUNTER_TREASURE_HORDE_CR17_PLUS: {
         "01-04"	:   ["", ""],
         "05-10"	:   ["2d4 25 gp art objects",	""],
         "11-16"	:   ["3d6 50 gp gems",	""],
@@ -728,5 +728,14 @@ const SFLOCALCONSTS = {
         "9-10": "Armor, +3 splint",
         "11": "Armor, +3 half plate",
         "12": "Armor, +3 plate",
+    },
+    ENCOUNTER_TYPE_DESCRIPTIONS: {
+        // Formula format ["1:.3*x","2:.1*x"] - This will create an encounter with 1 creature that is 30% of target XP and 2 creatures that are 10% target XP
+        "Single BBEG": ["1:1*x"],
+        "BBEG + 2 Minions": ["1:0.3*x","2:0.1*x"],
+        "2 Semi-BBEG": ["2:0.3333*x"],
+        "BBEG + Monster horde": ["1:0.3*x","5:0.04*x"],
+        "Monster horde": ["6:0.08333*x"],
+        "Random": ["*"],
     }
 }

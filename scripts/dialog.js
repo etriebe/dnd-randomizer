@@ -194,6 +194,7 @@ class SFDialog extends FormApplication {
 			
 			const params = {
 				loot_type: html.find('#lootType select[name="lootType"]').val(),
+				encounterType: html.find('#encounterType select[name="encounterType"]').val(),
 				numberOfPlayers: numberOfPlayers,
 				averageLevelOfPlayers: averageLevelOfPlayers,
 				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
@@ -396,7 +397,7 @@ class SFDialog extends FormApplication {
 		$('#averageLevelOfPlayers .placeholder').text(charData.level);
 		$('#averageLevelOfPlayers select').val(charData.level);
 		$(`#averageLevelOfPlayers .newOptions .newOption[data-value="${charData.level}"]`).addClass('active selected');
-		$(`#lootType .newOptions .newOption[data-value="Treasure Hoard"]`).addClass('active selected');
+		$(`#lootType .newOptions .newOption[data-value="Treasure Horde"]`).addClass('active selected');
 	}
 
 	async _updateObject(event, formData) {

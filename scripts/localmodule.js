@@ -599,88 +599,150 @@ class SFLocalHelpers {
       let targetEncounterXP = SFLOCALCONSTS.ENCOUNTER_DIFFICULTY_XP_TABLES[targetedDifficulty][averageLevelOfPlayers - 1] * numberOfPlayers;
       let currentEncounterXP = 0;
       let numberOfMonstersInCombat = 0;
-  
-      let j = 0;
-      while (j < 50) // attempt to put in 50 monsters before giving up so we don't spin forever
+      let encounterType = params.encounterType;
+      let encounterTypeInformation = SFLOCALCONSTS.ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
+      if (encounterType === "Random")
       {
-        j++;
-        let randomMonsterIndex = Math.floor((Math.random() * monsterList.length));
-        let randomMonster = monsterList[randomMonsterIndex];
-        let monsterName;
-
-        try
+        let j = 0;
+        while (j < 50) // attempt to put in 50 monsters before giving up so we don't spin forever
         {
-          monsterName = randomMonster.name;
-          if (!randomMonster.data || !randomMonster.data.data)
+          j++;
+          let randomMonsterIndex = Math.floor((Math.random() * monsterList.length));
+          let randomMonster = monsterList[randomMonsterIndex];
+          let monsterName;
+  
+          try
           {
-            console.warn(`Monster chosen ${randomMonster.name} didn't have a valid data property.`)
-            continue;
+            monsterName = randomMonster.name;
+            if (!randomMonster.data || !randomMonster.data.data)
+            {
+              console.warn(`Monster chosen ${randomMonster.name} didn't have a valid data property.`)
+              continue;
+            }
+  
+            let randomMonsterXP = randomMonster.data.data.details.xp.value;
+            let currentEncounterXPMultiplier = SFLocalHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
+            let monsterCR = randomMonster.data.data.details.cr;
+            let currentEncounterAdjustedXP = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
+      
+            // If we're within 10% of budget, let's stop
+            if (currentEncounterAdjustedXP > targetEncounterXP * 0.9)
+            {
+              break;
+            }
+      
+            let nextEncounterXPMultiplier = SFLocalHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat + 1);
+      
+            // If adding a single extra creature with no added XP boosts us over the XP target, just exit now.
+            if (currentEncounterXP * nextEncounterXPMultiplier > targetEncounterXP)
+            {
+              break;
+            }
+      
+            if (!randomMonsterXP)
+            {
+              continue;
+            }
+      
+            if (!monsterCR || monsterCR == 0)
+            {
+              // Boring monster
+              continue;
+            }
+      
+            let numberOfMonstersAllowedInCombat = SFLocalHelpers.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster);
+      
+            if (numberOfMonstersAllowedInCombat == 0)
+            {
+              console.log(`Monster: ${monsterName}, XP: ${randomMonsterXP}, CR: ${monsterCR} too dangerous`);
+              continue;
+            }
+      
+            if (numberOfMonstersAllowedInCombat > 20)
+            {
+              console.log(`Monster: ${monsterName}, XP: ${randomMonsterXP}, CR: ${monsterCR} too weak to be interesting in combat...`);
+              continue;
+            }
+      
+            // Choose a random number of creatures to put in combat based on the max allowed number but put a maximum of 10 in combat
+            let numberOfMonstersToPutInCombat = Math.min(Math.floor((Math.random() * numberOfMonstersAllowedInCombat)) + 1, 10);
+            let creatureCombatDetails = {};
+            creatureCombatDetails["name"] = monsterName;
+            creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
+            creatureCombatDetails["cr"] = monsterCR;
+            creatureCombatDetails["xp"] = randomMonsterXP;
+            creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
+            currentEncounter["creatures"].push(creatureCombatDetails);
+            numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
+            currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
           }
-
-          let randomMonsterXP = randomMonster.data.data.details.xp.value;
-          let currentEncounterXPMultiplier = SFLocalHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
-          let monsterCR = randomMonster.data.data.details.cr;
-          let currentEncounterAdjustedXP = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
-    
-          // If we're within 10% of budget, let's stop
-          if (currentEncounterAdjustedXP > targetEncounterXP * 0.9)
+          catch (error)
           {
-            break;
+            console.warn(`Failed to correctly add a random monster to the encounter. randomMonsterIndex: ${randomMonsterIndex}, monster name: ${monsterName}, Error: ${error}`);
           }
-    
-          let nextEncounterXPMultiplier = SFLocalHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat + 1);
-    
-          // If adding a single extra creature with no added XP boosts us over the XP target, just exit now.
-          if (currentEncounterXP * nextEncounterXPMultiplier > targetEncounterXP)
-          {
-            break;
-          }
-    
-          if (!randomMonsterXP)
-          {
-            continue;
-          }
-    
-          if (!monsterCR || monsterCR == 0)
-          {
-            // Boring monster
-            continue;
-          }
-    
-          let numberOfMonstersAllowedInCombat = SFLocalHelpers.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster);
-    
-          if (numberOfMonstersAllowedInCombat == 0)
-          {
-            console.log(`Monster: ${monsterName}, XP: ${randomMonsterXP}, CR: ${monsterCR} too dangerous`);
-            continue;
-          }
-    
-          if (numberOfMonstersAllowedInCombat > 20)
-          {
-            console.log(`Monster: ${monsterName}, XP: ${randomMonsterXP}, CR: ${monsterCR} too weak to be interesting in combat...`);
-            continue;
-          }
-    
-          // Choose a random number of creatures to put in combat based on the max allowed number but put a maximum of 10 in combat
-          let numberOfMonstersToPutInCombat = Math.min(Math.floor((Math.random() * numberOfMonstersAllowedInCombat)) + 1, 10);
-          let creatureCombatDetails = {};
-          creatureCombatDetails["name"] = monsterName;
-          creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
-          creatureCombatDetails["cr"] = monsterCR;
-          creatureCombatDetails["xp"] = randomMonsterXP;
-          creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
-          currentEncounter["creatures"].push(creatureCombatDetails);
-          numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
-          currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
-        }
-        catch (error)
-        {
-          console.warn(`Failed to correctly add a random monster to the encounter. randomMonsterIndex: ${randomMonsterIndex}, monster name: ${monsterName}, Error: ${error}`);
         }
       }
-  
+      else
+      {
+        for (var i = 0; i < encounterTypeInformation.length; i++)
+        {
+          let currentEncounterDescription = encounterTypeInformation[i];
+          let creatureDescriptionParts = currentEncounterDescription.split(":");
+
+          if (creatureDescriptionParts.length != 2)
+          {
+            console.error(`Encounter type description is invalid. Expected format of number:formula. For example: 2:0.3*x. This would choose 2 creatures that are roughly near 30% of the the target encounter XP. Actual: ${currentEncounterDescription}`);
+            return;
+          }
+          let numberOfCreatures = creatureDescriptionParts[0];
+          let formula = creatureDescriptionParts[1];
+          let formulaMatch = formula.match(/(?<multiplier>(\d+)?\.?\d+)\*x/i);
+
+          if (!formulaMatch)
+          {
+            console.error(`Encounter formula is invalid. Expected format of formula: 2:0.3*x. This would choose a creatures that is roughly near 30% of the the target encounter XP.`);
+            return;
+          }
+          let formulaMatchGroups = formulaMatch.groups;
+          let multiplierAmount = formulaMatchGroups.multiplier;
+
+          if (!multiplierAmount)
+          {
+            multiplierAmount = 1;
+          }
+
+          // Have ever exanding wiggle roomsto find more nad more monsters. 
+          let wiggleRoomAmounts = [0.1, 0.2, 0.3];
+
+          for (var j = 0; j < wiggleRoomAmounts.length; j++)
+          {
+            let wiggleRoom = wiggleRoomAmounts[j];
+            let lowerBound = multiplierAmount * targetEncounterXP * (1 - wiggleRoom);
+            let upperBound = multiplierAmount * targetEncounterXP * (1 + wiggleRoom);
+            let filteredMonsterList = monsterList.filter(m => m.data.data.details.xp.value >= lowerBound && m.data.data.details.xp.value <= upperBound);
+            if (filteredMonsterList.length === 0)
+            {
+              continue;
+            }
+
+            let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
+            let randomMonster = filteredMonsterList[randomMonsterIndex];
+            let monsterName = randomMonster.name;
+            let randomMonsterXP = randomMonster.data.data.details.xp.value;
+            let monsterCR = randomMonster.data.data.details.cr;
+            let creatureCombatDetails = {};
+            creatureCombatDetails["name"] = monsterName;
+            creatureCombatDetails["quantity"] = numberOfCreatures;
+            creatureCombatDetails["cr"] = monsterCR;
+            creatureCombatDetails["xp"] = randomMonsterXP;
+            creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
+            currentEncounter["creatures"].push(creatureCombatDetails);
+            break;
+          }
+        }
+      }
+
       currentEncounter["xp"] = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
-      
       let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
       currentEncounter["loot"] = generatedLootObject;
       return currentEncounter;
@@ -697,7 +759,7 @@ class SFLocalHelpers {
       }
       else
       {
-        generatedLoot = SFLocalHelpers.getTreasureHoardForEncounter(currentEncounter);
+        generatedLoot = SFLocalHelpers.getTreasureHordeForEncounter(currentEncounter);
       }
   
       return generatedLoot;
@@ -739,19 +801,19 @@ class SFLocalHelpers {
             let individualTreasureRowContents;
             if (monsterCR <= 4)
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR4, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR4, d100Roll);
             }
             else if (monsterCR <= 10)
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR10, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR10, d100Roll);
             }
             else if (monsterCR <= 16)
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR16, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR16, d100Roll);
             }
             else
             {
-              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR17_PLUS, d100Roll);
+              individualTreasureRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR17_PLUS, d100Roll);
             }
   
             currencyResultObject["cp"] += SFLocalHelpers.getCoinsResultFromRollTable(individualTreasureRowContents[0]);
@@ -784,7 +846,7 @@ class SFLocalHelpers {
       return totalCoins;
     }
   
-    static getTreasureHoardForEncounter(currentEncounter)
+    static getTreasureHordeForEncounter(currentEncounter)
     {
       let creatures = currentEncounter["creatures"];
       let lootResultObject = {};
@@ -818,13 +880,13 @@ class SFLocalHelpers {
   
         let d100Roll = this.getRollResult("1d100");
   
-        let treasureHoardRowContents;
+        let treasureHordeRowContents;
         if (maximumCRFromGroup <= 4)
         {
           currencyResultObject["cp"] += this.getRollResult("6d6") * 100;
           currencyResultObject["sp"] += this.getRollResult("3d6") * 100;
           currencyResultObject["gp"] += this.getRollResult("2d6") * 10;
-          treasureHoardRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HOARD_CR4, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR4, d100Roll);
         }
         else if (maximumCRFromGroup <= 10)
         {
@@ -832,31 +894,31 @@ class SFLocalHelpers {
           currencyResultObject["sp"] += this.getRollResult("2d6") * 1000;
           currencyResultObject["gp"] += this.getRollResult("6d6") * 100;
           currencyResultObject["pp"] += this.getRollResult("3d6") * 10;
-          treasureHoardRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HOARD_CR10, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR10, d100Roll);
         }
         else if (maximumCRFromGroup <= 16)
         {
           currencyResultObject["gp"] += this.getRollResult("4d6") * 1000;
           currencyResultObject["pp"] += this.getRollResult("5d6") * 100;
-          treasureHoardRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HOARD_CR16, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR16, d100Roll);
         }
         else
         {
           currencyResultObject["gp"] += this.getRollResult("12d6") * 1000;
           currencyResultObject["pp"] += this.getRollResult("8d6") * 1000;
-          treasureHoardRowContents = SFLocalHelpers.getResultFromTreasureHoardTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HOARD_CR17_PLUS, d100Roll);
+          treasureHordeRowContents = SFLocalHelpers.getResultFromTreasureHordeTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR17_PLUS, d100Roll);
         }
   
         try
         {
-          let gemOrArtRowContents = treasureHoardRowContents[0];
+          let gemOrArtRowContents = treasureHordeRowContents[0];
           otherResultObject = SFLocalHelpers.getArtOrGemsResult(gemOrArtRowContents);
-          let magicItemsRowContents = treasureHoardRowContents[1];
+          let magicItemsRowContents = treasureHordeRowContents[1];
           itemsResultObject = SFLocalHelpers.getMagicItemResult(magicItemsRowContents);
         }
         catch (error)
         {
-          console.error(`Unable to generate treasure hoard for maximum CR ${maximumCRFromGroup} and d100 roll of ${d100Roll}. Error: ${error}`);
+          console.error(`Unable to generate Treasure Horde for maximum CR ${maximumCRFromGroup} and d100 roll of ${d100Roll}. Error: ${error}`);
         }
       }
   
@@ -867,7 +929,7 @@ class SFLocalHelpers {
       return lootResultObject;
     }
   
-    static getResultFromTreasureHoardTable(rollTable, rollResult)
+    static getResultFromTreasureHordeTable(rollTable, rollResult)
     {
       let rowSelected;
       for (let key in rollTable)
@@ -1019,7 +1081,7 @@ class SFLocalHelpers {
       }
   
       let randomItemNumber = Math.floor(Math.random() * maxNumberToRollFor) + 1;
-      return SFLocalHelpers.getResultFromTreasureHoardTable(rollTable, randomItemNumber);
+      return SFLocalHelpers.getResultFromTreasureHordeTable(rollTable, randomItemNumber);
     }
   
     static getMagicItemTable(regexMatchResultGroups)
