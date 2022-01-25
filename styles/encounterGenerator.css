@@ -411,6 +411,11 @@
     border-color: var(--palette-danger-dark, #500808);
     color: var(--palette-app-danger-shaded-text, white);
 }
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.Extreme {
+    background-color: var(--palette-danger, #520061);
+    border-color: var(--palette-danger-dark, #500808);
+    color: var(--palette-app-danger-shaded-text, white);
+}
 
 #SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary {
     background-color: var(--palette-app-background-dark, #191813);
