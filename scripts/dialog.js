@@ -234,7 +234,7 @@ class SFDialog extends FormApplication {
 			
 			const params = {
 				loot_type: html.find('#lootType select[name="lootType"]').val(),
-				encounterType: html.find('#encounterType select[name="encounterType"]').val(),
+				encounterType: html.find('#encounterTypeSpan select[id="encounterTypeSelect"]').val(),
 				numberOfPlayers: numberOfPlayers,
 				averageLevelOfPlayers: averageLevelOfPlayers,
 				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()

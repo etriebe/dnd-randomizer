@@ -604,7 +604,7 @@ class SFLocalHelpers {
           continue;
         }
 
-        if (filteredMonsterTypes.filter(m => m === monsterObject.creaturetype).length === 0)
+        if (filteredMonsterTypes.filter(m => m === monsterObject.creaturetype.toLowerCase()).length === 0)
         {
           continue;
         }
@@ -653,27 +653,27 @@ class SFLocalHelpers {
         case "pf2e":
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = SFLocalHelpers.createEncounter("Extreme", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Extreme", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = SFLocalHelpers.createEncounter("Severe", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Severe", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = SFLocalHelpers.createEncounter("Moderate", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Moderate", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = SFLocalHelpers.createEncounter("Low", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Low", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = SFLocalHelpers.createEncounter("Trivial", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Trivial", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
       }
@@ -844,7 +844,7 @@ class SFLocalHelpers {
       let currentEncounter = {};
       currentEncounter["difficulty"] = targetedDifficulty;
       currentEncounter["creatures"] = [];
-      let targetEncounterXP = SFLOCALCONSTS.ENCOUNTER_DIFFICULTY_XP_TABLES[targetedDifficulty][averageLevelOfPlayers - 1] * numberOfPlayers;
+      let targetEncounterDifficultyInformation = SFLOCALCONSTS.PATHFINDER_2E_ENCOUNTER_BUDGET[targetedDifficulty];
       let currentEncounterXP = 0;
       let numberOfMonstersInCombat = 0;
       let encounterType = params.encounterType;
@@ -863,7 +863,7 @@ class SFLocalHelpers {
         let numberOfCreatures = creatureDescriptionParts[0];
         let levelInRelationToParty = creatureDescriptionParts[1];
 
-        let filteredMonsterList = monsterList.filter(m => m.data.data.details.xp.value >= lowerBound && m.data.data.details.xp.value <= upperBound);
+        let filteredMonsterList = monsterList.filter(m => m.level === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
         if (filteredMonsterList.length === 0)
         {
           continue;
@@ -872,23 +872,34 @@ class SFLocalHelpers {
         let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
         let randomMonster = filteredMonsterList[randomMonsterIndex];
         let monsterName = randomMonster.name;
-        let randomMonsterXP = randomMonster.data.data.details.xp.value;
+        let randomMonsterLevel = randomMonster.level;
         let monsterCR = randomMonster.data.data.details.cr;
         let creatureCombatDetails = {};
         creatureCombatDetails["name"] = monsterName;
         creatureCombatDetails["quantity"] = numberOfCreatures;
         creatureCombatDetails["cr"] = monsterCR;
-        creatureCombatDetails["xp"] = randomMonsterXP;
+        creatureCombatDetails["level"] = randomMonsterLevel;
         creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
         currentEncounter["creatures"].push(creatureCombatDetails);
-        
-        
       }
       
+      let lootResultObject = {};
+      let currencyResultObject = {};
+      let itemsResultObject = [];
+      let otherResultObject = [];
+      let scrollsResultObject = [];
+      currencyResultObject["pp"] = 0;
+      currencyResultObject["gp"] = 0;
+      currencyResultObject["ep"] = 0;
+      currencyResultObject["sp"] = 0;
+      currencyResultObject["cp"] = 0;
+      lootResultObject["currency"] = currencyResultObject;
+      lootResultObject["items"] = itemsResultObject;
+      lootResultObject["other"] = otherResultObject;
+      lootResultObject["scrolls"] = scrollsResultObject;
 
-      currentEncounter["xp"] = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
-      let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
-      currentEncounter["loot"] = generatedLootObject;
+      // let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
+      currentEncounter["loot"] = lootResultObject;
       return currentEncounter;
     }
   
