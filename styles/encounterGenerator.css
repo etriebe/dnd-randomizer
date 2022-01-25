@@ -293,6 +293,7 @@
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
+	width: 100%;
 }
 #SFDialog .window-content .form-encounters ul li {
 	border-bottom: 1px solid var(--palette-dialog-background-dark, #782e22);
@@ -386,21 +387,25 @@
 	text-transform: uppercase;
 	font-weight: 600;
 }
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.trivial,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.easy {
     background-color: var(--palette-success, rgb(64, 194, 64));
     border-color: var(--palette-success-dark, rgb(8, 87, 8));
     color: var(--palette-app-success-shaded-text, rgb(255, 255, 255));
 }
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.low,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.medium {
     background-color: var(--palette-info, rgb(14, 94, 185));
     border-color: var(--palette-info-dark, rgb(8, 53, 95));
     color: var(--palette-app-info-shaded-text, white);
 }
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.moderate,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.hard {
     background-color: var(--palette-warning, #ef6e00);
     border-color: var(--palette-warning-dark, #b85600);
     color: var(--palette-app-warning-shaded-text, rgb(255, 255, 255));
 }
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.Severe,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.deadly {
     background-color: var(--palette-danger, #a00f0f);
     border-color: var(--palette-danger-dark, #500808);
