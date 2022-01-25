@@ -882,14 +882,46 @@ class SFLocalHelpers {
         creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
         currentEncounter["creatures"].push(creatureCombatDetails);
       }
-      
+
+      currentEncounter["level"] = averageLevelOfPlayers;
+      let generatedLootObject = SFLocalHelpers.getPF2ELootForEncounter(currentEncounter, params);
+      currentEncounter["loot"] = generatedLootObject;
+      return currentEncounter;
+    }
+
+    static getPF2ELootForEncounter(currentEncounter, params)
+    {
+      let loopType = params.loot_type;
+      let generatedLoot;
+  
+      let currencyTable = SFLOCALCONSTS.PF2E_CURRENCY_TABLE;
+      let encounterLevel = currentEncounter["level"];
+      let encounterDifficulty = currentEncounter["difficulty"];
+      let currencyList = currencyTable[encounterLevel];
+      let goldPieces = 0;
+      switch (encounterDifficulty)
+      {
+        case "Low":
+          goldPieces = currencyList[0];
+          break;
+        case "Moderate":
+          goldPieces = currencyList[1];
+          break;
+        case "Severe":
+          goldPieces = currencyList[2];
+          break;
+        case "Extreme":
+          goldPieces = currencyList[3];
+          break;
+      }
+
       let lootResultObject = {};
       let currencyResultObject = {};
       let itemsResultObject = [];
       let otherResultObject = [];
       let scrollsResultObject = [];
       currencyResultObject["pp"] = 0;
-      currencyResultObject["gp"] = 0;
+      currencyResultObject["gp"] = goldPieces;
       currencyResultObject["ep"] = 0;
       currencyResultObject["sp"] = 0;
       currencyResultObject["cp"] = 0;
@@ -897,10 +929,8 @@ class SFLocalHelpers {
       lootResultObject["items"] = itemsResultObject;
       lootResultObject["other"] = otherResultObject;
       lootResultObject["scrolls"] = scrollsResultObject;
-
-      // let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
-      currentEncounter["loot"] = lootResultObject;
-      return currentEncounter;
+  
+      return lootResultObject;
     }
   
     static getLootForEncounter(currentEncounter, params)
