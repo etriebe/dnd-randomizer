@@ -32,6 +32,45 @@ class SFDialog extends FormApplication {
 		return {chars: characters.length || 4, level: level || 5}
 	}
 
+	populateEncounterTypes(){
+		let currentSystem = game.system.id;
+		let encounterDescriptionsObject;
+		switch (currentSystem)
+		{
+			case "dnd5e":
+				encounterDescriptionsObject = SFLOCALCONSTS.DND5E_ENCOUNTER_TYPE_DESCRIPTIONS;
+				break;
+			case "pf2e":
+				encounterDescriptionsObject = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS;
+				break;
+		}
+
+		const html = this.element
+		let $span = html.find('#encounterTypePlaceholder').first();
+		let $select = html.find('#encounterTypeSelect').first();
+		let i = 0;
+
+		for (var encounterType in encounterDescriptionsObject)
+		{
+
+			if (!encounterType)
+			{
+				continue;
+			}
+
+			if (i === 0)
+			{
+				$span.html(encounterType);
+				$select.append(`<option value="${encounterType}" selected>${encounterType}</option>`)
+			}
+			else
+			{
+				$select.append(`<option value="${encounterType}">${encounterType}</option>`)
+			}
+			i++;
+		}
+	}
+
 	populateEncounters(encounterData) {
 		const html = this.element
 		let $ul = html.find('.form-encounters ul').first();
@@ -156,7 +195,8 @@ class SFDialog extends FormApplication {
 			);
 			this.populateEncounters(getFavoritedEncounters);
 		}
-			
+
+		this.populateEncounterTypes();
 
 		html.find('button#generate-remote-encounters-button').on('click', async (event) => {
 			event.preventDefault();

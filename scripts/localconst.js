@@ -729,7 +729,7 @@ const SFLOCALCONSTS = {
         "11": "Armor, +3 half plate",
         "12": "Armor, +3 plate",
     },
-    ENCOUNTER_TYPE_DESCRIPTIONS: {
+    DND5E_ENCOUNTER_TYPE_DESCRIPTIONS: {
         // Formula format ["1:.3*x","2:.1*x"] - This will create an encounter with 1 creature that is 30% of target XP and 2 creatures that are 10% target XP
         "Single BBEG": ["1:1*x"],
         "BBEG + 2 Minions": ["1:0.3*x","2:0.1*x"],
@@ -737,5 +737,53 @@ const SFLOCALCONSTS = {
         "BBEG + Monster horde": ["1:0.3*x","5:0.04*x"],
         "Monster horde": ["6:0.08333*x"],
         "Random": ["*"],
-    }
+    },
+    SYSTEM_VARIABLES: {
+        // Object is for actor
+        "CreatureType": {
+            "dnd5e": "data.data.details.type.value",
+            "pf2e": "data.data.details.creatureType",
+        },
+        // Object is for spell
+        "SpellLevel": {
+            "dnd5e": "labels.level",
+            "pf2e": "level",
+        },
+        // Object is for actor
+        "CreatureXP": {
+            "dnd5e": "data.data.details.xp.value",
+            "pf2e": "level",
+        }
+    },
+    PATHFINDER_2E_ENCOUNTER_BUDGET: {
+        // Key=Encounter Difficulty : Value=[XP Budget, Character Adjustment]
+        "Trivial": [40, 10],
+        "Low": [60, 15],
+        "Moderate": [80, 20],
+        "Severe": [120, 30],
+        "Extreme": [160, 40],
+    },
+    PATHFINDER_2E_CREATURE_LEVEL_XP: {
+        // Creature level in reference to PC level : Creature XP
+        "-4": 10,
+        "-3": 15,
+        "-2": 20,
+        "-1": 30,
+        "0": 40,
+        "1": 60,
+        "2": 80,
+        "3": 120,
+        "4": 160,
+    },
+    PF2E_ENCOUNTER_TYPE_DESCRIPTIONS: {
+        // Formula format ["1:2","4:-4"] - This will create an encounter with 1 creature that is 2 levels over party level and 4 creatures that are 4 levels below party level
+        "Super Boss": ["1:4"],
+        "Boss and Lackeys": ["1:2","4:-4"],
+        "Boss and Lieutenant": ["1:2","1:0"],
+        "Elite Enemies": ["3:0"],
+        "Lieutenant and Lackeys": ["1:0","4:-4"],
+        "Mated Pair": ["2:0"],
+        "Troop": ["1:0","2:-2"],
+        "Mook Squad": ["6:-4"],
+    },
 }

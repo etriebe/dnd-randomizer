@@ -18,6 +18,7 @@ class SFLocalHelpers {
       this.spellsByLevel["7th level"] = [];
       this.spellsByLevel["8th level"] = [];
       this.spellsByLevel["9th level"] = [];
+      this.spellsByLevel["10th level"] = [];
     }
   
     static async populateObjectsFromCompendiums() {
@@ -112,7 +113,7 @@ class SFLocalHelpers {
               console.log(`Already have spell ${spellName} in dictionary`);
               continue;
             }
-            let spellLevel = currentSpell.labels.level.toLowerCase();
+            let spellLevel = this.getLevelKeyForSpell(currentSpell);
             this.allSpells[spellName] = currentSpell;
             this.spellsByLevel[spellLevel].push(currentSpell);
           }
@@ -122,6 +123,14 @@ class SFLocalHelpers {
             console.log(`Spell id ${entry._id} failed to get added.`);
           }
         }
+      }
+    }
+
+    static normalizeSpellLevelForDictionaryKey(spellLevel)
+    {
+      if (spellLevel.match(/^\d+$/))
+      {
+
       }
     }
   
@@ -176,7 +185,7 @@ class SFLocalHelpers {
             monsterObject["actorid"] = actor.data._id;
             monsterObject["compendiumname"] = compendium.metadata.label;
             monsterObject["environment"] = environmentArray;
-            monsterObject["creaturetype"] = actor.data.data.details.type.value;
+            monsterObject["creaturetype"] = this.getCreatureTypeForActor(actor);
             monsterObject["combatdata"] = this.getCombatDataPerRound(actor);
             this.allMonsters.push(monsterObject);
           } 
@@ -186,6 +195,54 @@ class SFLocalHelpers {
           }
         }
       }
+    }
+
+    static getCreatureTypeForActor(actor)
+    {
+      return this.getSystemVariableForObject(actor, "CreatureType");
+    }
+
+    static getLevelKeyForSpell(spell)
+    {
+      let spellLevel = this.getSystemVariableForObject(spell, "SpellLevel").toString().toLowerCase();
+
+      let fullSpellNameMatch = spellLevel.match(/(?<fullSpellDescription>(?<spellLevel>\d+)(st|nd|rd|th) level|cantrip)/g);
+
+      if (fullSpellNameMatch)
+      {
+        return spellLevel;
+      }
+
+      switch (spellLevel)
+      {
+        case "1":
+          return "1st level";
+        case "2":
+          return "2nd level";
+        case "3":
+          return "3rd level";
+        default:
+          return `${spellLevel}th level`
+      }
+    }
+
+    static getSystemVariableForObject(object, variableName)
+    {
+      let currentSystem = game.system.id;
+      let variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES[variableName];
+      if (!variableValues)
+      {
+        console.error(`Unable to find variable name ${variableName} information`);
+        return;
+      }
+
+      let currentSystemVariableName = variableValues[currentSystem];
+      if (!currentSystemVariableName)
+      {
+        console.error(`Unable to find variable name ${variableName} for system ${currentSystem}`);
+        return;
+      }
+      return eval(`object.${currentSystemVariableName}`)
     }
 
     static getCombatDataPerRound(actor)
@@ -565,33 +622,66 @@ class SFLocalHelpers {
     {
       let averageLevelOfPlayers = params.averageLevelOfPlayers;
       let numberOfPlayers = params.numberOfPlayers;
-  
+      let currentSystem = game.system.id;
+
       let encounterList = [];
-      for (let i = 0; i < 6; i++)
+
+      switch (currentSystem)
       {
-        let currentEncounter = SFLocalHelpers.createEncounter("deadly", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-        encounterList.push(currentEncounter);
-      }
-      for (let i = 0; i < 6; i++)
-      {
-        let currentEncounter = SFLocalHelpers.createEncounter("hard", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-        encounterList.push(currentEncounter);
-      }
-      for (let i = 0; i < 6; i++)
-      {
-        let currentEncounter = SFLocalHelpers.createEncounter("medium", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-        encounterList.push(currentEncounter);
-      }
-      for (let i = 0; i < 12; i++)
-      {
-        let currentEncounter = SFLocalHelpers.createEncounter("easy", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-        encounterList.push(currentEncounter);
+        case "dnd5e":
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounterDnd5e("deadly", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounterDnd5e("hard", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounterDnd5e("medium", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          for (let i = 0; i < 12; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounterDnd5e("easy", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          break;
+        case "pf2e":
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounter("Extreme", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounter("Severe", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounter("Moderate", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounter("Low", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+          for (let i = 0; i < 6; i++)
+          {
+            let currentEncounter = SFLocalHelpers.createEncounter("Trivial", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
       }
   
       return encounterList;
     }
   
-    static createEncounter(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)
+    static createEncounterDnd5e(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)
     {
       let currentEncounter = {};
       currentEncounter["difficulty"] = targetedDifficulty;
@@ -600,7 +690,7 @@ class SFLocalHelpers {
       let currentEncounterXP = 0;
       let numberOfMonstersInCombat = 0;
       let encounterType = params.encounterType;
-      let encounterTypeInformation = SFLOCALCONSTS.ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
+      let encounterTypeInformation = SFLOCALCONSTS.DND5E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
       if (encounterType === "Random")
       {
         let j = 0;
@@ -741,6 +831,60 @@ class SFLocalHelpers {
           }
         }
       }
+
+      currentEncounter["xp"] = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
+      let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
+      currentEncounter["loot"] = generatedLootObject;
+      return currentEncounter;
+    }
+
+    static createEncounterPf2e(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)
+    {
+      
+      let currentEncounter = {};
+      currentEncounter["difficulty"] = targetedDifficulty;
+      currentEncounter["creatures"] = [];
+      let targetEncounterXP = SFLOCALCONSTS.ENCOUNTER_DIFFICULTY_XP_TABLES[targetedDifficulty][averageLevelOfPlayers - 1] * numberOfPlayers;
+      let currentEncounterXP = 0;
+      let numberOfMonstersInCombat = 0;
+      let encounterType = params.encounterType;
+      let encounterTypeInformation = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
+
+      for (var i = 0; i < encounterTypeInformation.length; i++)
+      {
+        let currentEncounterDescription = encounterTypeInformation[i];
+        let creatureDescriptionParts = currentEncounterDescription.split(":");
+
+        if (creatureDescriptionParts.length != 2)
+        {
+          console.error(`Encounter type description is invalid. Expected format of number:formula. For example: 2:0.3*x. This would choose 2 creatures that are roughly near 30% of the the target encounter XP. Actual: ${currentEncounterDescription}`);
+          return;
+        }
+        let numberOfCreatures = creatureDescriptionParts[0];
+        let levelInRelationToParty = creatureDescriptionParts[1];
+
+        let filteredMonsterList = monsterList.filter(m => m.data.data.details.xp.value >= lowerBound && m.data.data.details.xp.value <= upperBound);
+        if (filteredMonsterList.length === 0)
+        {
+          continue;
+        }
+
+        let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
+        let randomMonster = filteredMonsterList[randomMonsterIndex];
+        let monsterName = randomMonster.name;
+        let randomMonsterXP = randomMonster.data.data.details.xp.value;
+        let monsterCR = randomMonster.data.data.details.cr;
+        let creatureCombatDetails = {};
+        creatureCombatDetails["name"] = monsterName;
+        creatureCombatDetails["quantity"] = numberOfCreatures;
+        creatureCombatDetails["cr"] = monsterCR;
+        creatureCombatDetails["xp"] = randomMonsterXP;
+        creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
+        currentEncounter["creatures"].push(creatureCombatDetails);
+        
+        
+      }
+      
 
       currentEncounter["xp"] = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
       let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
