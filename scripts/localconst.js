@@ -777,14 +777,14 @@ const SFLOCALCONSTS = {
     },
     PF2E_ENCOUNTER_TYPE_DESCRIPTIONS: {
         // Formula format ["1:2","4:-4"] - This will create an encounter with 1 creature that is 2 levels over party level and 4 creatures that are 4 levels below party level
-        "Super Boss": ["1:4"],
-        "Boss and Lackeys": ["1:2","4:-4"],
-        "Boss and Lieutenant": ["1:2","1:0"],
-        "Elite Enemies": ["3:0"],
-        "Lieutenant and Lackeys": ["1:0","4:-4"],
-        "Mated Pair": ["2:0"],
-        "Troop": ["1:0","2:-2"],
-        "Mook Squad": ["6:-4"],
+        "Super Boss :Extreme":              {"EncounterFormula": ["1:4"],           "EncounterDifficulty": "Extreme"},
+        "Boss and Lackeys :Severe":         {"EncounterFormula": ["1:2","4:-4"],    "EncounterDifficulty": "Severe"},
+        "Boss and Lieutenant :Severe":      {"EncounterFormula": ["1:2","1:0"],     "EncounterDifficulty": "Severe"},
+        "Elite Enemies :Severe":            {"EncounterFormula": ["3:0"],           "EncounterDifficulty": "Severe"},
+        "Lieutenant and Lackeys :Moderate": {"EncounterFormula": ["1:0","4:-4"],    "EncounterDifficulty": "Moderate"},
+        "Mated Pair :Moderate":             {"EncounterFormula": ["2:0"],           "EncounterDifficulty": "Moderate"},
+        "Troop :Moderate":                  {"EncounterFormula": ["1:0","2:-2"],    "EncounterDifficulty": "Moderate"},
+        "Mook Squad : Moderate":            {"EncounterFormula": ["6:-4"],          "EncounterDifficulty": "Low"},
     },
     PF2E_CURRENCY_TABLE: {
     //  Level:  [low, moderate, severe, extreme] amounts in gp

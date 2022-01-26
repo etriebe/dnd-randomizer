@@ -844,15 +844,21 @@ class SFLocalHelpers {
       let currentEncounter = {};
       currentEncounter["difficulty"] = targetedDifficulty;
       currentEncounter["creatures"] = [];
-      let targetEncounterDifficultyInformation = SFLOCALCONSTS.PATHFINDER_2E_ENCOUNTER_BUDGET[targetedDifficulty];
       let currentEncounterXP = 0;
       let numberOfMonstersInCombat = 0;
       let encounterType = params.encounterType;
       let encounterTypeInformation = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
+      let currentEncounterDifficulty = encounterTypeInformation.EncounterDifficulty;
+      let currentEncounterFormula = encounterTypeInformation.EncounterFormula;
 
-      for (var i = 0; i < encounterTypeInformation.length; i++)
+      for (var i = 0; i < currentEncounterFormula.length; i++)
       {
-        let currentEncounterDescription = encounterTypeInformation[i];
+        let currentEncounterDescription = currentEncounterFormula[i];
+        
+        let targetEncounterDifficultyInformation = SFLOCALCONSTS.PATHFINDER_2E_ENCOUNTER_BUDGET[targetedDifficulty];
+        let originalTargetEncounterXP = targetEncounterDifficultyInformation[0];
+        let characterAdjustment = targetEncounterDifficultyInformation[1];
+        let amountToAdjustEncounter = (numberOfPlayers - 4) * characterAdjustment;
         let creatureDescriptionParts = currentEncounterDescription.split(":");
 
         if (creatureDescriptionParts.length != 2)
