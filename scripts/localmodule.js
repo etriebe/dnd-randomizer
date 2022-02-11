@@ -126,14 +126,6 @@ class SFLocalHelpers {
       }
     }
 
-    static normalizeSpellLevelForDictionaryKey(spellLevel)
-    {
-      if (spellLevel.match(/^\d+$/))
-      {
-
-      }
-    }
-  
     static async populateMonstersFromCompendiums()
     {
       let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
