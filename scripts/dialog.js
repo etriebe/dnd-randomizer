@@ -32,6 +32,45 @@ class SFDialog extends FormApplication {
 		return {chars: characters.length || 4, level: level || 5}
 	}
 
+	populateEncounterTypes(){
+		let currentSystem = game.system.id;
+		let encounterDescriptionsObject;
+		switch (currentSystem)
+		{
+			case "dnd5e":
+				encounterDescriptionsObject = SFLOCALCONSTS.DND5E_ENCOUNTER_TYPE_DESCRIPTIONS;
+				break;
+			case "pf2e":
+				encounterDescriptionsObject = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS;
+				break;
+		}
+
+		const html = this.element
+		let $span = html.find('#encounterTypePlaceholder').first();
+		let $select = html.find('#encounterTypeSelect').first();
+		let i = 0;
+
+		for (var encounterType in encounterDescriptionsObject)
+		{
+
+			if (!encounterType)
+			{
+				continue;
+			}
+
+			if (i === 0)
+			{
+				$span.html(encounterType);
+				$select.append(`<option value="${encounterType}" selected>${encounterType}</option>`)
+			}
+			else
+			{
+				$select.append(`<option value="${encounterType}">${encounterType}</option>`)
+			}
+			i++;
+		}
+	}
+
 	populateEncounters(encounterData) {
 		const html = this.element
 		let $ul = html.find('.form-encounters ul').first();
@@ -63,7 +102,10 @@ class SFDialog extends FormApplication {
 						${encounter.currency.sp > 0 ? `<span class="loot-button">sp ${encounter.currency.sp}</span>` : ''}
 						${encounter.currency.cp > 0 ? `<span class="loot-button">cp ${encounter.currency.cp}</span>` : ''}
 						<span class="encounter-difficulty ${encounter.data.difficulty}">${encounter.data.difficulty}</span>
-						<span class="encounter-xp">${encounter.data.xp}</span>
+						${encounter.currency.xp > 0 ? `<span class="encounter-xp">${encounter.data.xp}</span>` : ''}
+						${encounter.amountToAdjustEncounter != null && encounter.amountToAdjustEncounter != 0 ? 
+							`<span class="encounter-xpadjustment">${SFLocalHelpers.getAdjustedXPString(encounter.amountToAdjustEncounter)}</span>` :
+							''}
 					</div>
 					${combatSummaryHTML}
 				</div>
@@ -156,7 +198,8 @@ class SFDialog extends FormApplication {
 			);
 			this.populateEncounters(getFavoritedEncounters);
 		}
-			
+
+		this.populateEncounterTypes();
 
 		html.find('button#generate-remote-encounters-button').on('click', async (event) => {
 			event.preventDefault();
@@ -194,7 +237,7 @@ class SFDialog extends FormApplication {
 			
 			const params = {
 				loot_type: html.find('#lootType select[name="lootType"]').val(),
-				encounterType: html.find('#encounterType select[name="encounterType"]').val(),
+				encounterType: html.find('#encounterTypeSpan select[id="encounterTypeSelect"]').val(),
 				numberOfPlayers: numberOfPlayers,
 				averageLevelOfPlayers: averageLevelOfPlayers,
 				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()

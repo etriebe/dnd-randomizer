@@ -3,6 +3,7 @@ class Encounter {
     this.data = data;
     this.name = data.name;
     this.difficulty = data.difficulty;
+    this.amountToAdjustEncounter = data.amounttoadjustencounter;
     this.currency = data.loot.currency;
     this.creatures = [];
     this.combatsummary = {};

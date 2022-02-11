@@ -729,7 +729,7 @@ const SFLOCALCONSTS = {
         "11": "Armor, +3 half plate",
         "12": "Armor, +3 plate",
     },
-    ENCOUNTER_TYPE_DESCRIPTIONS: {
+    DND5E_ENCOUNTER_TYPE_DESCRIPTIONS: {
         // Formula format ["1:.3*x","2:.1*x"] - This will create an encounter with 1 creature that is 30% of target XP and 2 creatures that are 10% target XP
         "Single BBEG": ["1:1*x"],
         "BBEG + 2 Minions": ["1:0.3*x","2:0.1*x"],
@@ -737,5 +737,76 @@ const SFLOCALCONSTS = {
         "BBEG + Monster horde": ["1:0.3*x","5:0.04*x"],
         "Monster horde": ["6:0.08333*x"],
         "Random": ["*"],
+    },
+    SYSTEM_VARIABLES: {
+        // Object is for actor
+        "CreatureType": {
+            "dnd5e": "data.data.details.type.value",
+            "pf2e": "data.data.details.creatureType",
+        },
+        // Object is for spell
+        "SpellLevel": {
+            "dnd5e": "labels.level",
+            "pf2e": "level",
+        },
+        // Object is for actor
+        "CreatureXP": {
+            "dnd5e": "data.data.details.xp.value",
+            "pf2e": "level",
+        }
+    },
+    PATHFINDER_2E_ENCOUNTER_BUDGET: {
+        // Key=Encounter Difficulty : Value=[XP Budget, Character Adjustment]
+        "Trivial": [40, 10],
+        "Low": [60, 15],
+        "Moderate": [80, 20],
+        "Severe": [120, 30],
+        "Extreme": [160, 40],
+    },
+    PATHFINDER_2E_CREATURE_LEVEL_XP: {
+        // Creature level in reference to PC level : Creature XP
+        "-4": 10,
+        "-3": 15,
+        "-2": 20,
+        "-1": 30,
+        "0": 40,
+        "1": 60,
+        "2": 80,
+        "3": 120,
+        "4": 160,
+    },
+    PF2E_ENCOUNTER_TYPE_DESCRIPTIONS: {
+        // Formula format ["1:2","4:-4"] - This will create an encounter with 1 creature that is 2 levels over party level and 4 creatures that are 4 levels below party level
+        "Super Boss (Extreme)":              {"EncounterFormula": ["1:4"],           "EncounterDifficulty": "Extreme"},
+        "Boss and Lackeys (Severe)":         {"EncounterFormula": ["1:2","4:-4"],    "EncounterDifficulty": "Severe"},
+        "Boss and Lieutenant (Severe)":      {"EncounterFormula": ["1:2","1:0"],     "EncounterDifficulty": "Severe"},
+        "Elite Enemies (Severe)":            {"EncounterFormula": ["3:0"],           "EncounterDifficulty": "Severe"},
+        "Lieutenant and Lackeys (Moderate)": {"EncounterFormula": ["1:0","4:-4"],    "EncounterDifficulty": "Moderate"},
+        "Mated Pair (Moderate)":             {"EncounterFormula": ["2:0"],           "EncounterDifficulty": "Moderate"},
+        "Troop (Moderate)":                  {"EncounterFormula": ["1:0","2:-2"],    "EncounterDifficulty": "Moderate"},
+        "Mook Squad (Moderate)":             {"EncounterFormula": ["6:-4"],          "EncounterDifficulty": "Low"},
+    },
+    PF2E_CURRENCY_TABLE: {
+    //  Level:  [low, moderate, severe, extreme] amounts in gp
+        "1" :	["13",	"18",	"26",	"35"],
+        "2" :	["23",	"30",	"45",	"60"],
+        "3" :	["38",	"50",	"75",	"100"],
+        "4" :	["65",	"85",	"130",	"170"],
+        "5" :	["100",	"135",	"200",	"270"],
+        "6" :	["150",	"200",	"300",	"400"],
+        "7" :	["220",	"290",	"440",	"580"],
+        "8" :	["300",	"400",	"600",	"800"],
+        "9" :	["430",	"570",	"860",	"1140"],
+        "10" :	["600",	"800",	"1200",	"1600"],
+        "11" :	["865",	"1150",	"1725",	"2300"],
+        "12" :	["1250",	"1650",	"2475",	"3300"],
+        "13" :	["1875",	"2500",	"3750",	"5000"],
+        "14" :	["2750",	"3650",	"5500",	"7300"],
+        "15" :	["4100",	"5450",	"8200",	"10900"],
+        "16" :	["6200",	"8250",	"12400",	"16500"],
+        "17" :	["9600",	"12800",	"19200",	"25600"],
+        "18" :	["15600",	"20800",	"31200",	"41600"],
+        "19" :	["26600",	"35500",	"53250",	"71000"],
+        "20" :	["36800",	"49000",	"73500",	"9800"]
     }
 }
