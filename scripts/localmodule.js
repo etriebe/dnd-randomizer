@@ -651,29 +651,9 @@ class SFLocalHelpers {
           }
           break;
         case "pf2e":
-          for (let i = 0; i < 6; i++)
+          for (let i = 0; i < 30; i++)
           {
-            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Extreme", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-            encounterList.push(currentEncounter);
-          }
-          for (let i = 0; i < 6; i++)
-          {
-            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Severe", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-            encounterList.push(currentEncounter);
-          }
-          for (let i = 0; i < 6; i++)
-          {
-            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Moderate", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-            encounterList.push(currentEncounter);
-          }
-          for (let i = 0; i < 6; i++)
-          {
-            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Low", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
-            encounterList.push(currentEncounter);
-          }
-          for (let i = 0; i < 6; i++)
-          {
-            let currentEncounter = SFLocalHelpers.createEncounterPf2e("Trivial", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = SFLocalHelpers.createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
       }
@@ -838,24 +818,24 @@ class SFLocalHelpers {
       return currentEncounter;
     }
 
-    static createEncounterPf2e(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)
+    static createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params)
     {
       
       let currentEncounter = {};
-      currentEncounter["difficulty"] = targetedDifficulty;
       currentEncounter["creatures"] = [];
       let currentEncounterXP = 0;
       let numberOfMonstersInCombat = 0;
       let encounterType = params.encounterType;
       let encounterTypeInformation = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
       let currentEncounterDifficulty = encounterTypeInformation.EncounterDifficulty;
+      currentEncounter["difficulty"] = currentEncounterDifficulty;
       let currentEncounterFormula = encounterTypeInformation.EncounterFormula;
 
       for (var i = 0; i < currentEncounterFormula.length; i++)
       {
         let currentEncounterDescription = currentEncounterFormula[i];
         
-        let targetEncounterDifficultyInformation = SFLOCALCONSTS.PATHFINDER_2E_ENCOUNTER_BUDGET[targetedDifficulty];
+        let targetEncounterDifficultyInformation = SFLOCALCONSTS.PATHFINDER_2E_ENCOUNTER_BUDGET[currentEncounterDifficulty];
         let originalTargetEncounterXP = targetEncounterDifficultyInformation[0];
         let characterAdjustment = targetEncounterDifficultyInformation[1];
         let amountToAdjustEncounter = (numberOfPlayers - 4) * characterAdjustment;
