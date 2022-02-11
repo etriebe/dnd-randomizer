@@ -382,6 +382,12 @@
 	display: inline-block;
 	padding: 0.25rem;
 }
+#SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xpadjustment {
+    border-bottom: 1px solid var(--palette-app-background-dark, #ff8f10cc);
+	border-top-width: 0px;
+	display: inline-block;
+	padding: 0.25rem;
+}
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty {
 	border-left: 1px solid var(--palette-app-background-dark, #191813);
 	text-transform: uppercase;

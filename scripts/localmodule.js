@@ -830,6 +830,7 @@ class SFLocalHelpers {
       let currentEncounterDifficulty = encounterTypeInformation.EncounterDifficulty;
       currentEncounter["difficulty"] = currentEncounterDifficulty;
       let currentEncounterFormula = encounterTypeInformation.EncounterFormula;
+      let amountToAdjustEncounter = 0;
 
       for (var i = 0; i < currentEncounterFormula.length; i++)
       {
@@ -838,7 +839,7 @@ class SFLocalHelpers {
         let targetEncounterDifficultyInformation = SFLOCALCONSTS.PATHFINDER_2E_ENCOUNTER_BUDGET[currentEncounterDifficulty];
         let originalTargetEncounterXP = targetEncounterDifficultyInformation[0];
         let characterAdjustment = targetEncounterDifficultyInformation[1];
-        let amountToAdjustEncounter = (numberOfPlayers - 4) * characterAdjustment;
+        amountToAdjustEncounter = (numberOfPlayers - 4) * characterAdjustment;
         let creatureDescriptionParts = currentEncounterDescription.split(":");
 
         if (creatureDescriptionParts.length != 2)
@@ -872,7 +873,14 @@ class SFLocalHelpers {
       currentEncounter["level"] = averageLevelOfPlayers;
       let generatedLootObject = SFLocalHelpers.getPF2ELootForEncounter(currentEncounter, params);
       currentEncounter["loot"] = generatedLootObject;
+      currentEncounter["amounttoadjustencounter"] = amountToAdjustEncounter;
       return currentEncounter;
+    }
+
+    static getAdjustedXPString(amountToAdjustEncounter)
+    {
+      let plusOrMinus = amountToAdjustEncounter > 0 ? "+" : "";
+      return `Needs ${plusOrMinus}${amountToAdjustEncounter} XP adjustment`;
     }
 
     static getPF2ELootForEncounter(currentEncounter, params)
