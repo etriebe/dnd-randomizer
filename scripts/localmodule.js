@@ -38,6 +38,11 @@ class SFLocalHelpers {
 
     static getActivePlayersCountAndLevels() {
       let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
+      if (playerCharacters.length === 0)
+      {
+        playerCharacters = game.actors.filter(a=>a.type === "character");
+      }
+
       const savedPlayerSettings = game.settings.get(
         SFCONSTS.MODULE_NAME,
         "playerCharactersToCreateEncountersFor"
@@ -52,15 +57,7 @@ class SFLocalHelpers {
           continue;
         }
 
-        let playerClasses = player.classes;
-        let playerClassList = Object.keys(playerClasses);
-        let totalLevelCount = 0;
-        for (let i = 0; i < playerClassList.length; i++)
-        {
-          let currentClassLevel = playerClasses[playerClassList[i]].data.data.levels;
-          totalLevelCount += currentClassLevel;
-        }
-
+        let totalLevelCount = this.getPlayerClassLevel(player);
         if (totalLevelCount === 0)
         {
           console.log(`Player ${player.name} has no class level so skipping them.`);
@@ -68,6 +65,7 @@ class SFLocalHelpers {
         }
         levelList.push(totalLevelCount);
       }
+
       let total = 0;
       for(let i = 0; i < levelList.length; i++) {
           total += levelList[i];
@@ -77,6 +75,31 @@ class SFLocalHelpers {
       resultObject["numberofplayers"] = levelList.length;
       resultObject["averageplayerlevel"] = avg;
       return resultObject;
+    }
+
+    static getPlayerClassLevel(player)
+    {
+      let currentSystem = game.system.id;
+      if (currentSystem === "dnd5e")
+      {
+        let playerClasses = player.classes;
+        let playerClassList = Object.keys(playerClasses);
+        let totalLevelCount = 0;
+        for (let i = 0; i < playerClassList.length; i++)
+        {
+          let currentClassLevel = playerClasses[playerClassList[i]].data.data.levels;
+          totalLevelCount += currentClassLevel;
+        }
+        return totalLevelCount;
+      }
+      else if (currentSystem === "pf2e")
+      {
+        return player.level;
+      }
+      else
+      {
+        throw new Error ("Unsupported system!");
+      }
     }
 
     static async populateCurrentActors() {
