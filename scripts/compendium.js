@@ -102,9 +102,9 @@ class SFCompendiumSorter extends FormApplication {
 		{
 			let playerClasses = player.classes;
 			let currentClassNameCasedCorrect = currentClass.charAt(0).toUpperCase() + currentClass.slice(1);
-			let currentClassObject = playerClasses[currentClassName];
+			let currentClassObject = playerClasses[currentClass];
 			let currentClassLevel = currentClassObject.data.data.levels;
-			let currentClassSpan = `<span class="player-character-info" data-type="${currentClassName}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
+			let currentClassSpan = `<span class="player-character-info" data-type="${currentClass}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
 			return currentClassSpan;
 		}
 		else if (currentSystem === "pf2e")
