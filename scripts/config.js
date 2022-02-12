@@ -88,7 +88,7 @@ Hooks.once("init", async function () {
     scope: "world",
     config: false,
     type: Object,
-    default: [],
+    default: {},
   });
 
   game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {

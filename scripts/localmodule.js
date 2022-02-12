@@ -1,13 +1,12 @@
 class SFLocalHelpers {
     static allMonsters = [];
-    static allSpells = {};
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
     static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
   
     static initializeDictionaries() {
-      this.dictionariesInitialized = true;
+      this.spellsByLevel = {};
       this.spellsByLevel["cantrip"] = [];
       this.spellsByLevel["1st level"] = [];
       this.spellsByLevel["2nd level"] = [];
@@ -19,6 +18,7 @@ class SFLocalHelpers {
       this.spellsByLevel["8th level"] = [];
       this.spellsByLevel["9th level"] = [];
       this.spellsByLevel["10th level"] = [];
+      this.dictionariesInitialized = true;
     }
   
     static async populateObjectsFromCompendiums(forceReload) {
@@ -85,44 +85,62 @@ class SFLocalHelpers {
   
     static async populateItemsFromCompendiums(forceReload)
     {
-      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
-  
-      for (let compendium of filteredCompendiums) {
-        if (!compendium)
+      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+
+      let populatedFromIndex = false;
+      if (useSavedIndex && !forceReload)
+      {
+        this.spellsByLevel = game.settings.get(SFCONSTS.MODULE_NAME, 'savedSpellIndex');
+        if (this.spellsByLevel.length > 0)
         {
-          break;
+          populatedFromIndex = true;
         }
-  
-        for (let entry of compendium.index) {
-          if (!entry)
+      }
+
+      if (!populatedFromIndex)
+      {
+        this.initializeDictionaries();
+        let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
+    
+        for (let compendium of filteredCompendiums) {
+          if (!compendium)
           {
             break;
           }
-  
-          if (entry.type != "spell")
-          {
-            continue;
-          }
-  
-          try
-          {
-            const currentSpell = await compendium.getDocument(entry._id);
-            let spellName = entry.name;
-            if (spellName in this.allSpells)
+    
+          for (let entry of compendium.index) {
+            if (!entry)
             {
-              console.log(`Already have spell ${spellName} in dictionary`);
+              break;
+            }
+    
+            if (entry.type != "spell")
+            {
               continue;
             }
-            let spellLevel = this.getLevelKeyForSpell(currentSpell);
-            this.allSpells[spellName] = currentSpell;
-            this.spellsByLevel[spellLevel].push(currentSpell);
-          }
-          catch (error)
-          {
-            console.log(error);
-            console.log(`Spell id ${entry._id} failed to get added.`);
+    
+            try
+            {
+              const currentSpell = await compendium.getDocument(entry._id);
+              let spellName = entry.name;
+              let spellLevel = this.getLevelKeyForSpell(currentSpell);
+              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
+              {
+                this.spellsByLevel[spellLevel].push(currentSpell);
+              }
+            }
+            catch (error)
+            {
+              console.log(error);
+              console.log(`Spell id ${entry._id} failed to get added.`);
+            }
           }
         }
+      }
+
+      if (useSavedIndex)
+      {
+        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', this.spellsByLevel);
       }
     }
 
