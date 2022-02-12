@@ -220,6 +220,8 @@ class SFLocalHelpers {
             }
           }
         }
+
+        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedIndexDate', this.getCurrentDateTime()); 
       }
 
       if (useSavedIndex)
@@ -227,6 +229,14 @@ class SFLocalHelpers {
         await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', this.allMonsters);
       }
     }
+
+    static getCurrentDateTime() {
+      let current = new Date();
+      let cDate = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
+      let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
+      let dateTime = cDate + ' ' + cTime;
+      return dateTime;
+  };
 
     static getCreatureTypeForActor(actor)
     {

@@ -125,10 +125,22 @@ class SFCompendiumSorter extends FormApplication {
 		this.populatePlayerCharacters();
 		this.populateCompendiums(["Actor","Item"]);
 		this.populateCreatureTypes();
-		html.find('button#index-compendiums').on('click', function(event) {
+		let savedIndexDate = game.settings.get(SFCONSTS.MODULE_NAME, 'savedIndexDate');
+		if (savedIndexDate && savedIndexDate != '[object Object]')
+		{
+			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
+		}
+
+		html.find('button#index-compendiums').on('click', async (event) => {
 			event.preventDefault();
+			const $button = $(event.currentTarget);
+			$button.prop('disabled', true).addClass('disabled');
 			let forceReload = true;
-			SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+			html.find('button#index-compendiums')[0].innerText = `Currently indexing...`;
+			let doneIndexing = await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+			savedIndexDate = game.settings.get(SFCONSTS.MODULE_NAME, 'savedIndexDate');
+			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
+			$button.prop('disabled', false).removeClass('disabled');
 		});
 	}
 

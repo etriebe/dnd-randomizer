@@ -212,6 +212,10 @@
     overflow-y: auto;
 }
 
+#SFDialog .window-content .form-controls .index-compendiums:disabled {
+	background-color: var(--palette-primary-dark, #5f5f5f);
+	cursor: not-allowed;
+}
 
 #SFDialog .window-content form .form-group {
 	flex-direction: column;
