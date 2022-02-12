@@ -63,7 +63,7 @@ class SFCompendiumSorter extends FormApplication {
 			return;
 		}
 
-		let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
+		let playerCharacters = SFLocalHelpers.getListOfActivePlayers();
 		
 		const savedPlayerSettings = game.settings.get(
 			SFCONSTS.MODULE_NAME,
@@ -74,15 +74,12 @@ class SFCompendiumSorter extends FormApplication {
 			let playerName = player.name;
 			const el = savedPlayerSettings.find(i => Object.keys(i)[0] === playerName);
 			let playerClasses = player.classes;
-			let playerClassList = Object.keys(playerClasses);
+			let playerClassList = SFLocalHelpers.getPlayerClassList(player);
 			let playerClassSpans = [];
 			for (let i = 0; i < playerClassList.length; i++)
 			{
 				let currentClassName = playerClassList[i];
-				let currentClassNameCasedCorrect = currentClassName.charAt(0).toUpperCase() + currentClassName.slice(1);
-				let currentClass = playerClasses[currentClassName];
-				let currentClassLevel = currentClass.data.data.levels;
-				let currentClassSpan = `<span class="player-character-info" data-type="${currentClassName}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
+				let currentClassSpan = this.getPlayerClassSpan(player, currentClassName);
 				playerClassSpans.push(currentClassSpan);
 			}
 			$ul.append(`<li class="playerCharacterLi">
@@ -95,6 +92,40 @@ class SFCompendiumSorter extends FormApplication {
 		sortable('#SFCompendiumSorter .sortable-compendiums', {
 			forcePlaceholderSize: true
 		});
+	}
+
+	getPlayerClassSpan(player, currentClass)
+	{
+		let currentSystem = game.system.id;
+
+		if (currentSystem === "dnd5e")
+		{
+			let playerClasses = player.classes;
+			let currentClassNameCasedCorrect = currentClass.charAt(0).toUpperCase() + currentClass.slice(1);
+			let currentClassObject = playerClasses[currentClassName];
+			let currentClassLevel = currentClassObject.data.data.levels;
+			let currentClassSpan = `<span class="player-character-info" data-type="${currentClassName}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
+			return currentClassSpan;
+		}
+		else if (currentSystem === "pf2e")
+		{
+			let currentClassLevel = player.level;
+
+			let pf2eClassName;
+			let currentClassNameCasedCorrect;
+			if (!currentClass)
+			{
+				pf2eClassName = currentClassNameCasedCorrect = "No class";
+			}
+			else
+			{
+				pf2eClassName = currentClass.name;
+				currentClassNameCasedCorrect = pf2eClassName.charAt(0).toUpperCase() + pf2eClassName.slice(1);
+			}
+			
+			let currentClassSpan = `<span class="player-character-info" data-type="${pf2eClassName}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
+			return currentClassSpan;
+		}
 	}
 
 	populateCreatureTypes() {

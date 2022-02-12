@@ -36,12 +36,18 @@ class SFLocalHelpers {
       }
     }
 
-    static getActivePlayersCountAndLevels() {
+    static getListOfActivePlayers()
+    {
       let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
       if (playerCharacters.length === 0)
       {
         playerCharacters = game.actors.filter(a=>a.type === "character");
       }
+      return playerCharacters;
+    }
+
+    static getActivePlayersCountAndLevels() {
+      let playerCharacters = this.getListOfActivePlayers();
 
       const savedPlayerSettings = game.settings.get(
         SFCONSTS.MODULE_NAME,
@@ -83,7 +89,7 @@ class SFLocalHelpers {
       if (currentSystem === "dnd5e")
       {
         let playerClasses = player.classes;
-        let playerClassList = Object.keys(playerClasses);
+        let playerClassList = this.getPlayerClassList(player);
         let totalLevelCount = 0;
         for (let i = 0; i < playerClassList.length; i++)
         {
@@ -102,8 +108,25 @@ class SFLocalHelpers {
       }
     }
 
-    static async populateCurrentActors() {
-      let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
+    static getPlayerClassList(player)
+    {
+      let playerClassList = [];
+      let currentSystem = game.system.id;
+      if (currentSystem === "dnd5e")
+      {
+        let playerClasses = player.classes;
+        let playerClassList = Object.keys(playerClasses);
+        return playerClassList;
+      }
+      else if (currentSystem === "pf2e")
+      {
+        playerClassList.push(player.class);
+        return playerClassList;
+      }
+      else
+      {
+        throw new Error ("Unsupported system!");
+      }
     }
   
     static async populateItemsFromCompendiums(forceReload)
