@@ -245,7 +245,8 @@ class SFDialog extends FormApplication {
 
 			if (SFHelpers.useLocalEncounterGenerator())
 			{
-				await SFLocalHelpers.populateObjectsFromCompendiums();
+				let forceReload = false;
+				await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
 				let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums(params);
 				let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, params, 30);
 				generateEncounters = generateEncounters.sort((a, b) => {

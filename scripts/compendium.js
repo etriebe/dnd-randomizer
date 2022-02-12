@@ -125,6 +125,11 @@ class SFCompendiumSorter extends FormApplication {
 		this.populatePlayerCharacters();
 		this.populateCompendiums(["Actor","Item"]);
 		this.populateCreatureTypes();
+		html.find('button#index-compendiums').on('click', function(event) {
+			event.preventDefault();
+			let forceReload = true;
+			SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+		});
 	}
 
 	async close(options) { 

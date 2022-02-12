@@ -41,6 +41,14 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: true,
   });
+  game.settings.register(SFCONSTS.MODULE_NAME, "useSavedIndex", {
+    name: "Save a copy of the generated monster index so we don't have to open every compendium.",
+    hint: "If checked, we will save off the monster and spell object index. This will take up extra space!",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
   game.settings.register(SFCONSTS.MODULE_NAME, 'favoritedEncounters', {
     scope: "world",
     config: false,
@@ -68,6 +76,21 @@ Hooks.once("init", async function () {
     type: Object,
     default: [],
   });
+  
+  game.settings.register(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: [],
+  });
+  
+  game.settings.register(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: [],
+  });
+
   game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {
     scope: "world",
     config: false,
