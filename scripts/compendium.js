@@ -123,7 +123,7 @@ class SFCompendiumSorter extends FormApplication {
 				currentClassNameCasedCorrect = pf2eClassName.charAt(0).toUpperCase() + pf2eClassName.slice(1);
 			}
 			
-			let currentClassSpan = `<span class="player-character-info" data-type="${pf2eClassName}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
+			let currentClassSpan = `<span class="player-character-info" data-type="${pf2eClassName.toLowerCase()}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
 			return currentClassSpan;
 		}
 	}
