@@ -26,7 +26,7 @@ class SFLocalHelpers {
       {
         this.initializeDictionaries();
       }
-      if (!this.dictionariesPopulated)
+      if (!this.dictionariesPopulated || forceReload)
       {
         let promises = [];
         promises.push(this.populateItemsFromCompendiums(forceReload));
@@ -918,7 +918,7 @@ class SFLocalHelpers {
         let numberOfCreatures = creatureDescriptionParts[0];
         let levelInRelationToParty = creatureDescriptionParts[1];
 
-        let filteredMonsterList = monsterList.filter(m => m.level === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
+        let filteredMonsterList = monsterList.filter(m => this.getDataObjectFromObject(m).details.level.value === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
         if (filteredMonsterList.length === 0)
         {
           continue;
@@ -927,14 +927,14 @@ class SFLocalHelpers {
         let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
         let randomMonster = filteredMonsterList[randomMonsterIndex];
         let monsterName = randomMonster.name;
-        let randomMonsterLevel = randomMonster.level;
+        let randomMonsterLevel = this.getDataObjectFromObject(randomMonster).details.level.value;
         let monsterCR = this.getDataObjectFromObject(randomMonster).details.cr;
         let creatureCombatDetails = {};
         creatureCombatDetails["name"] = monsterName;
         creatureCombatDetails["quantity"] = numberOfCreatures;
         creatureCombatDetails["cr"] = monsterCR;
         creatureCombatDetails["level"] = randomMonsterLevel;
-        creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
+        creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id || m.actorid === randomMonster._id).combatdata;
         currentEncounter["creatures"].push(creatureCombatDetails);
       }
 

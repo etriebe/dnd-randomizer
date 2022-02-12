@@ -165,7 +165,6 @@ class SFCompendiumSorter extends FormApplication {
 
 			filterCompendiumSettings.push(setting);
 		});
-		console.log(filterCompendiumSettings)
 		
 		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterCompendiums',filterCompendiumSettings);
 	}
@@ -183,7 +182,6 @@ class SFCompendiumSorter extends FormApplication {
 
 			filterMonsterSettings.push(setting);
 		});
-		console.log(filterMonsterSettings)
 		
 		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterMonsterTypes',filterMonsterSettings);
 	}

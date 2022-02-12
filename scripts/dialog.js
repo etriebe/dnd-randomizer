@@ -6,6 +6,21 @@ class SFDialog extends FormApplication {
 
 	static get defaultOptions() {
 		let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
+		let numberOfPlayers = 0;
+		let averageLevelOfPlayers = 0;
+		if (useLocalPCs)
+		{
+			let activePlayerInfo = SFLocalHelpers.getActivePlayersCountAndLevels();
+			numberOfPlayers = activePlayerInfo["numberofplayers"];
+			averageLevelOfPlayers = activePlayerInfo["averageplayerlevel"];
+		}
+
+		if (!averageLevelOfPlayers || numberOfPlayers === 0)
+		{
+			console.warn(`Not using player character PCs because there were none found locally.`)
+			useLocalPCs = false;
+		}
+
 		let dialogTemplate = useLocalPCs ? `modules/dnd-randomizer/templates/usePCsDialog.hbs` : `modules/dnd-randomizer/templates/dialog.hbs`;
 		return { 
 			...super.defaultOptions,
@@ -229,7 +244,8 @@ class SFDialog extends FormApplication {
 				numberOfPlayers = activePlayerInfo["numberofplayers"];
 				averageLevelOfPlayers = activePlayerInfo["averageplayerlevel"];
 			}
-			else
+
+			if (!numberOfPlayers || averageLevelOfPlayers === 0)
 			{
 				numberOfPlayers = html.find('#numberOfPlayers select[name="numberOfPlayers"]').val();
 				averageLevelOfPlayers = html.find('#averageLevelOfPlayers select[name="averageLevelOfPlayers"]').val();
