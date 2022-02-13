@@ -1,13 +1,12 @@
 class SFLocalHelpers {
     static allMonsters = [];
-    static allSpells = {};
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
     static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
   
     static initializeDictionaries() {
-      this.dictionariesInitialized = true;
+      this.spellsByLevel = {};
       this.spellsByLevel["cantrip"] = [];
       this.spellsByLevel["1st level"] = [];
       this.spellsByLevel["2nd level"] = [];
@@ -19,25 +18,37 @@ class SFLocalHelpers {
       this.spellsByLevel["8th level"] = [];
       this.spellsByLevel["9th level"] = [];
       this.spellsByLevel["10th level"] = [];
+      this.dictionariesInitialized = true;
     }
   
-    static async populateObjectsFromCompendiums() {
+    static async populateObjectsFromCompendiums(forceReload) {
       if (!this.dictionariesInitialized)
       {
         this.initializeDictionaries();
       }
-      if (!this.dictionariesPopulated)
+      if (!this.dictionariesPopulated || forceReload)
       {
         let promises = [];
-        promises.push(this.populateItemsFromCompendiums());
-        promises.push(this.populateMonstersFromCompendiums());
+        promises.push(this.populateItemsFromCompendiums(forceReload));
+        promises.push(this.populateMonstersFromCompendiums(forceReload));
         await Promise.all(promises);
         this.dictionariesPopulated = true;
       }
     }
 
-    static getActivePlayersCountAndLevels() {
+    static getListOfActivePlayers()
+    {
       let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
+      if (playerCharacters.length === 0)
+      {
+        playerCharacters = game.actors.filter(a=>a.type === "character");
+      }
+      return playerCharacters;
+    }
+
+    static getActivePlayersCountAndLevels() {
+      let playerCharacters = this.getListOfActivePlayers();
+
       const savedPlayerSettings = game.settings.get(
         SFCONSTS.MODULE_NAME,
         "playerCharactersToCreateEncountersFor"
@@ -52,15 +63,7 @@ class SFLocalHelpers {
           continue;
         }
 
-        let playerClasses = player.classes;
-        let playerClassList = Object.keys(playerClasses);
-        let totalLevelCount = 0;
-        for (let i = 0; i < playerClassList.length; i++)
-        {
-          let currentClassLevel = playerClasses[playerClassList[i]].data.data.levels;
-          totalLevelCount += currentClassLevel;
-        }
-
+        let totalLevelCount = this.getPlayerClassLevel(player);
         if (totalLevelCount === 0)
         {
           console.log(`Player ${player.name} has no class level so skipping them.`);
@@ -68,6 +71,7 @@ class SFLocalHelpers {
         }
         levelList.push(totalLevelCount);
       }
+
       let total = 0;
       for(let i = 0; i < levelList.length; i++) {
           total += levelList[i];
@@ -79,115 +83,206 @@ class SFLocalHelpers {
       return resultObject;
     }
 
-    static async populateCurrentActors() {
-      let playerCharacters = game.actors.filter(a=>a.hasPlayerOwner === true);
-    }
-  
-    static async populateItemsFromCompendiums()
+    static getPlayerClassLevel(player)
     {
-      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
-  
-      for (let compendium of filteredCompendiums) {
-        if (!compendium)
+      let currentSystem = game.system.id;
+      if (currentSystem === "dnd5e")
+      {
+        let playerClasses = player.classes;
+        let playerClassList = this.getPlayerClassList(player);
+        let totalLevelCount = 0;
+        for (let i = 0; i < playerClassList.length; i++)
         {
-          break;
+          let currentClassLevel = playerClasses[playerClassList[i]].data.data.levels;
+          totalLevelCount += currentClassLevel;
         }
-  
-        for (let entry of compendium.index) {
-          if (!entry)
-          {
-            break;
-          }
-  
-          if (entry.type != "spell")
-          {
-            continue;
-          }
-  
-          try
-          {
-            const currentSpell = await compendium.getDocument(entry._id);
-            let spellName = entry.name;
-            if (spellName in this.allSpells)
-            {
-              console.log(`Already have spell ${spellName} in dictionary`);
-              continue;
-            }
-            let spellLevel = this.getLevelKeyForSpell(currentSpell);
-            this.allSpells[spellName] = currentSpell;
-            this.spellsByLevel[spellLevel].push(currentSpell);
-          }
-          catch (error)
-          {
-            console.log(error);
-            console.log(`Spell id ${entry._id} failed to get added.`);
-          }
-        }
+        return totalLevelCount;
+      }
+      else if (currentSystem === "pf2e")
+      {
+        return player.level;
+      }
+      else
+      {
+        throw new Error ("Unsupported system!");
       }
     }
 
-    static async populateMonstersFromCompendiums()
+    static getPlayerClassList(player)
     {
-      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
+      let playerClassList = [];
+      let currentSystem = game.system.id;
+      if (currentSystem === "dnd5e")
+      {
+        let playerClasses = player.classes;
+        let playerClassList = Object.keys(playerClasses);
+        return playerClassList;
+      }
+      else if (currentSystem === "pf2e")
+      {
+        playerClassList.push(player.class);
+        return playerClassList;
+      }
+      else
+      {
+        throw new Error ("Unsupported system!");
+      }
+    }
   
-      for (let compendium of filteredCompendiums) {
-        if (!compendium)
+    static async populateItemsFromCompendiums(forceReload)
+    {
+      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+
+      let populatedFromIndex = false;
+      if (useSavedIndex && !forceReload)
+      {
+        this.spellsByLevel = game.settings.get(SFCONSTS.MODULE_NAME, 'savedSpellIndex');
+        if (this.spellsByLevel.length > 0)
         {
-          break;
+          populatedFromIndex = true;
         }
-  
-        for (let entry of compendium.index) {
-          if (!entry)
+      }
+
+      if (!populatedFromIndex)
+      {
+        this.initializeDictionaries();
+        let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
+    
+        for (let compendium of filteredCompendiums) {
+          if (!compendium)
           {
             break;
           }
-  
-          if (entry.type != "npc")
-          {
-            continue;
-          }
-  
-          try {
-            let actor = await compendium.getDocument(entry._id);
-            let actorName = actor.data.name;
-            actorName = actorName.replaceAll("\"", "");
-            if (actorName === "#[CF_tempEntity]")
+    
+          for (let entry of compendium.index) {
+            if (!entry)
             {
-              console.log(`Skipping actor ${actorName}`);
+              break;
+            }
+    
+            if (entry.type != "spell")
+            {
               continue;
             }
-  
-            let environment = actor.data.data.details.environment;
-            if (!environment || environment.trim() === "")
+    
+            try
             {
-              environment = "Any";
+              const currentSpell = await compendium.getDocument(entry._id);
+              let spellName = entry.name;
+              let spellLevel = this.getLevelKeyForSpell(currentSpell);
+              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
+              {
+                this.spellsByLevel[spellLevel].push(currentSpell);
+              }
             }
-  
-            let environmentArray = environment.split(",");
-            environmentArray = environmentArray.map(e => e.trim());
-  
-            if (this.allMonsters.filter((m) => m.actor.data.name === actorName).length > 0)
+            catch (error)
             {
-              console.log(`Already have actor ${actorName}, actor id ${actor.data._id} in dictionary`);
-              continue;
+              console.log(error);
+              console.log(`Spell id ${entry._id} failed to get added.`);
             }
-            let monsterObject = {};
-            monsterObject["actor"] = actor;
-            monsterObject["actorname"] = actorName;
-            monsterObject["actorid"] = actor.data._id;
-            monsterObject["compendiumname"] = compendium.metadata.label;
-            monsterObject["environment"] = environmentArray;
-            monsterObject["creaturetype"] = this.getCreatureTypeForActor(actor);
-            monsterObject["combatdata"] = this.getCombatDataPerRound(actor);
-            this.allMonsters.push(monsterObject);
-          } 
-          catch (error) {
-            console.warn(error);
-            console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
           }
         }
       }
+
+      if (useSavedIndex)
+      {
+        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', this.spellsByLevel);
+      }
     }
+
+    static async populateMonstersFromCompendiums(forceReload)
+    {
+      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+
+      let populatedFromIndex = false;
+      if (useSavedIndex && !forceReload)
+      {
+        this.allMonsters = game.settings.get(SFCONSTS.MODULE_NAME, 'savedMonsterIndex');
+        if (this.allMonsters.length > 0)
+        {
+          populatedFromIndex = true;
+        }
+      }
+
+      if (!populatedFromIndex)
+      {
+        this.allMonsters = [];
+        let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
+  
+        for (let compendium of filteredCompendiums) {
+          if (!compendium)
+          {
+            break;
+          }
+    
+          for (let entry of compendium.index) {
+            if (!entry)
+            {
+              break;
+            }
+    
+            if (entry.type != "npc")
+            {
+              continue;
+            }
+    
+            try {
+              let actor = await compendium.getDocument(entry._id);
+              let actorName = actor.data.name;
+              actorName = actorName.replaceAll("\"", "");
+              if (actorName === "#[CF_tempEntity]")
+              {
+                console.log(`Skipping actor ${actorName}`);
+                continue;
+              }
+    
+              let environment = actor.data.data.details.environment;
+              if (!environment || environment.trim() === "")
+              {
+                environment = "Any";
+              }
+    
+              let environmentArray = environment.split(",");
+              environmentArray = environmentArray.map(e => e.trim());
+    
+              if (this.allMonsters.filter((m) => m.actor.data.name === actorName).length > 0)
+              {
+                console.log(`Already have actor ${actorName}, actor id ${actor.data._id} in dictionary`);
+                continue;
+              }
+              let monsterObject = {};
+              monsterObject["actor"] = actor;
+              monsterObject["actorname"] = actorName;
+              monsterObject["actorid"] = actor.data._id;
+              monsterObject["compendiumname"] = compendium.metadata.label;
+              monsterObject["environment"] = environmentArray;
+              monsterObject["creaturetype"] = this.getCreatureTypeForActor(actor);
+              monsterObject["combatdata"] = this.getCombatDataPerRound(actor);
+              this.allMonsters.push(monsterObject);
+            } 
+            catch (error) {
+              console.warn(error);
+              console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
+            }
+          }
+        }
+
+        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedIndexDate', this.getCurrentDateTime()); 
+      }
+
+      if (useSavedIndex)
+      {
+        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', this.allMonsters);
+      }
+    }
+
+    static getCurrentDateTime() {
+      let current = new Date();
+      let cDate = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
+      let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
+      let dateTime = cDate + ' ' + cTime;
+      return dateTime;
+  };
 
     static getCreatureTypeForActor(actor)
     {
@@ -250,7 +345,7 @@ class SFLocalHelpers {
         // Description types supported:
         // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
         // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
-        let multiAttackDescription = multiAttack[0].data.data.description.value.toLowerCase();
+        let multiAttackDescription = this.getDescriptionFromItemObject(multiAttack[0]).toLowerCase();
 
         let parsedAttackList = [];
         for (let i = 0; i < attackList.length; i++)
@@ -432,7 +527,7 @@ class SFLocalHelpers {
     {
       let abilityModType = attackObject.abilityMod;
       let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
-      let damageList = attackObject.data.data.damage.parts;
+      let damageList = this.getDataObjectFromObject(attackObject).damage.parts;
 
       let totalDamageForAttack = 0;
       for (let i = 0; i < damageList.length; i++)
@@ -682,9 +777,9 @@ class SFLocalHelpers {
               continue;
             }
   
-            let randomMonsterXP = randomMonster.data.data.details.xp.value;
+            let randomMonsterXP = this.getDataObjectFromObject(randomMonster).details.xp.value;
             let currentEncounterXPMultiplier = SFLocalHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
-            let monsterCR = randomMonster.data.data.details.cr;
+            let monsterCR = this.getDataObjectFromObject(randomMonster).details.cr;
             let currentEncounterAdjustedXP = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
       
             // If we're within 10% of budget, let's stop
@@ -781,7 +876,7 @@ class SFLocalHelpers {
             let wiggleRoom = wiggleRoomAmounts[j];
             let lowerBound = multiplierAmount * targetEncounterXP * (1 - wiggleRoom);
             let upperBound = multiplierAmount * targetEncounterXP * (1 + wiggleRoom);
-            let filteredMonsterList = monsterList.filter(m => m.data.data.details.xp.value >= lowerBound && m.data.data.details.xp.value <= upperBound);
+            let filteredMonsterList = monsterList.filter(m => this.getXPFromActorObject(m) >= lowerBound && this.getXPFromActorObject(m) <= upperBound);
             if (filteredMonsterList.length === 0)
             {
               continue;
@@ -790,14 +885,14 @@ class SFLocalHelpers {
             let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
             let randomMonster = filteredMonsterList[randomMonsterIndex];
             let monsterName = randomMonster.name;
-            let randomMonsterXP = randomMonster.data.data.details.xp.value;
-            let monsterCR = randomMonster.data.data.details.cr;
+            let randomMonsterXP = this.getXPFromActorObject(randomMonster);
+            let monsterCR = this.getCRFromActorObject(randomMonster);
             let creatureCombatDetails = {};
             creatureCombatDetails["name"] = monsterName;
             creatureCombatDetails["quantity"] = numberOfCreatures;
             creatureCombatDetails["cr"] = monsterCR;
             creatureCombatDetails["xp"] = randomMonsterXP;
-            creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
+            creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id || m.actorid === randomMonster._id).combatdata;
             currentEncounter["creatures"].push(creatureCombatDetails);
             break;
           }
@@ -808,6 +903,33 @@ class SFLocalHelpers {
       let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
       currentEncounter["loot"] = generatedLootObject;
       return currentEncounter;
+    }
+
+    static getDataObjectFromObject(obj)
+    {
+      if (obj.data.data)
+      {
+        return obj.data.data;
+      }
+      else
+      {
+        return obj.data;
+      }
+    }
+
+    static getXPFromActorObject(actor)
+    {
+      return this.getDataObjectFromObject(actor).details.xp.value;
+    }
+
+    static getCRFromActorObject(actor)
+    {
+      return this.getDataObjectFromObject(actor).details.cr;
+    }
+
+    static getDescriptionFromItemObject(item)
+    {
+      return this.getDataObjectFromObject(item).description.value;
     }
 
     static createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params)
@@ -842,7 +964,7 @@ class SFLocalHelpers {
         let numberOfCreatures = creatureDescriptionParts[0];
         let levelInRelationToParty = creatureDescriptionParts[1];
 
-        let filteredMonsterList = monsterList.filter(m => m.level === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
+        let filteredMonsterList = monsterList.filter(m => this.getDataObjectFromObject(m).details.level.value === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
         if (filteredMonsterList.length === 0)
         {
           continue;
@@ -851,14 +973,14 @@ class SFLocalHelpers {
         let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
         let randomMonster = filteredMonsterList[randomMonsterIndex];
         let monsterName = randomMonster.name;
-        let randomMonsterLevel = randomMonster.level;
-        let monsterCR = randomMonster.data.data.details.cr;
+        let randomMonsterLevel = this.getDataObjectFromObject(randomMonster).details.level.value;
+        let monsterCR = this.getDataObjectFromObject(randomMonster).details.cr;
         let creatureCombatDetails = {};
         creatureCombatDetails["name"] = monsterName;
         creatureCombatDetails["quantity"] = numberOfCreatures;
         creatureCombatDetails["cr"] = monsterCR;
         creatureCombatDetails["level"] = randomMonsterLevel;
-        creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
+        creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id || m.actorid === randomMonster._id).combatdata;
         currentEncounter["creatures"].push(creatureCombatDetails);
       }
 
@@ -1349,7 +1471,7 @@ class SFLocalHelpers {
     {
       let currentEncounterMonsterCount = 0;
       let currentEncounterXP = 0;
-      let newMonsterXP = newMonster.data.data.details.xp.value;
+      let newMonsterXP = this.getDataObjectFromObject(newMonster).details.xp.value;
       if (currentEncounter["creatures"].length > 0)
       {
         for (const monsterIndex in currentEncounter["creatures"])

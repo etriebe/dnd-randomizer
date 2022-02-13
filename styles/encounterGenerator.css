@@ -212,6 +212,10 @@
     overflow-y: auto;
 }
 
+#SFDialog .window-content .form-controls .index-compendiums:disabled {
+	background-color: var(--palette-primary-dark, #5f5f5f);
+	cursor: not-allowed;
+}
 
 #SFDialog .window-content form .form-group {
 	flex-direction: column;
@@ -619,3 +623,46 @@
 #SFCompendiumSorter form ul li span.player-character-info[data-type="wizard"] {
     background-color: var(--palette-primary, #3E6EBE);
 }
+
+/* Pf2e classes */
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="alchemist"] {
+    background-color: var(--palette-primary, #49be3e);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="champion"] {
+    background-color: var(--palette-primary, #808080);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="gunslinger"] {
+    background-color: var(--palette-primary, #1b1e24);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="inventor"] {
+    background-color: var(--palette-primary, #bb5d1f);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="investigator"] {
+    background-color: var(--palette-primary, #3c5d95);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="magus"] {
+    background-color: var(--palette-primary, #3eafbe);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="oracle"] {
+    background-color: var(--palette-primary, #850d0d);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="summoner"] {
+    background-color: var(--palette-primary, #4d750b);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="swashbuckler"] {
+    background-color: var(--palette-primary, #087aaf);
+}
+
+#SFCompendiumSorter form ul li span.player-character-info[data-type="witch"] {
+    background-color: var(--palette-primary, #cc0b0b);
+}
+
