@@ -686,19 +686,24 @@ class SFLocalHelpers {
 
       for (const monsterObject of this.allMonsters)
       {
-        if (filteredCompendiums.filter((c) => c.metadata.label === monsterObject.compendiumname).length === 0) 
-        {
-          continue;
-        }
+        try {
+          if (filteredCompendiums.filter((c) => c.metadata.label === monsterObject.compendiumname).length === 0) 
+          {
+            continue;
+          }
 
-        if (filteredMonsterTypes.filter(m => m === monsterObject.creaturetype.toLowerCase()).length === 0)
-        {
-          continue;
-        }
+          if (filteredMonsterTypes.filter(m => monsterObject.creaturetype && m === monsterObject.creaturetype.toLowerCase()).length === 0)
+          {
+            continue;
+          }
 
-        if (monsterObject.environment.indexOf(environment) > -1 || monsterObject.environment.indexOf("Any") > -1)
-        {
-          filteredMonsters.push(monsterObject.actor);
+          if (monsterObject.environment.indexOf(environment) > -1 || monsterObject.environment.indexOf("Any") > -1)
+          {
+            filteredMonsters.push(monsterObject.actor);
+          }
+        }
+        catch (error) {
+          console.warn(`Unable to process creature: Name:${monsterObject.name}, Id: ${this.getActorId(monsterObject)}`);
         }
       }
 
@@ -930,6 +935,18 @@ class SFLocalHelpers {
     static getDescriptionFromItemObject(item)
     {
       return this.getDataObjectFromObject(item).description.value;
+    }
+
+    static getActorId(actor)
+    {
+      if (actor.id)
+      {
+        return actor.id;
+      }
+      else
+      {
+        return actor._id;
+      }
     }
 
     static createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params)
