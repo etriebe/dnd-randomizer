@@ -95,7 +95,7 @@ class Encounter {
       SFCONSTS.MODULE_NAME,
       "filterCompendiums"
     );
-    const filteredCompendiums = Array.from(game.packs).filter((p) => {
+    const filteredCompendiums = Array.from(FoundryUtils.getCompendiums()).filter((p) => {
       if (p.documentName !== type) return false;
       const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
       return !el || el[p.collection] ? true : false;
@@ -118,7 +118,7 @@ class Encounter {
   }
   //returns the most similar name in a compendium
   static fuzzyMatch(name, type) {
-    const compendiums = game.packs.filter((p) => p.documentName === type);
+    const compendiums = FoundryUtils.getCompendiums().filter((p) => p.documentName === type);
     let matchDb = [];
     for (let compendium of compendiums) {
       for (let entry of compendium.index) {

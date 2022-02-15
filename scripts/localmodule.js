@@ -146,7 +146,7 @@ class SFLocalHelpers {
       if (!populatedFromIndex)
       {
         this.initializeDictionaries();
-        let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
+        let filteredCompendiums = FoundryUtils.getCompendiums().filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
     
         for (let compendium of filteredCompendiums) {
           if (!compendium)
@@ -207,7 +207,7 @@ class SFLocalHelpers {
       if (!populatedFromIndex)
       {
         this.allMonsters = [];
-        let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
+        let filteredCompendiums = FoundryUtils.getCompendiums().filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
   
         for (let compendium of filteredCompendiums) {
           if (!compendium)
@@ -282,7 +282,7 @@ class SFLocalHelpers {
       let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
       let dateTime = cDate + ' ' + cTime;
       return dateTime;
-  };
+    };
 
     static getCreatureTypeForActor(actor)
     {
@@ -673,7 +673,7 @@ class SFLocalHelpers {
         "filterMonsterTypes"
       );
 
-      const filteredCompendiums = Array.from(game.packs).filter((p) => {
+      const filteredCompendiums = Array.from(FoundryUtils.getCompendiums()).filter((p) => {
         if (p.documentName !== "Actor") return false;
         const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
         return !el || el[p.collection] ? true : false;

@@ -10,11 +10,16 @@
           "name": "theripper93",
           "email": "tsplab@gmail.com",
           "url": "https://www.patreon.com/theripper93"
-      }, {
+      },
+      {
         "name": "Mouse0270",
         "email": "",
         "url": "https://www.patreon.com/mouse0270",
         "discord": "mouse0270#0270"
+      },
+      {
+        "name": "thetreat",
+        "discord": "thetreat#9487"
       }
   ],
   "languages": [
@@ -25,6 +30,8 @@
       }
   ],
   "scripts": [
+      "./scripts/dnd5e/PCActor5e.js",
+      "./scripts/utils/FoundryUtils.js",
       "./scripts/compendium.js",
       "./scripts/config.js",
       "./scripts/dialog.js",
