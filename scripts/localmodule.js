@@ -249,7 +249,7 @@ class SFLocalHelpers {
 
     static async loadFromCache(force)
     {
-      let storedCacheResponse = await (await fetch("/CompendiumCache.json"));
+      let storedCacheResponse = await (await fetch(`${SFLOCALCONSTS.CACHE_FOLDER}${SFLOCALCONSTS.CACHE_FILE}`));
       if(storedCacheResponse.ok && !force){
         let storedCache = JSON.parse(await storedCacheResponse.text());
         this.allMonsters = storedCache._monsterCache;
@@ -280,8 +280,9 @@ class SFLocalHelpers {
         type: 'text/plain'
       });
 
-      let file = new File([blob], "CompendiumCache.json", { type: "text" });
-      await FilePicker.upload("data", "", file, {});
+      await FilePicker.createDirectory("data", SFLOCALCONSTS.CACHE_FOLDER, {});
+      let file = new File([blob], SFLOCALCONSTS.CACHE_FILE, { type: "text" });
+      await FilePicker.upload("data", SFLOCALCONSTS.CACHE_FOLDER, file, {});
 
       // null out old settings
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', []);
