@@ -3,6 +3,7 @@ class SFLocalHelpers {
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
+    static _indexCacheDate;
     static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
   
     static initializeDictionaries() {
@@ -22,17 +23,29 @@ class SFLocalHelpers {
     }
   
     static async populateObjectsFromCompendiums(forceReload) {
+      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
       if (!this.dictionariesInitialized)
       {
         this.initializeDictionaries();
       }
-      if (!this.dictionariesPopulated || forceReload)
+      let loadResult = false;;
+      if (useSavedIndex)
+      {
+        loadResult = await this.loadFromCache(forceReload);
+      }
+
+      if (!this.dictionariesPopulated || forceReload || !loadResult)
       {
         let promises = [];
-        promises.push(this.populateItemsFromCompendiums(forceReload));
-        promises.push(this.populateMonstersFromCompendiums(forceReload));
+        promises.push(this.populateItemsFromCompendiums());
+        promises.push(this.populateMonstersFromCompendiums());
         await Promise.all(promises);
         this.dictionariesPopulated = true;
+      }
+
+      if (useSavedIndex && (forceReload || !loadResult))
+      {
+        await this.saveCache();
       }
     }
 
@@ -129,151 +142,151 @@ class SFLocalHelpers {
       }
     }
   
-    static async populateItemsFromCompendiums(forceReload)
+    static async populateItemsFromCompendiums()
     {
-      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+      this.initializeDictionaries();
+      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
 
-      let populatedFromIndex = false;
-      if (useSavedIndex && !forceReload)
-      {
-        this.spellsByLevel = game.settings.get(SFCONSTS.MODULE_NAME, 'savedSpellIndex');
-        if (this.spellsByLevel.length > 0)
+      for (let compendium of filteredCompendiums) {
+        if (!compendium)
         {
-          populatedFromIndex = true;
+          break;
         }
-      }
-
-      if (!populatedFromIndex)
-      {
-        this.initializeDictionaries();
-        let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
-    
-        for (let compendium of filteredCompendiums) {
-          if (!compendium)
+  
+        for (let entry of compendium.index) {
+          if (!entry)
           {
             break;
           }
-    
-          for (let entry of compendium.index) {
-            if (!entry)
+  
+          if (entry.type != "spell")
+          {
+            continue;
+          }
+  
+          try
+          {
+            const currentSpell = await compendium.getDocument(entry._id);
+            let spellName = entry.name;
+            let spellLevel = this.getLevelKeyForSpell(currentSpell);
+            if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
             {
-              break;
-            }
-    
-            if (entry.type != "spell")
-            {
-              continue;
-            }
-    
-            try
-            {
-              const currentSpell = await compendium.getDocument(entry._id);
-              let spellName = entry.name;
-              let spellLevel = this.getLevelKeyForSpell(currentSpell);
-              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
-              {
-                this.spellsByLevel[spellLevel].push(currentSpell);
-              }
-            }
-            catch (error)
-            {
-              console.log(error);
-              console.log(`Spell id ${entry._id} failed to get added.`);
+              this.spellsByLevel[spellLevel].push(currentSpell);
             }
           }
+          catch (error)
+          {
+            console.log(error);
+            console.log(`Spell id ${entry._id} failed to get added.`);
+          }
         }
-      }
-
-      if (useSavedIndex)
-      {
-        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', this.spellsByLevel);
       }
     }
 
-    static async populateMonstersFromCompendiums(forceReload)
+    static async populateMonstersFromCompendiums()
     {
-      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+      this.allMonsters = [];
+      let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
 
-      let populatedFromIndex = false;
-      if (useSavedIndex && !forceReload)
-      {
-        this.allMonsters = game.settings.get(SFCONSTS.MODULE_NAME, 'savedMonsterIndex');
-        if (this.allMonsters.length > 0)
+      for (let compendium of filteredCompendiums) {
+        if (!compendium)
         {
-          populatedFromIndex = true;
+          break;
         }
-      }
-
-      if (!populatedFromIndex)
-      {
-        this.allMonsters = [];
-        let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
   
-        for (let compendium of filteredCompendiums) {
-          if (!compendium)
+        for (let entry of compendium.index) {
+          if (!entry)
           {
             break;
           }
-    
-          for (let entry of compendium.index) {
-            if (!entry)
+  
+          if (entry.type != "npc")
+          {
+            continue;
+          }
+  
+          try {
+            let actor = await compendium.getDocument(entry._id);
+            let actorName = actor.data.name;
+            actorName = actorName.replaceAll("\"", "");
+            if (actorName === "#[CF_tempEntity]")
             {
-              break;
-            }
-    
-            if (entry.type != "npc")
-            {
+              console.log(`Skipping actor ${actorName}`);
               continue;
             }
-    
-            try {
-              let actor = await compendium.getDocument(entry._id);
-              let actorName = actor.data.name;
-              actorName = actorName.replaceAll("\"", "");
-              if (actorName === "#[CF_tempEntity]")
-              {
-                console.log(`Skipping actor ${actorName}`);
-                continue;
-              }
-    
-              let environment = actor.data.data.details.environment;
-              if (!environment || environment.trim() === "")
-              {
-                environment = "Any";
-              }
-    
-              let environmentArray = environment.split(",");
-              environmentArray = environmentArray.map(e => e.trim());
-    
-              if (this.allMonsters.filter((m) => m.actor.data.name === actorName).length > 0)
-              {
-                console.log(`Already have actor ${actorName}, actor id ${actor.data._id} in dictionary`);
-                continue;
-              }
-              let monsterObject = {};
-              monsterObject["actor"] = actor;
-              monsterObject["actorname"] = actorName;
-              monsterObject["actorid"] = actor.data._id;
-              monsterObject["compendiumname"] = compendium.metadata.label;
-              monsterObject["environment"] = environmentArray;
-              monsterObject["creaturetype"] = this.getCreatureTypeForActor(actor);
-              monsterObject["combatdata"] = this.getCombatDataPerRound(actor);
-              this.allMonsters.push(monsterObject);
-            } 
-            catch (error) {
-              console.warn(error);
-              console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
+  
+            let environment = actor.data.data.details.environment;
+            if (!environment || environment.trim() === "")
+            {
+              environment = "Any";
             }
+  
+            let environmentArray = environment.split(",");
+            environmentArray = environmentArray.map(e => e.trim());
+  
+            if (this.allMonsters.filter((m) => m.actor.data.name === actorName).length > 0)
+            {
+              console.log(`Already have actor ${actorName}, actor id ${actor.data._id} in dictionary`);
+              continue;
+            }
+            let monsterObject = {};
+            monsterObject["actor"] = actor;
+            monsterObject["actorname"] = actorName;
+            monsterObject["actorid"] = actor.data._id;
+            monsterObject["compendiumname"] = compendium.metadata.label;
+            monsterObject["environment"] = environmentArray;
+            monsterObject["creaturetype"] = this.getCreatureTypeForActor(actor);
+            monsterObject["combatdata"] = this.getCombatDataPerRound(actor);
+            this.allMonsters.push(monsterObject);
+          } 
+          catch (error) {
+            console.warn(error);
+            console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
           }
         }
+      }
+    }
 
-        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedIndexDate', this.getCurrentDateTime()); 
+    static async loadFromCache(force)
+    {
+      let storedCacheResponse = await (await fetch("/CompendiumCache.json"));
+      if(storedCacheResponse.ok && !force){
+        let storedCache = JSON.parse(await storedCacheResponse.text());
+        this.allMonsters = storedCache._monsterCache;
+        this._indexCacheDate = storedCache._indexCacheDate;
+        this.spellsByLevel = storedCache._spellsByLevel;
+        this.dictionariesPopulated = true;
+        console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
       }
 
-      if (useSavedIndex)
+      if (this.allMonsters.length > 0)
       {
-        await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', this.allMonsters);
+        return true;
       }
+      else
+      {
+        return false;
+      }
+    }
+
+    static async saveCache(){
+      const data = {
+        _indexCacheDate : this.getCurrentDateTime(),
+        _monsterCache : this.allMonsters,
+        _spellsByLevel : this.spellsByLevel,
+      }
+  
+      let blob = new Blob([JSON.stringify(data)], {
+        type: 'text/plain'
+      });
+
+      let file = new File([blob], "CompendiumCache.json", { type: "text" });
+      await FilePicker.upload("data", "", file, {});
+
+      // null out old settings
+      await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', []);
+      await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
+      console.log(`Saved ${this.allMonsters.length} monsters to cache`);
     }
 
     static getCurrentDateTime() {
@@ -282,7 +295,7 @@ class SFLocalHelpers {
       let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
       let dateTime = cDate + ' ' + cTime;
       return dateTime;
-  };
+    };
 
     static getCreatureTypeForActor(actor)
     {
