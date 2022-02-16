@@ -28,10 +28,10 @@ class SFLocalHelpers {
       {
         this.initializeDictionaries();
       }
-      let loadResult = false;;
-      if (useSavedIndex)
+      let loadResult = false;
+      if (useSavedIndex && !forceReload)
       {
-        loadResult = await this.loadFromCache(forceReload);
+        loadResult = await this.loadFromCache();
       }
 
       if (!this.dictionariesPopulated || forceReload || !loadResult)
@@ -247,20 +247,35 @@ class SFLocalHelpers {
       }
     }
 
-    static async loadFromCache(force)
+    static async loadFromCache()
     {
-      let storedCacheResponse = await (await fetch(`${SFLOCALCONSTS.CACHE_FOLDER}${SFLOCALCONSTS.CACHE_FILE}`));
-      if(storedCacheResponse.ok && !force){
-        let storedCache = JSON.parse(await storedCacheResponse.text());
-        this.allMonsters = storedCache._monsterCache;
-        this._indexCacheDate = storedCache._indexCacheDate;
-        this.spellsByLevel = storedCache._spellsByLevel;
-        this.dictionariesPopulated = true;
-        console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
+      let spellsbyLevelFromCache = await this.loadFile(SFLOCALCONSTS.SPELL_CACHE_FILE);
+      if (spellsbyLevelFromCache)
+      {
+        this.spellsByLevel = spellsbyLevelFromCache;
       }
+
+      let indexCacheDateFromCache = await this.loadFile(SFLOCALCONSTS.DATE_CACHE_FILE);
+      if (indexCacheDateFromCache)
+      {
+        this._indexCacheDate = indexCacheDateFromCache;
+      }
+
+      const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
+      for (let currentCreatureType of creatureTypes) {
+        let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
+        let currentCreatureTypeList = await this.loadFile(fileName);
+        if (!currentCreatureTypeList)
+        {
+          continue;
+        }
+        this.allMonsters = this.allMonsters.concat(currentCreatureTypeList);
+      }
+      console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
 
       if (this.allMonsters.length > 0)
       {
+        this.dictionariesPopulated = true;
         return true;
       }
       else
@@ -269,25 +284,54 @@ class SFLocalHelpers {
       }
     }
 
-    static async saveCache(){
-      const data = {
-        _indexCacheDate : this.getCurrentDateTime(),
-        _monsterCache : this.allMonsters,
-        _spellsByLevel : this.spellsByLevel,
+    static async loadFile(fileName)
+    {
+      let fullFilePath = `${SFLOCALCONSTS.CACHE_FOLDER}${fileName}`;
+      let storedCacheResponse = await (await fetch(fullFilePath));
+      if(storedCacheResponse.ok){
+        return JSON.parse(await storedCacheResponse.text());
       }
-  
-      let blob = new Blob([JSON.stringify(data)], {
+    }
+
+    static async saveCache(){
+      await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
+      await this.saveObjectToCache(SFLOCALCONSTS.DATE_CACHE_FILE, this.getCurrentDateTime());
+      const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
+      for (let currentCreatureType of creatureTypes) {
+        let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType === m.creaturetype.toLowerCase());
+        let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
+        await this.saveObjectToCache(fileName, monsterList);
+      }
+
+      console.log(`Saved ${this.allMonsters.length} monsters to cache`);
+      await this.cleanUpOldCacheObjects();
+    }
+
+    static async saveObjectToCache(fileName, object)
+    {
+      let blob = new Blob([JSON.stringify(object)], {
         type: 'text/plain'
       });
 
-      await FilePicker.createDirectory("data", SFLOCALCONSTS.CACHE_FOLDER, {});
-      let file = new File([blob], SFLOCALCONSTS.CACHE_FILE, { type: "text" });
-      await FilePicker.upload("data", SFLOCALCONSTS.CACHE_FOLDER, file, {});
+      try
+      {
+        const cacheDir = await FilePicker.browse("data", SFLOCALCONSTS.CACHE_FOLDER);
+      }
+      catch (error)
+      {
+        console.log(`Creating cache folder ${SFLOCALCONSTS.CACHE_FOLDER} because it doesn't exist.`);
+        await FilePicker.createDirectory("data", SFLOCALCONSTS.CACHE_FOLDER, {});
+      }
 
+      let file = new File([blob], fileName, { type: "text" });
+      await FilePicker.upload("data", SFLOCALCONSTS.CACHE_FOLDER, file, {});
+    }
+
+    static async cleanUpOldCacheObjects()
+    {
       // null out old settings
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', []);
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
-      console.log(`Saved ${this.allMonsters.length} monsters to cache`);
     }
 
     static getCurrentDateTime() {
@@ -965,7 +1009,6 @@ class SFLocalHelpers {
 
     static createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params)
     {
-      
       let currentEncounter = {};
       currentEncounter["creatures"] = [];
       let currentEncounterXP = 0;
