@@ -1,4 +1,6 @@
 const SFLOCALCONSTS = {
+    CACHE_FILE: "/CompendiumCache.json",
+    CACHE_FOLDER: "dnd-randomizer",
     CREATURE_TYPES: [
         "aberration",
         "beast",

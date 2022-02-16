@@ -156,8 +156,8 @@ class SFCompendiumSorter extends FormApplication {
 		this.populatePlayerCharacters();
 		this.populateCompendiums(["Actor","Item"]);
 		this.populateCreatureTypes();
-		let savedIndexDate = game.settings.get(SFCONSTS.MODULE_NAME, 'savedIndexDate');
-		if (savedIndexDate && savedIndexDate != '[object Object]')
+		let savedIndexDate = SFLocalHelpers._indexCacheDate;
+		if (savedIndexDate)
 		{
 			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
 		}
