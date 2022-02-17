@@ -52,17 +52,33 @@ class SFCompendiumSorter extends FormApplication {
 		});
 	}
 
+	populateLocations() {
+		const html = this.element
+		let $ul = html.find('ul#location_filter').first();
+		
+		const savedLocationSettings = game.settings.get(
+			SFCONSTS.MODULE_NAME,
+			"locationsToCreateEncountersFor"
+		  );
+		
+		for (let location of this.environments)
+		{
+			const el = savedLocationSettings.find(i => Object.keys(i)[0] === location);
+			$ul.append(`
+			<li class="locationLi">
+				<input type="checkbox" name="${location}" ${!el || el[location] ? "checked" : ""}>
+				<span class="location-type" data-name="${location === "Any" ? "Creatures without a location specified get grouped into an 'Any' bucket" : ""}">${location}</span>
+			</li>`)
+		}
+
+		sortable('#SFCompendiumSorter .sortable-compendiums', {
+			forcePlaceholderSize: true
+		});
+	}
+
 	populatePlayerCharacters() {
 		const html = this.element
 		let $ul = html.find('ul#player_filter').first();
-		let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
-
-		if (!useLocalPCs)
-		{
-			$ul.append("Filtering not available because setting wasn't specified to use player-owned actors for generation.");
-			return;
-		}
-
 		let playerCharacters = SFLocalHelpers.getListOfActivePlayers();
 		
 		const savedPlayerSettings = game.settings.get(
@@ -154,6 +170,7 @@ class SFCompendiumSorter extends FormApplication {
 	
 	async activateListeners(html) {
 		this.populatePlayerCharacters();
+		this.populateLocations();
 		this.populateCompendiums(["Actor","Item"]);
 		this.populateCreatureTypes();
 		let savedIndexDate = SFLocalHelpers._indexCacheDate;
@@ -179,6 +196,7 @@ class SFCompendiumSorter extends FormApplication {
 		await this.saveCompendiumSetting();
 		await this.saveMonsterTypeSetting();
 		await this.savePlayerCharacterSetting();
+		await this.saveLocationSetting();
 		// Default Close
 		return await super.close(options);
 	}
@@ -233,6 +251,23 @@ class SFCompendiumSorter extends FormApplication {
 		console.log(playerCharacterSettings)
 		
 		await game.settings.set(SFCONSTS.MODULE_NAME, 'playerCharactersToCreateEncountersFor',playerCharacterSettings);
+	}
+
+	async saveLocationSetting()
+	{
+		const html = this.element;
+		let $ul = html.find('ul#location_filter').first();
+		let locationSettings = [];
+
+		$ul.find('li.locationLi').each((index, item) => {
+			let $element = $(item).find('input');
+			let setting = {};
+			setting[$element.attr('name')] = $element.is(':checked');
+
+			locationSettings.push(setting);
+		});
+		
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'locationsToCreateEncountersFor',locationSettings);
 	}
 
 	async _updateObject(event, formData) {

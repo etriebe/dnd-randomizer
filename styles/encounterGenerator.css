@@ -551,7 +551,8 @@
     color: var(--palette-secondary-contrast-text, #fff);
 }
 
-#SFCompendiumSorter form ul li span.compendium-title:after {
+#SFCompendiumSorter form ul li span.compendium-title:after,
+#SFCompendiumSorter form ul li span.location-type:after {
     content: attr(data-name);
     display: block;
     font-size: 0.7rem;

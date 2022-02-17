@@ -5,6 +5,7 @@ const SFCONSTS = {
         numberOfPlayers: Number,//[1 - 13]
         averageLevelOfPlayers: Number,//[1 - 20]
         environment: [
+          "Any",
           "Arctic",
           "Coastal",
           "Desert",

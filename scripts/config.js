@@ -77,6 +77,13 @@ Hooks.once("init", async function () {
     default: [],
   });
   
+  game.settings.register(SFCONSTS.MODULE_NAME, 'locationsToCreateEncountersFor', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: [],
+  });
+  
   game.settings.register(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', {
     scope: "world",
     config: false,
