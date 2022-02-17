@@ -718,7 +718,8 @@ class SFLocalHelpers {
   
     static async filterMonstersFromCompendiums(params)
     {
-      let environment = params.environment;
+      let environmentList = savedLocationSettings
+
       let filteredMonsters = [];
 
       const constCompFilter = game.settings.get(
@@ -731,6 +732,11 @@ class SFLocalHelpers {
         "filterMonsterTypes"
       );
 
+      const savedLocationSettings = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "locationsToCreateEncountersFor"
+        );
+
       const filteredCompendiums = Array.from(game.packs).filter((p) => {
         if (p.documentName !== "Actor") return false;
         const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
@@ -740,6 +746,11 @@ class SFLocalHelpers {
       const filteredMonsterTypes = Array.from(SFLOCALCONSTS.CREATURE_TYPES).filter((p) => {
         const el = constMonsterTypeFilter.find((i) => Object.keys(i)[0] == p);
         return !el || el[p] ? true : false;
+      });
+
+      const filteredEnvironments = Array.from(SFCONSTS.GEN_OPT.environment).filter((e) => {
+        const el = savedLocationSettings.find((i) => Object.keys(i)[0] == e);
+        return !el || el[e] ? true : false;
       });
 
       for (const monsterObject of this.allMonsters)
@@ -755,7 +766,7 @@ class SFLocalHelpers {
             continue;
           }
 
-          if (monsterObject.environment.indexOf(environment) > -1 || monsterObject.environment.indexOf("Any") > -1)
+          if (monsterObject.environment.filter(e => filteredEnvironments.filter(f => f === e).length > 0))
           {
             filteredMonsters.push(monsterObject.actor);
           }
