@@ -764,7 +764,7 @@ class SFLocalHelpers {
             continue;
           }
 
-          if (monsterObject.environment.filter(e => filteredEnvironments.filter(f => f === e).length > 0))
+          if (monsterObject.environment.filter(e => filteredEnvironments.filter(f => f === e).length > 0).length > 0)
           {
             filteredMonsters.push(monsterObject.actor);
           }
