@@ -161,7 +161,7 @@ class SFCompendiumSorter extends FormApplication {
 		
 		for (let currentType of creatureTypes) {
 			const el = constMonsterTypeFilter.find(i => Object.keys(i)[0] === currentType);
-			let monsterCount = SFLocalHelpers.monsterTypeCount[currentType];
+			let monsterCount = SFLocalHelpers.creatureTypeCount[currentType];
 			let monsterCountText = "";
 			if (monsterCount)
 			{
@@ -202,7 +202,7 @@ class SFCompendiumSorter extends FormApplication {
 			let forceReload = true;
 			html.find('button#index-compendiums')[0].innerText = `Currently indexing...`;
 			let doneIndexing = await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-			savedIndexDate = game.settings.get(SFCONSTS.MODULE_NAME, 'savedIndexDate');
+			savedIndexDate = SFLocalHelpers._indexCacheDate;
 			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
 			$button.prop('disabled', false).removeClass('disabled');
 		});

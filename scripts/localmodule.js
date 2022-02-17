@@ -1,6 +1,6 @@
 class SFLocalHelpers {
     static allMonsters = [];
-    static monsterTypeCount = {};
+    static creatureTypeCount = {};
     static environmentCreatureCount = {};
     static spellsByLevel = {};
     static dictionariesInitialized = false;
@@ -42,7 +42,10 @@ class SFLocalHelpers {
         promises.push(this.populateItemsFromCompendiums());
         promises.push(this.populateMonstersFromCompendiums());
         await Promise.all(promises);
+        this.calculateCreatureTypeCounts();
+        this.calculateEnvironmentCreatureCounts();
         this.dictionariesPopulated = true;
+        this._indexCacheDate = this.getCurrentDateTime();
       }
 
       if (useSavedIndex && (forceReload || !loadResult))
@@ -257,12 +260,6 @@ class SFLocalHelpers {
         this.spellsByLevel = spellsbyLevelFromCache;
       }
 
-      let indexCacheDateFromCache = await this.loadFile(SFLOCALCONSTS.DATE_CACHE_FILE);
-      if (indexCacheDateFromCache)
-      {
-        this._indexCacheDate = indexCacheDateFromCache;
-      }
-
       const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
       for (let currentCreatureType of creatureTypes) {
         let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
@@ -271,14 +268,20 @@ class SFLocalHelpers {
         {
           continue;
         }
-        this.monsterTypeCount[currentCreatureType] = currentCreatureTypeList.length;
+        this.creatureTypeCount[currentCreatureType] = currentCreatureTypeList.length;
         this.allMonsters = this.allMonsters.concat(currentCreatureTypeList);
       }
 
-      for (let environment of SFCONSTS.GEN_OPT.environment)
+      let generalCache = await this.loadFile(SFLOCALCONSTS.GENERAL_CACHE_FILE);
+      if (generalCache)
       {
-        let monsterCount = this.allMonsters.filter(m => m.environment.filter(e => e === environment).length > 0).length;
-        this.environmentCreatureCount[environment] = monsterCount;
+        this._indexCacheDate = generalCache._indexCacheDate;
+        this.creatureTypeCount = generalCache.creatureTypeCount;
+        this.environmentCreatureCount = generalCache.environmentCreatureCount;
+      }
+      else
+      {
+        this.calculateEnvironmentCreatureCounts();
       }
 
       console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
@@ -294,6 +297,26 @@ class SFLocalHelpers {
       }
     }
 
+    static calculateCreatureTypeCounts()
+    {
+      this.creatureTypeCount = {};
+      for (let creatureType of SFLOCALCONSTS.CREATURE_TYPES)
+      {
+        let monsterCount = this.allMonsters.filter(m => m.creaturetype.toLowerCase() === creatureType).length;
+        this.creatureTypeCount[creatureType] = monsterCount;
+      }
+    }
+
+    static calculateEnvironmentCreatureCounts()
+    {
+      this.environmentCreatureCount = {};
+      for (let environment of SFCONSTS.GEN_OPT.environment)
+      {
+        let monsterCount = this.allMonsters.filter(m => m.environment.filter(e => e === environment).length > 0).length;
+        this.environmentCreatureCount[environment] = monsterCount;
+      }
+    }
+
     static async loadFile(fileName)
     {
       let fullFilePath = `${SFLOCALCONSTS.CACHE_FOLDER}${fileName}`;
@@ -304,8 +327,13 @@ class SFLocalHelpers {
     }
 
     static async saveCache(){
+      const data = {
+        _indexCacheDate : this._indexCacheDate,
+        creatureTypeCount : this.creatureTypeCount,
+        environmentCreatureCount : this.environmentCreatureCount
+      };
       await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
-      await this.saveObjectToCache(SFLOCALCONSTS.DATE_CACHE_FILE, this.getCurrentDateTime());
+      await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
       const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
       for (let currentCreatureType of creatureTypes) {
         let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType === m.creaturetype.toLowerCase());
