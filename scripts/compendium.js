@@ -1,7 +1,7 @@
 class SFCompendiumSorter extends FormApplication {
 	constructor() {
 		super();
-		this.environments = SFCONSTS.GEN_OPT.environment
+		this.environments = SFCONSTS.GEN_OPT.environment;
 	}
 
 	static get defaultOptions() {
@@ -64,10 +64,16 @@ class SFCompendiumSorter extends FormApplication {
 		for (let environment of this.environments)
 		{
 			const el = savedEnvironmentSettings.find(i => Object.keys(i)[0] === environment);
+			let monsterCount = SFLocalHelpers.environmentCreatureCount[environment];
+			let monsterCountText = "";
+			if (monsterCount)
+			{
+				monsterCountText = ` - ${monsterCount} creatures`;
+			}
 			$ul.append(`
 			<li class="environmentLi">
 				<input type="checkbox" name="${environment}" ${!el || el[environment] ? "checked" : ""}>
-				<span class="environment-type" data-name="${environment === "Any" ? "Creatures without a environment specified get grouped into an 'Any' bucket" : ""}">${environment}</span>
+				<span class="environment-type" data-name="${environment === "Any" ? "Creatures without a environment get grouped into an 'Any' bucket" : ""}">${environment}${monsterCountText}</span>
 			</li>`)
 		}
 
@@ -84,7 +90,7 @@ class SFCompendiumSorter extends FormApplication {
 		const savedPlayerSettings = game.settings.get(
 			SFCONSTS.MODULE_NAME,
 			"playerCharactersToCreateEncountersFor"
-		  );
+		);
 		
 		for (let player of playerCharacters) {
 			let playerName = player.name;
@@ -155,11 +161,16 @@ class SFCompendiumSorter extends FormApplication {
 		
 		for (let currentType of creatureTypes) {
 			const el = constMonsterTypeFilter.find(i => Object.keys(i)[0] === currentType);
-			console.log(currentType);
+			let monsterCount = SFLocalHelpers.monsterTypeCount[currentType];
+			let monsterCountText = "";
+			if (monsterCount)
+			{
+				monsterCountText = ` - ${monsterCount} creatures`;
+			}
 			let currentTypeCasedCorrect = currentType.charAt(0).toUpperCase() + currentType.slice(1);
 			$ul.append(`<li class="monsterTypeLi">
 				<input type="checkbox" name="${currentType}" ${!el || el[currentType] ? "checked" : ""}>
-				<span class="monster-type">${currentTypeCasedCorrect}</span>
+				<span class="monster-type">${currentTypeCasedCorrect}${monsterCountText}</span>
 			</li>`)
 		}
 
@@ -169,6 +180,11 @@ class SFCompendiumSorter extends FormApplication {
 	}
 	
 	async activateListeners(html) {
+		let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+		if (useSavedIndex && !SFLocalHelpers.dictionariesPopulated)
+		{
+			await SFLocalHelpers.loadFromCache();
+		}
 		this.populatePlayerCharacters();
 		this.populateEnvironments();
 		this.populateCompendiums(["Actor","Item"]);

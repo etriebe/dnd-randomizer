@@ -1,5 +1,7 @@
 class SFLocalHelpers {
     static allMonsters = [];
+    static monsterTypeCount = {};
+    static environmentCreatureCount = {};
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
@@ -269,8 +271,16 @@ class SFLocalHelpers {
         {
           continue;
         }
+        this.monsterTypeCount[currentCreatureType] = currentCreatureTypeList.length;
         this.allMonsters = this.allMonsters.concat(currentCreatureTypeList);
       }
+
+      for (let environment of SFCONSTS.GEN_OPT.environment)
+      {
+        let monsterCount = this.allMonsters.filter(m => m.environment.filter(e => e === environment).length > 0).length;
+        this.environmentCreatureCount[environment] = monsterCount;
+      }
+
       console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
 
       if (this.allMonsters.length > 0)
