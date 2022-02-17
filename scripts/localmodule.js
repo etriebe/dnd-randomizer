@@ -718,8 +718,6 @@ class SFLocalHelpers {
   
     static async filterMonstersFromCompendiums(params)
     {
-      let environmentList = savedLocationSettings
-
       let filteredMonsters = [];
 
       const constCompFilter = game.settings.get(
@@ -732,9 +730,9 @@ class SFLocalHelpers {
         "filterMonsterTypes"
       );
 
-      const savedLocationSettings = game.settings.get(
+      const savedEnvironmentSettings = game.settings.get(
         SFCONSTS.MODULE_NAME,
-        "locationsToCreateEncountersFor"
+        "environmentsToCreateEncountersFor"
         );
 
       const filteredCompendiums = Array.from(game.packs).filter((p) => {
@@ -749,7 +747,7 @@ class SFLocalHelpers {
       });
 
       const filteredEnvironments = Array.from(SFCONSTS.GEN_OPT.environment).filter((e) => {
-        const el = savedLocationSettings.find((i) => Object.keys(i)[0] == e);
+        const el = savedEnvironmentSettings.find((i) => Object.keys(i)[0] == e);
         return !el || el[e] ? true : false;
       });
 

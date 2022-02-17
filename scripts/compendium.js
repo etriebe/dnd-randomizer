@@ -52,22 +52,22 @@ class SFCompendiumSorter extends FormApplication {
 		});
 	}
 
-	populateLocations() {
+	populateEnvironments() {
 		const html = this.element
-		let $ul = html.find('ul#location_filter').first();
+		let $ul = html.find('ul#environment_filter').first();
 		
-		const savedLocationSettings = game.settings.get(
+		const savedEnvironmentSettings = game.settings.get(
 			SFCONSTS.MODULE_NAME,
-			"locationsToCreateEncountersFor"
+			"environmentsToCreateEncountersFor"
 		  );
 		
-		for (let location of this.environments)
+		for (let environment of this.environments)
 		{
-			const el = savedLocationSettings.find(i => Object.keys(i)[0] === location);
+			const el = savedEnvironmentSettings.find(i => Object.keys(i)[0] === environment);
 			$ul.append(`
-			<li class="locationLi">
-				<input type="checkbox" name="${location}" ${!el || el[location] ? "checked" : ""}>
-				<span class="location-type" data-name="${location === "Any" ? "Creatures without a location specified get grouped into an 'Any' bucket" : ""}">${location}</span>
+			<li class="environmentLi">
+				<input type="checkbox" name="${environment}" ${!el || el[environment] ? "checked" : ""}>
+				<span class="environment-type" data-name="${environment === "Any" ? "Creatures without a environment specified get grouped into an 'Any' bucket" : ""}">${environment}</span>
 			</li>`)
 		}
 
@@ -170,7 +170,7 @@ class SFCompendiumSorter extends FormApplication {
 	
 	async activateListeners(html) {
 		this.populatePlayerCharacters();
-		this.populateLocations();
+		this.populateEnvironments();
 		this.populateCompendiums(["Actor","Item"]);
 		this.populateCreatureTypes();
 		let savedIndexDate = SFLocalHelpers._indexCacheDate;
@@ -196,7 +196,7 @@ class SFCompendiumSorter extends FormApplication {
 		await this.saveCompendiumSetting();
 		await this.saveMonsterTypeSetting();
 		await this.savePlayerCharacterSetting();
-		await this.saveLocationSetting();
+		await this.saveEnvironmentsSetting();
 		// Default Close
 		return await super.close(options);
 	}
@@ -253,21 +253,21 @@ class SFCompendiumSorter extends FormApplication {
 		await game.settings.set(SFCONSTS.MODULE_NAME, 'playerCharactersToCreateEncountersFor',playerCharacterSettings);
 	}
 
-	async saveLocationSetting()
+	async saveEnvironmentsSetting()
 	{
 		const html = this.element;
-		let $ul = html.find('ul#location_filter').first();
-		let locationSettings = [];
+		let $ul = html.find('ul#environment_filter').first();
+		let environmentsSettings = [];
 
-		$ul.find('li.locationLi').each((index, item) => {
+		$ul.find('li.environmentLi').each((index, item) => {
 			let $element = $(item).find('input');
 			let setting = {};
 			setting[$element.attr('name')] = $element.is(':checked');
 
-			locationSettings.push(setting);
+			environmentsSettings.push(setting);
 		});
 		
-		await game.settings.set(SFCONSTS.MODULE_NAME, 'locationsToCreateEncountersFor',locationSettings);
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'environmentsToCreateEncountersFor',environmentsSettings);
 	}
 
 	async _updateObject(event, formData) {

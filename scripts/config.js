@@ -77,7 +77,7 @@ Hooks.once("init", async function () {
     default: [],
   });
   
-  game.settings.register(SFCONSTS.MODULE_NAME, 'locationsToCreateEncountersFor', {
+  game.settings.register(SFCONSTS.MODULE_NAME, 'environmentsToCreateEncountersFor', {
     scope: "world",
     config: false,
     type: Object,
