@@ -2,7 +2,10 @@ class PCActor5e {
     static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
     constructor(data) {
       this.actor = data;
+      this.actorname = this.actor.data.name;
+      this.actorid = actor.data._id;
       this.classes = data.classes;
+      this.creaturetype = ActorUtils.getCreatureTypeForActor(actor);
       this.environment = this.getPlayerEnvironments();
       this.level = this.getPlayerClassLevel();
       this.playerclasslist = this.getPlayerClassList();
@@ -38,6 +41,7 @@ class PCActor5e {
 
       let environmentArray = environment.split(",");
       environmentArray = environmentArray.map(e => e.trim());
+      return environmentArray;
     }
 
     getCombatDataPerRound()

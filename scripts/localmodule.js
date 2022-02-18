@@ -219,30 +219,23 @@ class SFLocalHelpers {
               console.log(`Skipping actor ${actorName}`);
               continue;
             }
-  
-            let environment = actor.data.data.details.environment;
-            if (!environment || environment.trim() === "")
-            {
-              environment = "Any";
-            }
-  
-            let environmentArray = environment.split(",");
-            environmentArray = environmentArray.map(e => e.trim());
-  
-            if (this.allMonsters.filter((m) => m.actor.data.name === actorName).length > 0)
+
+            let actorObject = ActorUtils.getActorObject(actor);
+
+            if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
             {
               console.log(`Already have actor ${actorName}, actor id ${actor.data._id} in dictionary`);
               continue;
             }
             let monsterObject = {};
-            let actorObject = ActorUtils.getActorObject(actor);
+            
             monsterObject["actor"] = actorObject;
-            monsterObject["actorname"] = actorName;
-            monsterObject["actorid"] = actor.data._id;
+            monsterObject["actorname"] = actorObject.actorname;
+            monsterObject["actorid"] = actorObject.actorid;
             monsterObject["compendiumname"] = compendium.metadata.label;
-            monsterObject["environment"] = environmentArray;
-            monsterObject["creaturetype"] = ActorUtils.getCreatureTypeForActor(actor);
-            monsterObject["combatdata"] = actorObject.getCombatDataPerRound();
+            monsterObject["environment"] = actorObject.environment;
+            monsterObject["creaturetype"] = actorObject.creaturetype;
+            monsterObject["combatdata"] = actorObject.combatdata;
             this.allMonsters.push(monsterObject);
           } 
           catch (error) {
