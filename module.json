@@ -30,8 +30,11 @@
       }
   ],
   "scripts": [
+      "./scripts/dnd5e/EncounterUtils5e.js",
       "./scripts/dnd5e/PCActor5e.js",
+      "./scripts/utils/ActorUtils.js",
       "./scripts/utils/FoundryUtils.js",
+      "./scripts/utils/GeneralUtils.js",
       "./scripts/compendium.js",
       "./scripts/config.js",
       "./scripts/dialog.js",

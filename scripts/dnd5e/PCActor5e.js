@@ -1,10 +1,12 @@
 class PCActor5e {
+    static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
     constructor(data) {
       this.actor = data;
       this.classes = data.classes;
       this.environment = this.getPlayerEnvironments();
       this.level = this.getPlayerClassLevel();
       this.playerclasslist = this.getPlayerClassList();
+      this.combatdata = this.getCombatDataPerRound();
     }
   
     getPlayerClassLevel()
@@ -38,7 +40,7 @@ class PCActor5e {
       environmentArray = environmentArray.map(e => e.trim());
     }
 
-    static getCombatDataPerRound()
+    getCombatDataPerRound()
     {
       let actor = this.actor;
       let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat") 
@@ -52,7 +54,7 @@ class PCActor5e {
         // Description types supported:
         // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
         // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
-        let multiAttackDescription = this.getDescriptionFromItemObject(multiAttack[0]).toLowerCase();
+        let multiAttackDescription = PCActor5e.getDescriptionFromItemObject(multiAttack[0]).toLowerCase();
 
         let parsedAttackList = [];
         for (let i = 0; i < attackList.length; i++)
@@ -91,9 +93,9 @@ class PCActor5e {
           let actualNumberOfAttacks = 1;
           if (correctNumberMatch)
           {
-            actualNumberOfAttacks = this.getIntegerFromWordNumber(correctNumberMatch[0]);
+            actualNumberOfAttacks = GeneralUtils.getIntegerFromWordNumber(correctNumberMatch[0]);
           }
-          let currentAttackObject = this.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
+          let currentAttackObject = PCActor5e.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
 
           if (!currentAttackObject || currentAttackObject.averagedamage === 0)
           {
@@ -152,7 +154,7 @@ class PCActor5e {
         {
           try 
           {
-            let currentAttackObject = this.getInfoForAttackObject(attackList[i], 1);
+            let currentAttackObject = PCActor5e.getInfoForAttackObject(attackList[i], 1);
             let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
             if (maxDamage < totalDamage)
             {
@@ -182,17 +184,17 @@ class PCActor5e {
       let numberMatch = multiAttackDescription.match(this.numberRegex);
       if (numberMatch)
       {
-        actualNumber = this.getIntegerFromWordNumber(numberMatch[0]);
+        actualNumber = GeneralUtils.getIntegerFromWordNumber(numberMatch[0]);
       }
 
-      return this.getInfoForAttackObject(firstAttack, actualNumber);
+      return PCActor5e.getInfoForAttackObject(firstAttack, actualNumber);
     }
 
     static getInfoForAttackObject(attackObject, numberOfAttacks)
     {
       let abilityModType = attackObject.abilityMod;
       let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
-      let damageList = this.getDataObjectFromObject(attackObject).damage.parts;
+      let damageList = FoundryUtils.getDataObjectFromObject(attackObject).damage.parts;
 
       let totalDamageForAttack = 0;
       for (let i = 0; i < damageList.length; i++)
@@ -210,7 +212,7 @@ class PCActor5e {
           damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
         }
 
-        let totalAverageRollResult = this.getAverageDamageFromDescription(damageDescription, abilityModValue);
+        let totalAverageRollResult = PCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
 
         totalDamageForAttack += totalAverageRollResult;
       }
@@ -321,5 +323,20 @@ class PCActor5e {
       {
         characterTraits["hasAOESpell"] = true;
       }
+    }
+
+    static getDescriptionFromItemObject(item)
+    {
+      return FoundryUtils.getDataObjectFromObject(item).description.value;
+    }
+
+    static getXPFromActorObject(actor)
+    {
+      return FoundryUtils.getDataObjectFromObject(actor).details.xp.value;
+    }
+
+    static getCRFromActorObject(actor)
+    {
+      return FoundryUtils.getDataObjectFromObject(actor).details.cr;
     }
 }

@@ -1,16 +1,9 @@
 class FoundryUtils {
+    
     static getCompendiums()
     {
         return game.packs.filter((p) => !p.metadata.system || p.metadata.system === game.system.id);
     }
-
-    static getCurrentDateTime() {
-        let current = new Date();
-        let cDate = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-        let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
-        let dateTime = cDate + ' ' + cTime;
-        return dateTime;
-    };
 
     static getSystemVariableForObject(object, variableName)
     {
@@ -31,48 +24,6 @@ class FoundryUtils {
       return eval(`object.${currentSystemVariableName}`)
     }
 
-    static getIntegerFromWordNumber(number)
-    {
-      // This feels stupid but parseInt can't work with text format like we have.
-      switch (number.toLowerCase())
-      {
-        case "one":
-        case "1":
-          return 1;
-        case "two":
-        case "twice":
-        case "2":
-          return 2;
-        case "three":
-        case "thrice":
-        case "3":
-          return 3;
-        case "four":
-        case "4":
-          return 4;
-        case "five":
-        case "5":
-          return 5;
-        case "six":
-        case "6":
-          return 6;
-        case "seven":
-        case "7":
-          return 7;
-        case "eight":
-        case "8":
-          return 8;
-        case "nine":
-        case "9":
-          return 9;
-        case "ten":
-        case "10":
-          return 10;
-        default:
-          return null;
-      }
-    }
-    
     static getDataObjectFromObject(obj)
     {
       if (obj.data.data)
@@ -83,5 +34,81 @@ class FoundryUtils {
       {
         return obj.data;
       }
+    }
+
+    static getResultFromRollTable(rollTable, rollResult)
+    {
+      let rowSelected;
+      for (let key in rollTable)
+      {
+        let value = rollTable[key];
+  
+        // if this is a single number
+        if (key.indexOf("-") === -1)
+        {
+          let keyInteger = parseInt(key);
+          if (rollResult === parseInt(key))
+          {
+            rowSelected = value;
+            break;
+          }
+        }
+        else
+        {
+          let rollRange = key.split("-");
+          let lowerRange = parseInt(rollRange[0]);
+          let higherRange = parseInt(rollRange[1]);
+  
+          if (lowerRange <= rollResult && rollResult <= higherRange)
+          {
+            rowSelected = value;
+            break;
+          }
+        }
+      }
+      return rowSelected;
+    }
+
+    static getRandomItemFromRollTable(rollTable)
+    {
+      let lastRowInTableKeyValue = Object.keys(rollTable)[Object.keys(rollTable).length - 1];
+      
+      let maxNumberToRollFor;
+      // if this is a single number
+      if (lastRowInTableKeyValue.indexOf("-") === -1)
+      {
+        maxNumberToRollFor = lastRowInTableKeyValue;
+      }
+      else
+      {
+        let rollRange = lastRowInTableKeyValue.split("-");
+        let higherRange = rollRange[1];
+  
+        maxNumberToRollFor = higherRange;
+      }
+  
+      let randomItemNumber = Math.floor(Math.random() * maxNumberToRollFor) + 1;
+      return FoundryUtils.getResultFromRollTable(rollTable, randomItemNumber);
+    }
+
+    static getRollResult(rollDescription)
+    {
+      let diceDescriptionParts = rollDescription.split("d");
+  
+      if (diceDescriptionParts.length != 2)
+      {
+        throw new Error(`Invalid dice description specified: ${rollDescription}`);
+      }
+  
+      let numberOfDice = diceDescriptionParts[0];
+      let diceSize = diceDescriptionParts[1];
+  
+      let totalDiceResult = 0;
+      for (let i = 0; i < numberOfDice; i++)
+      {
+        totalDiceResult += Math.floor(Math.random() * diceSize) + 1;
+      }
+  
+      return totalDiceResult;
     }
 }

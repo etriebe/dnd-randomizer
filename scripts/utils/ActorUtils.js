@@ -7,7 +7,7 @@ class ActorUtils
     
     static getLevelKeyForSpell(spell)
     {
-      let spellLevel = this.getSystemVariableForObject(spell, "SpellLevel").toString().toLowerCase();
+      let spellLevel = FoundryUtils.getSystemVariableForObject(spell, "SpellLevel").toString().toLowerCase();
 
       let fullSpellNameMatch = spellLevel.match(/(?<fullSpellDescription>(?<spellLevel>\d+)(st|nd|rd|th) level|cantrip)/g);
 
@@ -26,6 +26,32 @@ class ActorUtils
           return "3rd level";
         default:
           return `${spellLevel}th level`
+      }
+    }
+
+    static getActorObject(actor)
+    {
+      let currentSystem = game.system.id;
+
+      if (currentSystem === "dnd5e")
+      {
+        return new PCActor5e(actor);
+      }
+      else
+      {
+        throw new Error("Not yet implemented!");
+      }
+    }
+
+    static getActorId(actor)
+    {
+      if (actor.id)
+      {
+        return actor.id;
+      }
+      else
+      {
+        return actor._id;
       }
     }
 }

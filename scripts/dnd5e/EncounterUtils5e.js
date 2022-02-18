@@ -30,9 +30,9 @@ class EncounterUtils5e
             }
   
             let randomMonsterXP = FoundryUtils.getDataObjectFromObject(randomMonster).details.xp.value;
-            let currentEncounterXPMultiplier = SFLocalHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
+            let currentEncounterXPMultiplier = EncounterUtils5e.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
             let monsterCR = FoundryUtils.getDataObjectFromObject(randomMonster).details.cr;
-            let currentEncounterAdjustedXP = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
+            let currentEncounterAdjustedXP = EncounterUtils5e.getAdjustedXPOfEncounter(currentEncounter);
       
             // If we're within 10% of budget, let's stop
             if (currentEncounterAdjustedXP > targetEncounterXP * 0.9)
@@ -40,7 +40,7 @@ class EncounterUtils5e
               break;
             }
       
-            let nextEncounterXPMultiplier = SFLocalHelpers.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat + 1);
+            let nextEncounterXPMultiplier = EncounterUtils5e.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat + 1);
       
             // If adding a single extra creature with no added XP boosts us over the XP target, just exit now.
             if (currentEncounterXP * nextEncounterXPMultiplier > targetEncounterXP)
@@ -59,7 +59,7 @@ class EncounterUtils5e
               continue;
             }
       
-            let numberOfMonstersAllowedInCombat = SFLocalHelpers.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster);
+            let numberOfMonstersAllowedInCombat = EncounterUtils5e.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster);
       
             if (numberOfMonstersAllowedInCombat == 0)
             {
@@ -128,7 +128,7 @@ class EncounterUtils5e
             let wiggleRoom = wiggleRoomAmounts[j];
             let lowerBound = multiplierAmount * targetEncounterXP * (1 - wiggleRoom);
             let upperBound = multiplierAmount * targetEncounterXP * (1 + wiggleRoom);
-            let filteredMonsterList = monsterList.filter(m => this.getXPFromActorObject(m) >= lowerBound && this.getXPFromActorObject(m) <= upperBound);
+            let filteredMonsterList = monsterList.filter(m => PCActor5e.getXPFromActorObject(m) >= lowerBound && PCActor5e.getXPFromActorObject(m) <= upperBound);
             if (filteredMonsterList.length === 0)
             {
               continue;
@@ -137,24 +137,455 @@ class EncounterUtils5e
             let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
             let randomMonster = filteredMonsterList[randomMonsterIndex];
             let monsterName = randomMonster.name;
-            let randomMonsterXP = this.getXPFromActorObject(randomMonster);
-            let monsterCR = this.getCRFromActorObject(randomMonster);
+            let randomMonsterXP = PCActor5e.getXPFromActorObject(randomMonster);
+            let monsterCR = PCActor5e.getCRFromActorObject(randomMonster);
             let creatureCombatDetails = {};
             creatureCombatDetails["name"] = monsterName;
             creatureCombatDetails["quantity"] = numberOfCreatures;
             creatureCombatDetails["cr"] = monsterCR;
             creatureCombatDetails["xp"] = randomMonsterXP;
-            creatureCombatDetails["combatdata"] = this.allMonsters.find(m => m.actorid === randomMonster.id || m.actorid === randomMonster._id).combatdata;
+            creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonster.id || m.actorid === randomMonster._id).combatdata;
             currentEncounter["creatures"].push(creatureCombatDetails);
             break;
           }
         }
       }
 
-      currentEncounter["xp"] = SFLocalHelpers.getAdjustedXPOfEncounter(currentEncounter);
-      let generatedLootObject = SFLocalHelpers.getLootForEncounter(currentEncounter, params);
+      currentEncounter["xp"] = EncounterUtils5e.getAdjustedXPOfEncounter(currentEncounter);
+      let generatedLootObject = EncounterUtils5e.getLootForEncounter(currentEncounter, params);
       currentEncounter["loot"] = generatedLootObject;
       return currentEncounter;
     }
 
+    static getNumberOfMonstersAllowedInCombat(currentEncounter, fullMonsterList, targetEncounterXP, newMonster)
+    {
+      let currentEncounterMonsterCount = 0;
+      let currentEncounterXP = 0;
+      let newMonsterXP = FoundryUtils.getDataObjectFromObject(newMonster).details.xp.value;
+      if (currentEncounter["creatures"].length > 0)
+      {
+        for (const monsterIndex in currentEncounter["creatures"])
+        {
+          let monsterDetails = currentEncounter["creatures"][monsterIndex];
+          let monsterName = monsterDetails.name;
+          let monsterCount = monsterDetails.quantity;
+          let monsterXP = monsterDetails.xp;
+          if (!monsterName || !monsterCount || !monsterXP)
+          {
+            // Encountered the end of the list. For some reason we get an empty iterator here at the end. 
+            break;
+          }
+          currentEncounterMonsterCount += monsterCount;
+          currentEncounterXP += monsterXP * monsterCount;
+        }
+      }
+  
+      let currentEncounterXPMultiplier = EncounterUtils5e.getCurrentEncounterXPMultiplier(currentEncounterMonsterCount);
+      let numberOfNewMonstersAllowed = 0;
+      while (true)
+      {
+        // figure out what our new encounter XP would be if we add another creature
+        let newMonsterEncounterXPMultiplier = EncounterUtils5e.getCurrentEncounterXPMultiplier(currentEncounterMonsterCount + numberOfNewMonstersAllowed + 1);
+        let newEncounterAdjustedXP = (currentEncounterXP + (numberOfNewMonstersAllowed + 1) * newMonsterXP) * newMonsterEncounterXPMultiplier;
+        
+        // if it breaches the threshold our encounter is now too deadly
+        if (newEncounterAdjustedXP > targetEncounterXP)
+        {
+          break;
+        }
+        numberOfNewMonstersAllowed++;
+      }
+      
+      return numberOfNewMonstersAllowed;
+    }
+
+    static getAdjustedXPOfEncounter(currentEncounter)
+    {
+      let currentEncounterMonsterCount = 0;
+      let currentEncounterXP = 0;
+      if (currentEncounter["creatures"].length > 0)
+      {
+        for (const monsterIndex in currentEncounter["creatures"])
+        {
+          let monsterDetails = currentEncounter["creatures"][monsterIndex];
+          let monsterName = monsterDetails.name;
+          let monsterCount = monsterDetails.quantity;
+          let monsterXP = monsterDetails.xp;
+          if (!monsterName || !monsterCount || !monsterXP)
+          {
+            // Encountered the end of the list. For some reason we get an empty iterator here at the end. 
+            break;
+          }
+          currentEncounterMonsterCount += monsterCount;
+          currentEncounterXP += monsterXP * monsterCount;
+        }
+      }
+  
+      let currentEncounterXPMultiplier = EncounterUtils5e.getCurrentEncounterXPMultiplier(currentEncounterMonsterCount);
+      return currentEncounterXPMultiplier * currentEncounterXP;
+    }
+
+    static getCurrentEncounterXPMultiplier(monsterCount)
+    {
+      let latestEncounterMultiplier;
+      for (let key in SFLOCALCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS)
+      {
+        let value = SFLOCALCONSTS.ENCOUNTER_MONSTER_MULTIPLIERS[key];
+        latestEncounterMultiplier = value;
+        if (monsterCount <= key)
+        {
+          return value;
+        }
+      }
+      return latestEncounterMultiplier;
+    }
+
+    static getLootForEncounter(currentEncounter, params)
+    {
+      let loopType = params.loot_type;
+      let generatedLoot;
+  
+      if (loopType === "Individual Treasure")
+      {
+        generatedLoot = EncounterUtils5e.getIndividualTreasureForEncounter(currentEncounter);
+      }
+      else
+      {
+        generatedLoot = EncounterUtils5e.getTreasureHordeForEncounter(currentEncounter);
+      }
+  
+      return generatedLoot;
+    }
+
+    static getIndividualTreasureForEncounter(currentEncounter)
+    {
+      let creatures = currentEncounter["creatures"];
+      let lootResultObject = {};
+      let currencyResultObject = {};
+      let itemsResultObject = [];
+      let otherResultObject = [];
+      let scrollsResultObject = [];
+      currencyResultObject["pp"] = 0;
+      currencyResultObject["gp"] = 0;
+      currencyResultObject["ep"] = 0;
+      currencyResultObject["sp"] = 0;
+      currencyResultObject["cp"] = 0;
+  
+      if (currentEncounter["creatures"].length > 0)
+      {
+        for (const monsterIndex in currentEncounter["creatures"])
+        {
+          let monsterDetails = currentEncounter["creatures"][monsterIndex];
+          let monsterName = monsterDetails.name;
+          let monsterCount = monsterDetails.quantity;
+          let monsterXP = monsterDetails.xp;
+          let monsterCR = monsterDetails.cr;
+          if (!monsterName || !monsterCount || !monsterXP || !monsterCR)
+          {
+            // Encountered the end of the list. For some reason we get an empty iterator here at the end. 
+            break;
+          }
+  
+          for (let i = 0; i < monsterCount; i++)
+          {
+            let d100Roll = FoundryUtils.getRollResult("1d100");
+  
+            let individualTreasureRowContents;
+            if (monsterCR <= 4)
+            {
+              individualTreasureRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR4, d100Roll);
+            }
+            else if (monsterCR <= 10)
+            {
+              individualTreasureRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR10, d100Roll);
+            }
+            else if (monsterCR <= 16)
+            {
+              individualTreasureRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR16, d100Roll);
+            }
+            else
+            {
+              individualTreasureRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_INDIVIDUAL_TREASURE_CR17_PLUS, d100Roll);
+            }
+  
+            currencyResultObject["cp"] += EncounterUtils5e.getCoinsResultFromRollTable(individualTreasureRowContents[0]);
+            currencyResultObject["sp"] += EncounterUtils5e.getCoinsResultFromRollTable(individualTreasureRowContents[1]);
+            currencyResultObject["ep"] += EncounterUtils5e.getCoinsResultFromRollTable(individualTreasureRowContents[2]);
+            currencyResultObject["gp"] += EncounterUtils5e.getCoinsResultFromRollTable(individualTreasureRowContents[3]);
+            currencyResultObject["pp"] += EncounterUtils5e.getCoinsResultFromRollTable(individualTreasureRowContents[4]);
+          }
+        }
+      }
+      
+      lootResultObject["currency"] = currencyResultObject;
+      lootResultObject["items"] = itemsResultObject;
+      lootResultObject["other"] = otherResultObject;
+      lootResultObject["scrolls"] = scrollsResultObject;
+      return lootResultObject;
+    }
+
+    static getTreasureHordeForEncounter(currentEncounter)
+    {
+      let creatures = currentEncounter["creatures"];
+      let lootResultObject = {};
+      let currencyResultObject = {};
+      let itemsResultObject = [];
+      let otherResultObject = [];
+      let scrollsResultObject = [];
+      currencyResultObject["pp"] = 0;
+      currencyResultObject["gp"] = 0;
+      currencyResultObject["ep"] = 0;
+      currencyResultObject["sp"] = 0;
+      currencyResultObject["cp"] = 0;
+  
+      if (creatures.length > 0)
+      {
+        let maximumCRFromGroup = 0;
+        for (const monsterIndex in creatures)
+        {
+          let monsterDetails = creatures[monsterIndex];
+          let monsterName = monsterDetails.name;
+          let monsterCount = monsterDetails.quantity;
+          let monsterXP = monsterDetails.xp;
+          let monsterCR = monsterDetails.cr;
+          if (!monsterName || !monsterCount || !monsterXP || !monsterCR)
+          {
+            // Encountered the end of the list. For some reason we get an empty iterator here at the end. 
+            break;
+          }
+          maximumCRFromGroup = Math.max(maximumCRFromGroup, monsterCR);
+        }
+  
+        let d100Roll = FoundryUtils.getRollResult("1d100");
+  
+        let treasureHordeRowContents;
+        if (maximumCRFromGroup <= 4)
+        {
+          currencyResultObject["cp"] += FoundryUtils.getRollResult("6d6") * 100;
+          currencyResultObject["sp"] += FoundryUtils.getRollResult("3d6") * 100;
+          currencyResultObject["gp"] += FoundryUtils.getRollResult("2d6") * 10;
+          treasureHordeRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR4, d100Roll);
+        }
+        else if (maximumCRFromGroup <= 10)
+        {
+          currencyResultObject["cp"] += FoundryUtils.getRollResult("2d6") * 100;
+          currencyResultObject["sp"] += FoundryUtils.getRollResult("2d6") * 1000;
+          currencyResultObject["gp"] += FoundryUtils.getRollResult("6d6") * 100;
+          currencyResultObject["pp"] += FoundryUtils.getRollResult("3d6") * 10;
+          treasureHordeRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR10, d100Roll);
+        }
+        else if (maximumCRFromGroup <= 16)
+        {
+          currencyResultObject["gp"] += FoundryUtils.getRollResult("4d6") * 1000;
+          currencyResultObject["pp"] += FoundryUtils.getRollResult("5d6") * 100;
+          treasureHordeRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR16, d100Roll);
+        }
+        else
+        {
+          currencyResultObject["gp"] += FoundryUtils.getRollResult("12d6") * 1000;
+          currencyResultObject["pp"] += FoundryUtils.getRollResult("8d6") * 1000;
+          treasureHordeRowContents = FoundryUtils.getResultFromRollTable(SFLOCALCONSTS.ENCOUNTER_TREASURE_HORDE_CR17_PLUS, d100Roll);
+        }
+  
+        try
+        {
+          let gemOrArtRowContents = treasureHordeRowContents[0];
+          otherResultObject = EncounterUtils5e.getArtOrGemsResult(gemOrArtRowContents);
+          let magicItemsRowContents = treasureHordeRowContents[1];
+          itemsResultObject = EncounterUtils5e.getMagicItemResult(magicItemsRowContents);
+        }
+        catch (error)
+        {
+          console.error(`Unable to generate Treasure Horde for maximum CR ${maximumCRFromGroup} and d100 roll of ${d100Roll}. Error: ${error}`);
+        }
+      }
+  
+      lootResultObject["currency"] = currencyResultObject;
+      lootResultObject["items"] = itemsResultObject;
+      lootResultObject["other"] = otherResultObject;
+      lootResultObject["scrolls"] = scrollsResultObject;
+      return lootResultObject;
+    }
+
+    static getCoinsResultFromRollTable(treasureRowDescription)
+    {
+      let matchResult = treasureRowDescription.match(/(?<rollDescription>\dd\d)( x (?<multiplierAmount>\d+))?/);
+      if (!matchResult)
+      {
+        return 0;
+      }
+      let matchResultGroups = matchResult.groups;
+      let multiplierAmount = matchResultGroups.multiplierAmount || 1;
+      let rollResult = FoundryUtils.getRollResult(matchResultGroups.rollDescription);
+      let totalCoins = rollResult * multiplierAmount;
+      return totalCoins;
+    }
+
+    static getMagicItemResult(rowContents)
+    {
+      let matches = [...rowContents.matchAll(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (times)? ? on Magic Item Table (?<tableLetter>\w)/g)];
+      let magicItemResultObject = [];
+      let magicItemTrackerDictionary = {};
+  
+      for (let i = 0; i < matches.length; i++)
+      {
+        let matchResult = matches[0];
+        let matchResultGroups = matchResult.groups;
+        let rollDescription = matchResultGroups.rollDescription;
+    
+        let rollResult = FoundryUtils.getRollResult(rollDescription);
+        let rollTableToUse = EncounterUtils5e.getMagicItemTable(matchResultGroups);
+        for(let i = 0; i < rollResult; i++)
+        {
+          let magicItemResult = FoundryUtils.getRandomItemFromRollTable(rollTableToUse);
+          if (magicItemResult === "Figurine of wondrous power (roll d8)")
+          {
+            magicItemResult = FoundryUtils.getRandomItemFromRollTable(SFLOCALCONSTS.MAGIC_ITEM_FIGURINE_OF_WONDEROUS_POWER_TABLE);
+          }
+          else if (magicItemResult === "Magic armor (roll d12)")
+          {
+            magicItemResult = FoundryUtils.getRandomItemFromRollTable(SFLOCALCONSTS.MAGIC_ITEM_MAGIC_ARMOR_TABLE);
+          }
+          else if (magicItemResult.indexOf("Spell scroll") > -1)
+          {
+            let spellScrollMatch = magicItemResult.match(/Spell scroll \((?<fullSpellDescription>(?<spellLevel>\d+)(st|nd|rd|th) level|cantrip)\)/);
+            if (spellScrollMatch)
+            {
+              let spellLevelToGet = spellScrollMatch.groups.fullSpellDescription.toLowerCase();
+              let randomSpellChosen = FoundryUtils.getRandomItemFromRollTable(SFLocalHelpers.spellsByLevel[spellLevelToGet]);
+              magicItemResult = randomSpellChosen;
+            }
+          }
+  
+          // increment dictionary value
+          magicItemTrackerDictionary[magicItemResult] = (magicItemTrackerDictionary[magicItemResult] || 0) + 1;
+        }
+    
+        for(let objectName in magicItemTrackerDictionary) {
+          let countOfObjects = magicItemTrackerDictionary[objectName];
+    
+          if (!countOfObjects)
+          {
+            break;
+          }
+    
+          let currentObjectDictionary = {};
+          currentObjectDictionary.quantity = countOfObjects;
+          currentObjectDictionary.name = objectName;
+          magicItemResultObject.push(currentObjectDictionary);
+        }
+      }
+  
+      return magicItemResultObject;
+    }
+  
+    static getArtOrGemsResult(rowContents)
+    {
+      let gemOrArtResultObject = [];
+      let gemOrArtTrackerDictionary = {};
+      let matchResult = rowContents.match(/(?<rollDescription>(?<numberOfDice>\d+)d(?<diceType>\d+)) (?<gemOrArtCost>\d+) gp (?<gemsOrArt>gems|art objects)/);
+      if (!matchResult)
+      {
+        return gemOrArtResultObject;
+      }
+      let matchResultGroups = matchResult.groups;
+      let rollDescription = matchResultGroups.rollDescription;
+  
+      let rollResult = FoundryUtils.getRollResult(rollDescription);
+      let rollTableToUse = EncounterUtils5e.getArtOrGemsTable(matchResultGroups);
+  
+  
+      for(let i = 0; i < rollResult; i++)
+      {
+        let gemOrArtResult = FoundryUtils.getRandomItemFromRollTable(rollTableToUse);
+  
+        // increment dictionary value
+        gemOrArtTrackerDictionary[gemOrArtResult] = (gemOrArtTrackerDictionary[gemOrArtResult] || 0) + 1;
+      }
+  
+      for(let objectName in gemOrArtTrackerDictionary) {
+        let countOfObjects = gemOrArtTrackerDictionary[objectName];
+  
+        if (!countOfObjects)
+        {
+          break;
+        }
+  
+        let currentObjectDictionary = {};
+        currentObjectDictionary.quantity = countOfObjects;
+        currentObjectDictionary.name = objectName + ` (${matchResultGroups.gemOrArtCost} gp)`;
+        gemOrArtResultObject.push(currentObjectDictionary);
+      }
+  
+      return gemOrArtResultObject;
+    }
+
+    static getMagicItemTable(regexMatchResultGroups)
+    {
+      switch (regexMatchResultGroups.tableLetter)
+      {
+        case "A":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_A;
+        case "B":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_B;
+        case "C":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_C;
+        case "D":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_D;
+        case "E":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_E;
+        case "F":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_F;
+        case "G":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_G;
+        case "H":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_H;
+        case "I":
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_I;
+        default:
+          return SFLOCALCONSTS.MAGIC_ITEM_TABLE_A;
+      }
+    }
+
+    static getArtOrGemsTable(regexMatchResultGroups)
+    {
+      if (regexMatchResultGroups.gemsOrArt === "gems")
+      {
+        switch (regexMatchResultGroups.gemOrArtCost)
+        {
+          case 10:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_10GP_GEMSTONES;
+          case 50:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_50GP_GEMSTONES;
+          case 100:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_100GP_GEMSTONES;
+          case 500:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_500GP_GEMSTONES;
+          case 1000:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_1000GP_GEMSTONES;
+          case 5000:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_5000GP_GEMSTONES;
+          default:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_10GP_GEMSTONES;
+        }
+      }
+      else
+      {
+        switch (regexMatchResultGroups.gemOrArtCost)
+        {
+          case 25:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_25GP_ART_OBJECTS;
+          case 250:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_250GP_ART_OBJECTS;
+          case 750:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_750GP_ART_OBJECTS;
+          case 2500:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_2500GP_ART_OBJECTS;
+          case 7500:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_7500GP_ART_OBJECTS;
+          default:
+            return SFLOCALCONSTS.ENCOUNTER_TREASURE_25GP_ART_OBJECTS;
+        }
+      }
+    }
 }
