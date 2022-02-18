@@ -1,5 +1,7 @@
 class SFLocalHelpers {
     static allMonsters = [];
+    static creatureTypeCount = {};
+    static environmentCreatureCount = {};
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
@@ -40,7 +42,10 @@ class SFLocalHelpers {
         promises.push(this.populateItemsFromCompendiums());
         promises.push(this.populateMonstersFromCompendiums());
         await Promise.all(promises);
+        this.calculateCreatureTypeCounts();
+        this.calculateEnvironmentCreatureCounts();
         this.dictionariesPopulated = true;
+        this._indexCacheDate = this.getCurrentDateTime();
       }
 
       if (useSavedIndex && (forceReload || !loadResult))
@@ -255,12 +260,6 @@ class SFLocalHelpers {
         this.spellsByLevel = spellsbyLevelFromCache;
       }
 
-      let indexCacheDateFromCache = await this.loadFile(SFLOCALCONSTS.DATE_CACHE_FILE);
-      if (indexCacheDateFromCache)
-      {
-        this._indexCacheDate = indexCacheDateFromCache;
-      }
-
       const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
       for (let currentCreatureType of creatureTypes) {
         let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
@@ -269,8 +268,22 @@ class SFLocalHelpers {
         {
           continue;
         }
+        this.creatureTypeCount[currentCreatureType] = currentCreatureTypeList.length;
         this.allMonsters = this.allMonsters.concat(currentCreatureTypeList);
       }
+
+      let generalCache = await this.loadFile(SFLOCALCONSTS.GENERAL_CACHE_FILE);
+      if (generalCache)
+      {
+        this._indexCacheDate = generalCache._indexCacheDate;
+        this.creatureTypeCount = generalCache.creatureTypeCount;
+        this.environmentCreatureCount = generalCache.environmentCreatureCount;
+      }
+      else
+      {
+        this.calculateEnvironmentCreatureCounts();
+      }
+
       console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
 
       if (this.allMonsters.length > 0)
@@ -284,6 +297,26 @@ class SFLocalHelpers {
       }
     }
 
+    static calculateCreatureTypeCounts()
+    {
+      this.creatureTypeCount = {};
+      for (let creatureType of SFLOCALCONSTS.CREATURE_TYPES)
+      {
+        let monsterCount = this.allMonsters.filter(m => m.creaturetype.toLowerCase() === creatureType).length;
+        this.creatureTypeCount[creatureType] = monsterCount;
+      }
+    }
+
+    static calculateEnvironmentCreatureCounts()
+    {
+      this.environmentCreatureCount = {};
+      for (let environment of SFCONSTS.GEN_OPT.environment)
+      {
+        let monsterCount = this.allMonsters.filter(m => m.environment.filter(e => e === environment).length > 0).length;
+        this.environmentCreatureCount[environment] = monsterCount;
+      }
+    }
+
     static async loadFile(fileName)
     {
       let fullFilePath = `${SFLOCALCONSTS.CACHE_FOLDER}${fileName}`;
@@ -294,8 +327,13 @@ class SFLocalHelpers {
     }
 
     static async saveCache(){
+      const data = {
+        _indexCacheDate : this._indexCacheDate,
+        creatureTypeCount : this.creatureTypeCount,
+        environmentCreatureCount : this.environmentCreatureCount
+      };
       await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
-      await this.saveObjectToCache(SFLOCALCONSTS.DATE_CACHE_FILE, this.getCurrentDateTime());
+      await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
       const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
       for (let currentCreatureType of creatureTypes) {
         let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType === m.creaturetype.toLowerCase());
@@ -718,7 +756,6 @@ class SFLocalHelpers {
   
     static async filterMonstersFromCompendiums(params)
     {
-      let environment = params.environment;
       let filteredMonsters = [];
 
       const constCompFilter = game.settings.get(
@@ -731,6 +768,11 @@ class SFLocalHelpers {
         "filterMonsterTypes"
       );
 
+      const savedEnvironmentSettings = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "environmentsToCreateEncountersFor"
+        );
+
       const filteredCompendiums = Array.from(game.packs).filter((p) => {
         if (p.documentName !== "Actor") return false;
         const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
@@ -740,6 +782,11 @@ class SFLocalHelpers {
       const filteredMonsterTypes = Array.from(SFLOCALCONSTS.CREATURE_TYPES).filter((p) => {
         const el = constMonsterTypeFilter.find((i) => Object.keys(i)[0] == p);
         return !el || el[p] ? true : false;
+      });
+
+      const filteredEnvironments = Array.from(SFCONSTS.GEN_OPT.environment).filter((e) => {
+        const el = savedEnvironmentSettings.find((i) => Object.keys(i)[0] == e);
+        return !el || el[e] ? true : false;
       });
 
       for (const monsterObject of this.allMonsters)
@@ -755,7 +802,7 @@ class SFLocalHelpers {
             continue;
           }
 
-          if (monsterObject.environment.indexOf(environment) > -1 || monsterObject.environment.indexOf("Any") > -1)
+          if (monsterObject.environment.filter(e => filteredEnvironments.filter(f => f === e).length > 0).length > 0)
           {
             filteredMonsters.push(monsterObject.actor);
           }

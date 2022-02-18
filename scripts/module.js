@@ -25,8 +25,8 @@ class SFHelpers {
     }, []);
 
     for (let encounter of encounters) {
-      encounter.environment = data.environment || params.environment;
-      encounter.name = encounter.data.name || `${encounter.environment} Encounter #${encounters.indexOf(encounter)+1}`;
+      encounter.encounterType = params.encounterType;
+      encounter.name = encounter.data.name || `${encounter.encounterType} Encounter #${encounters.indexOf(encounter)+1}`;
       await encounter.prepareData();
     }
 

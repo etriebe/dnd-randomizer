@@ -255,8 +255,7 @@ class SFDialog extends FormApplication {
 				loot_type: html.find('#lootType select[name="lootType"]').val(),
 				encounterType: html.find('#encounterTypeSpan select[id="encounterTypeSelect"]').val(),
 				numberOfPlayers: numberOfPlayers,
-				averageLevelOfPlayers: averageLevelOfPlayers,
-				environment: html.find('#environmentSelector select[name="environmentSelector"]').val()
+				averageLevelOfPlayers: averageLevelOfPlayers
 			}
 
 			if (SFHelpers.useLocalEncounterGenerator())
@@ -450,7 +449,6 @@ class SFDialog extends FormApplication {
 		});
 
 		// Set Defaults
-		$(`#environmentSelector .newOptions .newOption[data-value="Arctic"]`).addClass('active selected');
 		$('#numberOfPlayers .placeholder').text(charData.chars);
 		$('#numberOfPlayers select').val(charData.chars).trigger('change');
 		$(`#numberOfPlayers .newOptions .newOption[data-value="${charData.chars}"]`).addClass('active selected');
