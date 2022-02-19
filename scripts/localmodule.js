@@ -326,6 +326,13 @@ class SFLocalHelpers {
     static async loadFile(fileName)
     {
       let fullFilePath = this.getCachePath(fileName);
+      let fileExists = await this.fileExists(this.getCacheFolder(), fileName);
+      if (!fileExists)
+      {
+        console.warn(`File ${fullFilePath} does not exist`);
+        return null;
+      }
+
       let storedCacheResponse = await (await fetch(fullFilePath));
       if(storedCacheResponse.ok){
         return JSON.parse(await storedCacheResponse.text());
@@ -369,6 +376,20 @@ class SFLocalHelpers {
 
       let file = new File([blob], fileName, { type: "text" });
       await FilePicker.upload("data", this.getCacheFolder(), file, {});
+    }
+
+    static async fileExists(fileFolder, fileName)
+    {
+      let fullFilePath = `${fileFolder}/${fileName}`;
+      let cacheDir = await FilePicker.browse("data", fileFolder);
+      if (cacheDir.files.filter(f => f === fullFilePath).length > 0)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 
     static async cleanUpOldCacheObjects()
