@@ -296,7 +296,7 @@ class SFLocalHelpers {
       this.creatureTypeCount = {};
       for (let creatureType of SFLOCALCONSTS.CREATURE_TYPES)
       {
-        let monsterCount = this.allMonsters.filter(m => m.creaturetype.toLowerCase() === creatureType).length;
+        let monsterCount = this.allMonsters.filter(m => m.creaturetype && m.creaturetype.toLowerCase() === creatureType).length;
         this.creatureTypeCount[creatureType] = monsterCount;
       }
     }
