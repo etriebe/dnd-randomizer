@@ -22,7 +22,7 @@ class SFCompendiumSorter extends FormApplication {
 
 	populateCompendiums(type) {
 		const html = this.element
-		const filteredCompendiums = game.packs.filter((p) => type.includes(p.documentName));
+		const filteredCompendiums = FoundryUtils.getCompendiums().filter((p) => type.includes(p.documentName));
 		let $ul = html.find('ul#compendium_filter').first();
 		const constCompFilter = game.settings.get(
 			SFCONSTS.MODULE_NAME,

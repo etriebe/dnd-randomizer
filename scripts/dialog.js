@@ -119,7 +119,7 @@ class SFDialog extends FormApplication {
 						<span class="encounter-difficulty ${encounter.data.difficulty}">${encounter.data.difficulty}</span>
 						${encounter.currency.xp > 0 ? `<span class="encounter-xp">${encounter.data.xp}</span>` : ''}
 						${encounter.amountToAdjustEncounter != null && encounter.amountToAdjustEncounter != 0 ? 
-							`<span class="encounter-xpadjustment">${SFLocalHelpers.getAdjustedXPString(encounter.amountToAdjustEncounter)}</span>` :
+							`<span class="encounter-xpadjustment">${EncounterUtilsPf2e.getAdjustedXPString(encounter.amountToAdjustEncounter)}</span>` :
 							''}
 					</div>
 					${combatSummaryHTML}
