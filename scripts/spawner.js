@@ -25,12 +25,17 @@ class CreatureSpawner {
   }
   //generate a random point in a circle given a center point and a radius
   static randomInCircle(center, oradius, collision = true) {
-    
+    let attemptNumber = 0;
     let x,y,radius;
-    do{let angle = Math.random() * Math.PI * 2;
-    radius = Math.random() * oradius;
-    x = Math.cos(angle) * radius + center.x;
-    y = Math.sin(angle) * radius + center.y;}while(!collision || canvas.walls.checkCollision(new Ray(center,{x:x,y:y})))
+    do{
+      attemptNumber++;
+      let angle = Math.random() * Math.PI * 2;
+      radius = Math.random() * oradius;
+      x = Math.cos(angle) * radius + center.x;
+      y = Math.sin(angle) * radius + center.y;
+    }
+    while (!collision || (canvas.walls.checkCollision(new Ray(center,{x:x,y:y})) && attemptNumber < 100))
+
     return { x: x, y: y };
   }
   //wait for a specific amount of time before returning a promise
