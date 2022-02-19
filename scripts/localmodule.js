@@ -48,7 +48,7 @@ class SFLocalHelpers {
         this._indexCacheDate = GeneralUtils.getCurrentDateTime();
       }
 
-      if (useSavedIndex && (forceReload || loadResult))
+      if (useSavedIndex && (forceReload || !loadResult))
       {
         await this.saveCache();
       }
