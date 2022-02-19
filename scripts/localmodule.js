@@ -313,11 +313,17 @@ class SFLocalHelpers {
 
     static getCachePath(fileName)
     {
-      let cacheFolder = this.getCacheFolder();
+      let cacheFolder = this.getSystemCacheFolder();
       return `${cacheFolder}/${fileName}`;
     }
 
-    static getCacheFolder()
+    static getSystemCacheFolder()
+    {
+      let systemID = FoundryUtils.getSystemId();
+      return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
+    }
+
+    static getBaseCacheFolder()
     {
       let systemID = FoundryUtils.getSystemId();
       return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
@@ -325,8 +331,9 @@ class SFLocalHelpers {
 
     static async loadFile(fileName)
     {
+      await this.ensureFolder(this.getSystemCacheFolder());
       let fullFilePath = this.getCachePath(fileName);
-      let fileExists = await this.fileExists(this.getCacheFolder(), fileName);
+      let fileExists = await this.fileExists(this.getSystemCacheFolder(), fileName);
       if (!fileExists)
       {
         console.warn(`File ${fullFilePath} does not exist`);
@@ -364,23 +371,15 @@ class SFLocalHelpers {
         type: 'text/plain'
       });
 
-      try
-      {
-        const cacheDir = await FilePicker.browse("data", this.getCacheFolder());
-      }
-      catch (error)
-      {
-        console.log(`Creating cache folder ${this.getCacheFolder()} because it doesn't exist.`);
-        await FilePicker.createDirectory("data", this.getCacheFolder(), {});
-      }
-
+      await this.ensureFolder(this.getSystemCacheFolder());
       let file = new File([blob], fileName, { type: "text" });
-      await FilePicker.upload("data", this.getCacheFolder(), file, {});
+      await FilePicker.upload("data", this.getSystemCacheFolder(), file, {});
     }
 
     static async fileExists(fileFolder, fileName)
     {
       let fullFilePath = `${fileFolder}/${fileName}`;
+      await this.ensureFolder(fileFolder);
       let cacheDir = await FilePicker.browse("data", fileFolder);
       if (cacheDir.files.filter(f => f === fullFilePath).length > 0)
       {
@@ -389,6 +388,23 @@ class SFLocalHelpers {
       else
       {
         return false;
+      }
+    }
+
+    static async ensureFolder(fileFolder)
+    {
+      let folderArray = fileFolder.split("/");
+      let currentFolderArray = [];
+      let currentFolderPath = "";
+      for (let folder of folderArray)
+      {
+        let currentDir = await FilePicker.browse("data", currentFolderPath);
+        currentFolderArray.push(folder);
+        currentFolderPath = currentFolderArray.join("/");
+        if (currentDir.dirs.filter(d => d === currentFolderPath).length === 0)
+        {
+          await FilePicker.createDirectory("data", currentFolderPath, {});
+        }
       }
     }
 
