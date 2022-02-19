@@ -31,12 +31,12 @@ class SFLocalHelpers {
         this.initializeDictionaries();
       }
       let loadResult = false;
-      if (useSavedIndex && !forceReload)
+      if (useSavedIndex && !forceReload && !this.dictionariesPopulated)
       {
         loadResult = await this.loadFromCache();
       }
 
-      if (!this.dictionariesPopulated || forceReload || !loadResult)
+      if (!this.dictionariesPopulated || forceReload)
       {
         let promises = [];
         promises.push(this.populateItemsFromCompendiums());
@@ -48,7 +48,7 @@ class SFLocalHelpers {
         this._indexCacheDate = GeneralUtils.getCurrentDateTime();
       }
 
-      if (useSavedIndex && (forceReload || !loadResult))
+      if (useSavedIndex && (forceReload || loadResult))
       {
         await this.saveCache();
       }
@@ -311,9 +311,21 @@ class SFLocalHelpers {
       }
     }
 
+    static getCachePath(fileName)
+    {
+      let cacheFolder = this.getCacheFolder();
+      return `${cacheFolder}/${fileName}`;
+    }
+
+    static getCacheFolder()
+    {
+      let systemID = FoundryUtils.getSystemId();
+      return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
+    }
+
     static async loadFile(fileName)
     {
-      let fullFilePath = `${SFLOCALCONSTS.CACHE_FOLDER}${fileName}`;
+      let fullFilePath = this.getCachePath(fileName);
       let storedCacheResponse = await (await fetch(fullFilePath));
       if(storedCacheResponse.ok){
         return JSON.parse(await storedCacheResponse.text());
@@ -347,16 +359,16 @@ class SFLocalHelpers {
 
       try
       {
-        const cacheDir = await FilePicker.browse("data", SFLOCALCONSTS.CACHE_FOLDER);
+        const cacheDir = await FilePicker.browse("data", this.getCacheFolder());
       }
       catch (error)
       {
-        console.log(`Creating cache folder ${SFLOCALCONSTS.CACHE_FOLDER} because it doesn't exist.`);
-        await FilePicker.createDirectory("data", SFLOCALCONSTS.CACHE_FOLDER, {});
+        console.log(`Creating cache folder ${this.getCacheFolder()} because it doesn't exist.`);
+        await FilePicker.createDirectory("data", this.getCacheFolder(), {});
       }
 
       let file = new File([blob], fileName, { type: "text" });
-      await FilePicker.upload("data", SFLOCALCONSTS.CACHE_FOLDER, file, {});
+      await FilePicker.upload("data", this.getCacheFolder(), file, {});
     }
 
     static async cleanUpOldCacheObjects()

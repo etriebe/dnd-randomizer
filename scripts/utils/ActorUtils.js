@@ -35,7 +35,29 @@ class ActorUtils
 
       if (currentSystem === "dnd5e")
       {
+        return new Actor5e(actor);
+      }
+      else if (currentSystem === "pf2e")
+      {
+        return new ActorPf2e(actor);
+      }
+      else
+      {
+        throw new Error("Not yet implemented!");
+      }
+    }
+
+    static getPCActorObject(actor)
+    {
+      let currentSystem = game.system.id;
+
+      if (currentSystem === "dnd5e")
+      {
         return new PCActor5e(actor);
+      }
+      else if (currentSystem === "pf2e")
+      {
+        return new PCActorPf2e(actor);
       }
       else
       {
@@ -53,5 +75,16 @@ class ActorUtils
       {
         return actor._id;
       }
+    }
+
+    static getActorEnvironments(actor) {
+        let environment = actor.data.data.details.environment;
+        if (!environment || environment.trim() === "") {
+            environment = "Any";
+        }
+
+        let environmentArray = environment.split(",");
+        environmentArray = environmentArray.map(e => e.trim());
+        return environmentArray;
     }
 }

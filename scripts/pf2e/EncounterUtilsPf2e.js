@@ -31,7 +31,7 @@ class EncounterUtilsPf2e
         let numberOfCreatures = creatureDescriptionParts[0];
         let levelInRelationToParty = creatureDescriptionParts[1];
 
-        let filteredMonsterList = monsterList.filter(m => FoundryUtils.getDataObjectFromObject(m).details.level.value === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
+        let filteredMonsterList = monsterList.filter(m => FoundryUtils.getDataObjectFromObject(m.actor).details.level.value === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
         if (filteredMonsterList.length === 0)
         {
           continue;
@@ -39,15 +39,14 @@ class EncounterUtilsPf2e
 
         let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
         let randomMonster = filteredMonsterList[randomMonsterIndex];
-        let monsterName = randomMonster.name;
-        let randomMonsterLevel = FoundryUtils.getDataObjectFromObject(randomMonster).details.level.value;
-        let monsterCR = FoundryUtils.getDataObjectFromObject(randomMonster).details.cr;
+        let randomMonsterActorObj = randomMonster.actor;
+        let monsterName = randomMonster.actorname;
+        let randomMonsterLevel = FoundryUtils.getDataObjectFromObject(randomMonsterActorObj).details.level.value;
         let creatureCombatDetails = {};
         creatureCombatDetails["name"] = monsterName;
         creatureCombatDetails["quantity"] = numberOfCreatures;
-        creatureCombatDetails["cr"] = monsterCR;
         creatureCombatDetails["level"] = randomMonsterLevel;
-        creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonster.id || m.actorid === randomMonster._id).combatdata;
+        creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorObj.id || m.actorid === randomMonsterActorObj._id).combatdata;
         currentEncounter["creatures"].push(creatureCombatDetails);
       }
 

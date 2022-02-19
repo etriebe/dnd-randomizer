@@ -1,8 +1,8 @@
 const SFLOCALCONSTS = {
-    CACHE_FILE: "/CompendiumCache.json",
-    SPELL_CACHE_FILE: "/spellsbylevel_cache.json",
-    GENERAL_CACHE_FILE: "/general_cache.json",
-    MONSTER_CACHE_FILE_FORMAT: "/##creaturetype##_cache.json",
+    CACHE_FILE: "CompendiumCache.json",
+    SPELL_CACHE_FILE: "spellsbylevel_cache.json",
+    GENERAL_CACHE_FILE: "general_cache.json",
+    MONSTER_CACHE_FILE_FORMAT: "##creaturetype##_cache.json",
     CACHE_FOLDER: "dnd-randomizer",
     CREATURE_TYPES: [
         "aberration",

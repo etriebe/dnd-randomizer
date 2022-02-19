@@ -1,5 +1,9 @@
 class FoundryUtils {
-    
+
+    static getSystemId()
+    {
+      return game.system.id;
+    }
     static getCompendiums()
     {
         return game.packs.filter((p) => !p.metadata.system || p.metadata.system === game.system.id);
