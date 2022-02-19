@@ -128,7 +128,7 @@ class EncounterUtils5e
             let wiggleRoom = wiggleRoomAmounts[j];
             let lowerBound = multiplierAmount * targetEncounterXP * (1 - wiggleRoom);
             let upperBound = multiplierAmount * targetEncounterXP * (1 + wiggleRoom);
-            let filteredMonsterList = monsterList.filter(m => PCActor5e.getXPFromActorObject(m) >= lowerBound && PCActor5e.getXPFromActorObject(m) <= upperBound);
+            let filteredMonsterList = monsterList.filter(m => m.actorxp >= lowerBound && m.actorxp <= upperBound);
             if (filteredMonsterList.length === 0)
             {
               continue;
@@ -136,15 +136,15 @@ class EncounterUtils5e
 
             let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
             let randomMonster = filteredMonsterList[randomMonsterIndex];
-            let monsterName = randomMonster.name;
-            let randomMonsterXP = PCActor5e.getXPFromActorObject(randomMonster);
-            let monsterCR = PCActor5e.getCRFromActorObject(randomMonster);
+            let monsterName = randomMonster.actorname;
+            let randomMonsterXP = randomMonster.actorxp;
+            let monsterCR = randomMonster.actorcr;
             let creatureCombatDetails = {};
             creatureCombatDetails["name"] = monsterName;
             creatureCombatDetails["quantity"] = numberOfCreatures;
             creatureCombatDetails["cr"] = monsterCR;
             creatureCombatDetails["xp"] = randomMonsterXP;
-            creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonster.id || m.actorid === randomMonster._id).combatdata;
+            creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonster.actorid).combatdata;
             currentEncounter["creatures"].push(creatureCombatDetails);
             break;
           }

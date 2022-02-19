@@ -4,8 +4,10 @@ class Actor5e {
         this.actor = data;
         this.actorname = this.actor.data.name;
         this.actorid = this.actor.data._id;
+        this.actorxp = Actor5e.getXPFromActorObject(this.actor);
+        this.actorcr = Actor5e.getCRFromActorObject(this.actor);
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
-        this.environment = ActorUtils.getActorEnvironments();
+        this.environment = ActorUtils.getActorEnvironments(this.actor);
         this.combatdata = this.getCombatDataPerRound();
     }
 
@@ -21,116 +23,124 @@ class Actor5e {
     }
 
     getCombatDataPerRound() {
-        let actor = this.actor;
-        let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat")
-            && i.name.toLowerCase() != "multiattack"
-            && i.hasAttack);
-        // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
-        let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
         let allAttackResultObjects = [];
-        if (multiAttack && multiAttack.length > 0) {
-            // Description types supported:
-            // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
-            // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
-            let multiAttackDescription = PCActor5e.getDescriptionFromItemObject(multiAttack[0]).toLowerCase();
-
-            let parsedAttackList = [];
-            for (let i = 0; i < attackList.length; i++) {
-                let currentAttack = attackList[i];
-                let attackName = currentAttack.name.toLowerCase();
-                let sanitizedAttackName = attackName.replaceAll(/\(.+\)/gm, "").trim();
-                sanitizedAttackName = sanitizedAttackName.replaceAll(/\+\d/gm, "").trim();
-                sanitizedAttackName = sanitizedAttackName.replaceAll(/\)/gm, "").trim(); // currently creatures with a recharge attack have the recharge attack named incorrectly
-                // skip if we've removed anything interesting from the attack name
-                if (sanitizedAttackName === "") {
-                    continue;
+        let actor = this.actor;
+        try
+        {
+            let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat")
+                && i.name.toLowerCase() != "multiattack"
+                && i.hasAttack);
+    
+            // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
+            let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
+            if (multiAttack && multiAttack.length > 0) {
+                // Description types supported:
+                // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
+                // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
+                let multiAttackDescription = Actor5e.getDescriptionFromItemObject(multiAttack[0]).toLowerCase();
+    
+                let parsedAttackList = [];
+                for (let i = 0; i < attackList.length; i++) {
+                    let currentAttack = attackList[i];
+                    let attackName = currentAttack.name.toLowerCase();
+                    let sanitizedAttackName = attackName.replaceAll(/\(.+\)/gm, "").trim();
+                    sanitizedAttackName = sanitizedAttackName.replaceAll(/\+\d/gm, "").trim();
+                    sanitizedAttackName = sanitizedAttackName.replaceAll(/\)/gm, "").trim(); // currently creatures with a recharge attack have the recharge attack named incorrectly
+                    // skip if we've removed anything interesting from the attack name
+                    if (sanitizedAttackName === "") {
+                        continue;
+                    }
+                    parsedAttackList.push(sanitizedAttackName);
                 }
-                parsedAttackList.push(sanitizedAttackName);
-            }
-            parsedAttackList.push("melee attack");
-            let parsedAttackRegex = parsedAttackList.join("|");
-
-            let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
-            let numberMatches = [...multiAttackDescription.matchAll(this.numberRegex)];
-            let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
-
-            let previousAttackIndex = -1;
-            for (let i = 0; i < attackMatches.length; i++) {
-                let currentAttackMatch = attackMatches[i];
-                let attackObject = attackList.find(a => a.name.toLowerCase().match(currentAttackMatch[0]));
-                if (!attackObject || currentAttackMatch[0] === "melee attack") {
-                    attackObject = attackList.find(a => a.type === "weapon");
-                }
-                let currentAttackIndex = currentAttackMatch.index;
-                let numberMatchesBeforeAttack = numberMatches.filter(n => n.index < currentAttackIndex);
-                let correctNumberMatch = numberMatchesBeforeAttack[numberMatchesBeforeAttack.length - 1];
-                let actualNumberOfAttacks = 1;
-                if (correctNumberMatch) {
-                    actualNumberOfAttacks = GeneralUtils.getIntegerFromWordNumber(correctNumberMatch[0]);
-                }
-                let currentAttackObject = PCActor5e.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
-
-                if (!currentAttackObject || currentAttackObject.averagedamage === 0) {
-                    // Skip because attack is boring and likely is some type of charm feature. 
-                    continue;
-                }
-
-                if (previousAttackIndex != -1) {
-                    let previousAttackObject = allAttackResultObjects.pop();
-
-                    // Check to see if an or is between the previous attack object and the current
-                    let orMatchesBetweenAttacks = orMatches.filter(o => o.index > previousAttackIndex && o.index < currentAttackIndex);
-                    if (orMatchesBetweenAttacks.length > 0) {
-                        // decide which object is better and push that one.
-                        if ((currentAttackObject.numberofattacks * currentAttackObject.averagedamage) >
-                            (previousAttackObject.numberofattacks * previousAttackObject.averagedamage)) {
-                            allAttackResultObjects.push(currentAttackObject);
+                parsedAttackList.push("melee attack");
+                let parsedAttackRegex = parsedAttackList.join("|");
+    
+                let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
+                let numberMatches = [...multiAttackDescription.matchAll(this.numberRegex)];
+                let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
+    
+                let previousAttackIndex = -1;
+                for (let i = 0; i < attackMatches.length; i++) {
+                    let currentAttackMatch = attackMatches[i];
+                    let attackObject = attackList.find(a => a.name.toLowerCase().match(currentAttackMatch[0]));
+                    if (!attackObject || currentAttackMatch[0] === "melee attack") {
+                        attackObject = attackList.find(a => a.type === "weapon");
+                    }
+                    let currentAttackIndex = currentAttackMatch.index;
+                    let numberMatchesBeforeAttack = numberMatches.filter(n => n.index < currentAttackIndex);
+                    let correctNumberMatch = numberMatchesBeforeAttack[numberMatchesBeforeAttack.length - 1];
+                    let actualNumberOfAttacks = 1;
+                    if (correctNumberMatch) {
+                        actualNumberOfAttacks = GeneralUtils.getIntegerFromWordNumber(correctNumberMatch[0]);
+                    }
+                    let currentAttackObject = Actor5e.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
+    
+                    if (!currentAttackObject || currentAttackObject.averagedamage === 0) {
+                        // Skip because attack is boring and likely is some type of charm feature. 
+                        continue;
+                    }
+    
+                    if (previousAttackIndex != -1) {
+                        let previousAttackObject = allAttackResultObjects.pop();
+    
+                        // Check to see if an or is between the previous attack object and the current
+                        let orMatchesBetweenAttacks = orMatches.filter(o => o.index > previousAttackIndex && o.index < currentAttackIndex);
+                        if (orMatchesBetweenAttacks.length > 0) {
+                            // decide which object is better and push that one.
+                            if ((currentAttackObject.numberofattacks * currentAttackObject.averagedamage) >
+                                (previousAttackObject.numberofattacks * previousAttackObject.averagedamage)) {
+                                allAttackResultObjects.push(currentAttackObject);
+                            }
+                            else {
+                                allAttackResultObjects.push(previousAttackObject);
+                            }
                         }
                         else {
                             allAttackResultObjects.push(previousAttackObject);
+                            allAttackResultObjects.push(currentAttackObject);
                         }
                     }
                     else {
-                        allAttackResultObjects.push(previousAttackObject);
-                        allAttackResultObjects.push(currentAttackObject);
+                        allAttackResultObjects.push(currentAttackObject)
+                        // console.log(`Adding attack ${attackObject.name} for ${actor.name}`);
+                    }
+                    previousAttackIndex = currentAttackIndex;
+                }
+    
+                if (allAttackResultObjects.length === 0) {
+                    let guessedAttack = Actor5e.guessActorMultiAttack(attackList, multiAttackDescription);
+                    if (guessedAttack) {
+                        console.log(`Attempted to guess attack for ${actor.name}: ${guessedAttack.numberofattacks} ${guessedAttack.attackdescription} attacks.`)
+                        allAttackResultObjects.push(guessedAttack);
                     }
                 }
-                else {
-                    allAttackResultObjects.push(currentAttackObject)
-                    // console.log(`Adding attack ${attackObject.name} for ${actor.name}`);
-                }
-                previousAttackIndex = currentAttackIndex;
             }
-
+            else {
+                let bestAttackObject = null;
+                let maxDamage = 0;
+                for (let i = 0; i < attackList.length; i++) {
+                    try {
+                        let currentAttackObject = Actor5e.getInfoForAttackObject(attackList[i], 1);
+                        let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
+                        if (maxDamage < totalDamage) {
+                            bestAttackObject = currentAttackObject;
+                            maxDamage = totalDamage;
+                        }
+                    }
+                    catch (error) {
+                        console.warn(`Unable to parse attack ${attackList[i].name}: ${error}`);
+                    }
+                }
+                allAttackResultObjects.push(bestAttackObject);
+            }
+    
             if (allAttackResultObjects.length === 0) {
-                let guessedAttack = this.guessActorMultiAttack(attackList, multiAttackDescription);
-                if (guessedAttack) {
-                    console.log(`Attempted to guess attack for ${actor.name}: ${guessedAttack.numberofattacks} ${guessedAttack.attackdescription} attacks.`)
-                    allAttackResultObjects.push(guessedAttack);
-                }
+                console.warn(`Parsed no attack data for actor: ${actor.name}`);
             }
         }
-        else {
-            let bestAttackObject = null;
-            let maxDamage = 0;
-            for (let i = 0; i < attackList.length; i++) {
-                try {
-                    let currentAttackObject = PCActor5e.getInfoForAttackObject(attackList[i], 1);
-                    let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
-                    if (maxDamage < totalDamage) {
-                        bestAttackObject = currentAttackObject;
-                        maxDamage = totalDamage;
-                    }
-                }
-                catch (error) {
-                    console.warn(`Unable to parse attack ${attackList[i].name}: ${error}`);
-                }
-            }
-            allAttackResultObjects.push(bestAttackObject);
-        }
-
-        if (allAttackResultObjects.length === 0) {
-            console.warn(`Parsed no attack data for actor: ${actor.name}`);
+        catch (error)
+        {
+            console.warn(`Error parsing attack information for ${actor.name}, ${actor.id}. Error: ${error}`);
         }
         return allAttackResultObjects;
     }
@@ -143,7 +153,7 @@ class Actor5e {
             actualNumber = GeneralUtils.getIntegerFromWordNumber(numberMatch[0]);
         }
 
-        return PCActor5e.getInfoForAttackObject(firstAttack, actualNumber);
+        return Actor5e.getInfoForAttackObject(firstAttack, actualNumber);
     }
 
     static getInfoForAttackObject(attackObject, numberOfAttacks) {
@@ -165,7 +175,7 @@ class Actor5e {
                 damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
             }
 
-            let totalAverageRollResult = PCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
+            let totalAverageRollResult = Actor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
 
             totalDamageForAttack += totalAverageRollResult;
         }
