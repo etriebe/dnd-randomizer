@@ -1,4 +1,4 @@
-class ActorPf2e {
+class NPCActorPf2e {
     constructor(data) {
       this.actor = data;
       this.actorname = this.actor.data.name;

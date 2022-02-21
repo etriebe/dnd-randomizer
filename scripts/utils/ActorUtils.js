@@ -39,7 +39,7 @@ class ActorUtils
       }
       else if (currentSystem === "pf2e")
       {
-        return new ActorPf2e(actor);
+        return new NPCActorPf2e(actor);
       }
       else
       {
