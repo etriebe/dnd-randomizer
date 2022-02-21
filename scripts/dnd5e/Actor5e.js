@@ -1,11 +1,11 @@
-class Actor5e {
+class NPCActor5e {
     static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
     constructor(data) {
         this.actor = data;
         this.actorname = this.actor.data.name;
         this.actorid = this.actor.data._id;
-        this.actorxp = Actor5e.getXPFromActorObject(this.actor);
-        this.actorcr = Actor5e.getCRFromActorObject(this.actor);
+        this.actorxp = NPCActor5e.getXPFromActorObject(this.actor);
+        this.actorcr = NPCActor5e.getCRFromActorObject(this.actor);
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
         this.environment = ActorUtils.getActorEnvironments(this.actor);
         this.combatdata = this.getCombatDataPerRound();
@@ -37,7 +37,7 @@ class Actor5e {
                 // Description types supported:
                 // <p>The imperial ghoul makes one bite attack and one claws attack.</p>
                 // <p>the dragon can use its frightful presence. it then makes three attacks: one with its bite and two with its claws.</p>'
-                let multiAttackDescription = Actor5e.getDescriptionFromItemObject(multiAttack[0]).toLowerCase();
+                let multiAttackDescription = NPCActor5e.getDescriptionFromItemObject(multiAttack[0]).toLowerCase();
     
                 let parsedAttackList = [];
                 for (let i = 0; i < attackList.length; i++) {
@@ -73,7 +73,7 @@ class Actor5e {
                     if (correctNumberMatch) {
                         actualNumberOfAttacks = GeneralUtils.getIntegerFromWordNumber(correctNumberMatch[0]);
                     }
-                    let currentAttackObject = Actor5e.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
+                    let currentAttackObject = NPCActor5e.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
     
                     if (!currentAttackObject || currentAttackObject.averagedamage === 0) {
                         // Skip because attack is boring and likely is some type of charm feature. 
@@ -108,7 +108,7 @@ class Actor5e {
                 }
     
                 if (allAttackResultObjects.length === 0) {
-                    let guessedAttack = Actor5e.guessActorMultiAttack(attackList, multiAttackDescription);
+                    let guessedAttack = NPCActor5e.guessActorMultiAttack(attackList, multiAttackDescription);
                     if (guessedAttack) {
                         console.log(`Attempted to guess attack for ${actor.name}: ${guessedAttack.numberofattacks} ${guessedAttack.attackdescription} attacks.`)
                         allAttackResultObjects.push(guessedAttack);
@@ -120,7 +120,7 @@ class Actor5e {
                 let maxDamage = 0;
                 for (let i = 0; i < attackList.length; i++) {
                     try {
-                        let currentAttackObject = Actor5e.getInfoForAttackObject(attackList[i], 1);
+                        let currentAttackObject = NPCActor5e.getInfoForAttackObject(attackList[i], 1);
                         let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
                         if (maxDamage < totalDamage) {
                             bestAttackObject = currentAttackObject;
@@ -145,6 +145,88 @@ class Actor5e {
         return allAttackResultObjects;
     }
 
+    getSpellDataPerRound() {
+        let allSpellResultObjects = [];
+        let actor = this.actor;
+        try
+        {
+            let spellList = actor.items.filter(i => (i.type.toLowerCase() === "spell") && i.hasAttack);
+            let bestSpellObject = null;
+            let maxDamage = 0;
+            for (let i = 0; i < spellList.length; i++) {
+                try {
+                    let currentSpellObject = NPCActor5e.getInfoForAttackObject(spellList[i], 1);
+                    let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
+                    if (maxDamage < totalDamage) {
+                        bestSpellObject = currentAttackObject;
+                        maxDamage = totalDamage;
+                    }
+                }
+                catch (error) {
+                    console.warn(`Unable to parse attack ${spellList[i].name}: ${error}`);
+                }
+            }
+            allAttackResultObjects.push(bestSpellObject);
+        }
+        catch (error)
+        {
+
+        }
+        return allSpellResultObjects;
+    }
+
+    static getSpellCastingBonus()
+    {
+        let data = ActorUtils.getDataObjectFromObject(this.actor);
+        let spellCastingAttribute = data.attributes.spellcasting;
+        let spellCastingAttributeScore = eval(`data.abilities.${spellCastingAttribute}.value`);
+
+    }
+
+    static getModifierFromAttributeScore(attributeScore)
+    {
+        let modifier = Math.floor((attributeScore - 10) / 2);
+        return modifier;
+    }
+
+    static getInfoForSpellObject(attackObject, actor) {
+        let abilityModType = attackObject.abilityMod;
+        let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
+        let damageList = FoundryUtils.getDataObjectFromObject(attackObject).damage.parts;
+
+        let totalDamageForAttack = 0;
+        for (let i = 0; i < damageList.length; i++) {
+            let damageArray = damageList[i];
+            let damageDescription = damageArray[0];
+            let damageType = damageArray[1];
+            damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+            let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
+            for (let j = 0; j < abilitiesModMatches.length; j++) {
+                let abilitiesDescription = abilitiesModMatches[j][0];
+                let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "attackObject.parent.data.data.abilities.");
+                let abilitiesModValue = eval(newAbilitiesDescription);
+                damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
+            }
+
+            let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
+
+            totalDamageForAttack += totalAverageRollResult;
+        }
+        let currentAttackResult = {};
+        currentAttackResult["averagedamage"] = totalDamageForAttack;
+        let isProficient = attackObject.data.data.proficient;
+        let attackBonus = 0;
+        if (isProficient) {
+            attackBonus += attackObject.data.data.prof.flat;
+        }
+
+        attackBonus += abilityModValue;
+        currentAttackResult["attackbonustohit"] = attackBonus;
+        currentAttackResult["numberofattacks"] = numberOfAttacks;
+        currentAttackResult["attackdescription"] = attackObject.name;
+        return currentAttackResult;
+    }
+
     static guessActorMultiAttack(attackList, multiAttackDescription) {
         let firstAttack = attackList.find(a => a.type === "weapon");
         let actualNumber = 1;
@@ -153,7 +235,7 @@ class Actor5e {
             actualNumber = GeneralUtils.getIntegerFromWordNumber(numberMatch[0]);
         }
 
-        return Actor5e.getInfoForAttackObject(firstAttack, actualNumber);
+        return NPCActor5e.getInfoForAttackObject(firstAttack, actualNumber);
     }
 
     static getInfoForAttackObject(attackObject, numberOfAttacks) {
@@ -175,7 +257,7 @@ class Actor5e {
                 damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
             }
 
-            let totalAverageRollResult = Actor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
+            let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
 
             totalDamageForAttack += totalAverageRollResult;
         }
