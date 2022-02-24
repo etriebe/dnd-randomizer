@@ -9,6 +9,7 @@ class NPCActor5e {
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
         this.environment = ActorUtils.getActorEnvironments(this.actor);
         this.combatdata = this.getCombatDataPerRound();
+        this.spelldata = this.getSpellDataPerRound();
     }
 
     getActorEnvironments() {
@@ -156,14 +157,15 @@ class NPCActor5e {
             for (let i = 0; i < spellList.length; i++) {
                 try {
                     let currentSpellObject = NPCActor5e.getInfoForAttackObject(spellList[i], 1);
-                    let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
+                    let totalDamage = currentSpellObject.averagedamage * currentSpellObject.numberofattacks;
                     if (maxDamage < totalDamage) {
-                        bestSpellObject = currentAttackObject;
+                        bestSpellObject = currentSpellObject;
                         maxDamage = totalDamage;
                     }
                 }
                 catch (error) {
-                    console.warn(`Unable to parse attack ${spellList[i].name}: ${error}`);
+                    console.warn(`Unable to parse attack ${spellList[i].name}`);
+                    console.warn(error);
                 }
             }
             allAttackResultObjects.push(bestSpellObject);
@@ -288,6 +290,14 @@ class NPCActor5e {
             let diceTypeAverage = (parseInt(diceType) + 1) / 2;
             let totalDiceRollAverage = diceTypeAverage * diceCount;
             damageDescription = damageDescription.replaceAll(entireMatchValue, totalDiceRollAverage);
+        }
+
+        let spellDamageQualifierMatches = [...damageDescription.matchAll(/\[.+\]/gm)];
+
+        for (let i = 0; i < spellDamageQualifierMatches.length; i++) {
+            let matchResult = spellDamageQualifierMatches[i];
+            let entireMatchValue = matchResult[0];
+            damageDescription = damageDescription.replaceAll(entireMatchValue, "");
         }
 
         // deal with modules that use a Math.floor function but Math. isn't specified

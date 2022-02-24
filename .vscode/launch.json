@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "pwa-msedge",
+            "name": "http://192.168.0.200:30001/game",
+            "request": "launch",
+            "url": "http://192.168.0.200:30001/game"
+        }
+    ]
+}
