@@ -1,5 +1,5 @@
 class Actor5e {
-    static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
+    static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;
     constructor(data) {
         this.actor = data;
         this.actorname = this.actor.data.name;
@@ -56,7 +56,7 @@ class Actor5e {
                 let parsedAttackRegex = parsedAttackList.join("|");
     
                 let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
-                let numberMatches = [...multiAttackDescription.matchAll(this.numberRegex)];
+                let numberMatches = [...multiAttackDescription.matchAll(Actor5e.numberRegex)];
                 let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
     
                 let previousAttackIndex = -1;
@@ -73,6 +73,12 @@ class Actor5e {
                     if (correctNumberMatch) {
                         actualNumberOfAttacks = GeneralUtils.getIntegerFromWordNumber(correctNumberMatch[0]);
                     }
+
+                    if (!actualNumberOfAttacks)
+                    {
+                        console.warn(`Unable to parse number of attacks for multi attack for ${this.actorname}, ${this.actorid}, Multiattack Description: ${multiAttackDescription}`);
+                    }
+
                     let currentAttackObject = Actor5e.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
     
                     if (!currentAttackObject || currentAttackObject.averagedamage === 0) {
@@ -148,7 +154,7 @@ class Actor5e {
     static guessActorMultiAttack(attackList, multiAttackDescription) {
         let firstAttack = attackList.find(a => a.type === "weapon");
         let actualNumber = 1;
-        let numberMatch = multiAttackDescription.match(this.numberRegex);
+        let numberMatch = multiAttackDescription.match(Actor5e.numberRegex);
         if (numberMatch) {
             actualNumber = GeneralUtils.getIntegerFromWordNumber(numberMatch[0]);
         }
