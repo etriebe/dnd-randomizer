@@ -5,6 +5,7 @@ class GeneralUtils {
       switch (number.toLowerCase())
       {
         case "one":
+        case "once":
         case "1":
           return 1;
         case "two":

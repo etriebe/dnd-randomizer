@@ -1,5 +1,5 @@
 class Actor5e {
-    static numberRegex = `(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)`;
+    static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;
     constructor(data) {
         this.actor = data;
         this.actorname = this.actor.data.name;
@@ -29,7 +29,8 @@ class Actor5e {
         {
             let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat")
                 && i.name.toLowerCase() != "multiattack"
-                && i.hasAttack);
+                && i.hasAttack
+                && i.hasDamage);
     
             // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
             let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
@@ -56,7 +57,7 @@ class Actor5e {
                 let parsedAttackRegex = parsedAttackList.join("|");
     
                 let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
-                let numberMatches = [...multiAttackDescription.matchAll(this.numberRegex)];
+                let numberMatches = [...multiAttackDescription.matchAll(Actor5e.numberRegex)];
                 let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
     
                 let previousAttackIndex = -1;
@@ -73,7 +74,13 @@ class Actor5e {
                     if (correctNumberMatch) {
                         actualNumberOfAttacks = GeneralUtils.getIntegerFromWordNumber(correctNumberMatch[0]);
                     }
-                    let currentAttackObject = Actor5e.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
+
+                    if (!actualNumberOfAttacks)
+                    {
+                        console.warn(`Unable to parse number of attacks for multi attack for ${this.actorname}, ${this.actorid}, Multiattack Description: ${multiAttackDescription}`);
+                    }
+
+                    let currentAttackObject = this.getInfoForAttackObject(attackObject, actualNumberOfAttacks);
     
                     if (!currentAttackObject || currentAttackObject.averagedamage === 0) {
                         // Skip because attack is boring and likely is some type of charm feature. 
@@ -108,7 +115,7 @@ class Actor5e {
                 }
     
                 if (allAttackResultObjects.length === 0) {
-                    let guessedAttack = Actor5e.guessActorMultiAttack(attackList, multiAttackDescription);
+                    let guessedAttack = this.guessActorMultiAttack(attackList, multiAttackDescription);
                     if (guessedAttack) {
                         console.log(`Attempted to guess attack for ${actor.name}: ${guessedAttack.numberofattacks} ${guessedAttack.attackdescription} attacks.`)
                         allAttackResultObjects.push(guessedAttack);
@@ -120,7 +127,7 @@ class Actor5e {
                 let maxDamage = 0;
                 for (let i = 0; i < attackList.length; i++) {
                     try {
-                        let currentAttackObject = Actor5e.getInfoForAttackObject(attackList[i], 1);
+                        let currentAttackObject = this.getInfoForAttackObject(attackList[i], 1);
                         let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
                         if (maxDamage < totalDamage) {
                             bestAttackObject = currentAttackObject;
@@ -145,18 +152,18 @@ class Actor5e {
         return allAttackResultObjects;
     }
 
-    static guessActorMultiAttack(attackList, multiAttackDescription) {
+    guessActorMultiAttack(attackList, multiAttackDescription) {
         let firstAttack = attackList.find(a => a.type === "weapon");
         let actualNumber = 1;
-        let numberMatch = multiAttackDescription.match(this.numberRegex);
+        let numberMatch = multiAttackDescription.match(Actor5e.numberRegex);
         if (numberMatch) {
             actualNumber = GeneralUtils.getIntegerFromWordNumber(numberMatch[0]);
         }
 
-        return Actor5e.getInfoForAttackObject(firstAttack, actualNumber);
+        return this.getInfoForAttackObject(firstAttack, actualNumber);
     }
 
-    static getInfoForAttackObject(attackObject, numberOfAttacks) {
+    getInfoForAttackObject(attackObject, numberOfAttacks) {
         let abilityModType = attackObject.abilityMod;
         let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
         let damageList = FoundryUtils.getDataObjectFromObject(attackObject).damage.parts;
@@ -176,6 +183,14 @@ class Actor5e {
             }
 
             let totalAverageRollResult = Actor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
+            if (isNaN(totalAverageRollResult))
+            {
+                if (damageType != "healing")
+                {
+                    console.warn(`No damage for ${this.actorname}, ${this.actorid}, attack ${attackObject.name}, damage type ${damageType}`);
+                }
+                continue;
+            }
 
             totalDamageForAttack += totalAverageRollResult;
         }
@@ -191,6 +206,12 @@ class Actor5e {
         currentAttackResult["attackbonustohit"] = attackBonus;
         currentAttackResult["numberofattacks"] = numberOfAttacks;
         currentAttackResult["attackdescription"] = attackObject.name;
+
+        if (isNaN(attackBonus) || isNaN(numberOfAttacks) || isNaN(totalDamageForAttack))
+        {
+            console.warn(`Invalid attack data for ${this.actorname}, ${this.actorid}. Average damage: ${currentAttackResult.averagedamage}, Attack Bonus: ${currentAttackResult.attackbonustohit}, Number of Attacks: ${currentAttackResult.numberofattacks}`);
+        }
+
         return currentAttackResult;
     }
 
