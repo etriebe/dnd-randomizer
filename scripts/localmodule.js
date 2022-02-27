@@ -30,6 +30,13 @@ class SFLocalHelpers {
       {
         this.initializeDictionaries();
       }
+
+      if (this.dictionariesPopulated && !forceReload)
+      {
+        console.log(`Dictionaries are already reloaded and we aren't forcing a reindex.`);
+        return;
+      }
+
       let loadResult = false;
       if (useSavedIndex && !forceReload && !this.dictionariesPopulated)
       {
