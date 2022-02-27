@@ -163,7 +163,7 @@ class Actor5e {
             let maxDamage = 0;
             for (let i = 0; i < spellList.length; i++) {
                 try {
-                    let currentSpellObject = NPCActor5e.getInfoForAttackObject(spellList[i], 1);
+                    let currentSpellObject = this.getInfoForSpellObject(spellList[i], 1);
                     let totalDamage = currentSpellObject.averagedamage * currentSpellObject.numberofattacks;
                     if (maxDamage < totalDamage) {
                         bestSpellObject = currentSpellObject;
@@ -171,16 +171,21 @@ class Actor5e {
                     }
                 }
                 catch (error) {
-                    console.warn(`Unable to parse attack ${spellList[i].name}`);
+                    console.warn(`Unable to parse spell attack ${spellList[i].name}`);
                     console.warn(error);
                 }
             }
-            allAttackResultObjects.push(bestSpellObject);
+            if (bestSpellObject)
+            {
+                allSpellResultObjects.push(bestSpellObject);
+            }
         }
         catch (error)
         {
-
+            console.warn(`Failed to get spell data per round for ${this.actorname}, ${this.actorid}`);
+            console.warn(error);
         }
+
         return allSpellResultObjects;
     }
 
@@ -198,10 +203,10 @@ class Actor5e {
         return modifier;
     }
 
-    static getInfoForSpellObject(attackObject, actor) {
-        let abilityModType = attackObject.abilityMod;
-        let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
-        let damageList = FoundryUtils.getDataObjectFromObject(attackObject).damage.parts;
+    getInfoForSpellObject(spellObject) {
+        let abilityModType = spellObject.abilityMod;
+        let abilityModValue = eval("spellObject.parent.data.data.abilities." + abilityModType + ".mod");
+        let damageList = FoundryUtils.getDataObjectFromObject(spellObject).damage.parts;
 
         let totalDamageForAttack = 0;
         for (let i = 0; i < damageList.length; i++) {
@@ -209,10 +214,15 @@ class Actor5e {
             let damageDescription = damageArray[0];
             let damageType = damageArray[1];
             damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+            if (damageType.toLowerCase() === "healing")
+            {
+                continue;
+            }
+
             let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
             for (let j = 0; j < abilitiesModMatches.length; j++) {
                 let abilitiesDescription = abilitiesModMatches[j][0];
-                let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "attackObject.parent.data.data.abilities.");
+                let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "spellObject.parent.data.data.abilities.");
                 let abilitiesModValue = eval(newAbilitiesDescription);
                 damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
             }
@@ -223,16 +233,16 @@ class Actor5e {
         }
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
-        let isProficient = attackObject.data.data.proficient;
+        let isProficient = spellObject.data.data.proficient;
         let attackBonus = 0;
         if (isProficient) {
-            attackBonus += attackObject.data.data.prof.flat;
+            attackBonus += spellObject.data.data.prof.flat;
         }
 
         attackBonus += abilityModValue;
         currentAttackResult["attackbonustohit"] = attackBonus;
-        currentAttackResult["numberofattacks"] = numberOfAttacks;
-        currentAttackResult["attackdescription"] = attackObject.name;
+        currentAttackResult["numberofattacks"] = 1;
+        currentAttackResult["attackdescription"] = spellObject.name;
         return currentAttackResult;
     }
 
