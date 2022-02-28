@@ -8,8 +8,9 @@ class Actor5e {
         this.actorcr = NPCActor5e.getCRFromActorObject(this.actor);
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
         this.environment = ActorUtils.getActorEnvironments(this.actor);
-        this.combatdata = this.getCombatDataPerRound();
+        this.attackdata = this.getCombatDataPerRound();
         this.spelldata = this.getSpellDataPerRound();
+        this.bestcombatdata = this.getBestCombat();
     }
 
     getActorEnvironments() {
@@ -189,12 +190,56 @@ class Actor5e {
         return allSpellResultObjects;
     }
 
-    static getSpellCastingBonus()
-    {
-        let data = ActorUtils.getDataObjectFromObject(this.actor);
-        let spellCastingAttribute = data.attributes.spellcasting;
-        let spellCastingAttributeScore = eval(`data.abilities.${spellCastingAttribute}.value`);
+    getBestCombat() {
+        let totalAttackDamage = 0;
+        let totalSpellDamage = 0;
 
+        for (let attack of this.attackdata)
+        {
+          try
+          {
+            let attackBonus = attack.attackbonustohit;
+            let averageDamage = attack.averagedamage;
+            let numberOfAttacks = attack.numberofattacks;
+
+            for (var j = 0; j < numberOfAttacks; j++)
+            {
+              totalAttackDamage += averageDamage;
+            }
+          }
+          catch (error)
+          {
+            console.warn(`Failed to add combat summary for creature ${this.actorname}`);
+          }
+        }
+
+        for (let attack of this.spelldata)
+        {
+          try
+          {
+            let attackBonus = attack.attackbonustohit;
+            let averageDamage = attack.averagedamage;
+            let numberOfAttacks = attack.numberofattacks;
+
+            for (var j = 0; j < numberOfAttacks; j++)
+            {
+                totalSpellDamage += averageDamage;
+            }
+          }
+          catch (error)
+          {
+            console.warn(`Failed to calculate spell summary for creature ${this.actorname}`);
+          }
+        }
+
+        if (totalAttackDamage > totalSpellDamage)
+        {
+            return this.attackdata;
+        }
+        else
+        {
+            return this.spelldata;
+        }
     }
 
     static getModifierFromAttributeScore(attributeScore)
