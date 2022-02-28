@@ -1,4 +1,4 @@
-class Actor5e {
+class NPCActor5e {
     static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;
     constructor(data) {
         this.actor = data;
@@ -10,7 +10,7 @@ class Actor5e {
         this.environment = ActorUtils.getActorEnvironments(this.actor);
         this.attackdata = this.getCombatDataPerRound();
         this.spelldata = this.getSpellDataPerRound();
-        this.bestcombatdata = this.getBestCombat();
+        this.combatdata = this.getBestCombat();
     }
 
     getActorEnvironments() {
@@ -59,7 +59,7 @@ class Actor5e {
                 let parsedAttackRegex = parsedAttackList.join("|");
     
                 let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
-                let numberMatches = [...multiAttackDescription.matchAll(Actor5e.numberRegex)];
+                let numberMatches = [...multiAttackDescription.matchAll(NPCActor5e.numberRegex)];
                 let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
     
                 let previousAttackIndex = -1;
@@ -140,7 +140,11 @@ class Actor5e {
                         console.warn(`Unable to parse attack ${attackList[i].name}: ${error}`);
                     }
                 }
-                allAttackResultObjects.push(bestAttackObject);
+
+                if (bestAttackObject)
+                {
+                    allAttackResultObjects.push(bestAttackObject);
+                }
             }
     
             if (allAttackResultObjects.length === 0) {
@@ -210,6 +214,7 @@ class Actor5e {
           catch (error)
           {
             console.warn(`Failed to add combat summary for creature ${this.actorname}`);
+            console.warn(error);
           }
         }
 
@@ -229,6 +234,7 @@ class Actor5e {
           catch (error)
           {
             console.warn(`Failed to calculate spell summary for creature ${this.actorname}`);
+            console.warn(error);
           }
         }
 
@@ -276,6 +282,14 @@ class Actor5e {
 
             totalDamageForAttack += totalAverageRollResult;
         }
+
+        let scalingObject = FoundryUtils.getDataObjectFromObject(spellObject).scaling;
+        if (scalingObject && scalingObject.mode === "cantrip")
+        {
+            let cantripMultiplier = this.getCantripMultiplier();
+            totalDamageForAttack = totalDamageForAttack * cantripMultiplier;
+        }
+
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
         let isProficient = spellObject.data.data.proficient;
@@ -294,7 +308,7 @@ class Actor5e {
     guessActorMultiAttack(attackList, multiAttackDescription) {
         let firstAttack = attackList.find(a => a.type === "weapon");
         let actualNumber = 1;
-        let numberMatch = multiAttackDescription.match(Actor5e.numberRegex);
+        let numberMatch = multiAttackDescription.match(NPCActor5e.numberRegex);
         if (numberMatch) {
             actualNumber = GeneralUtils.getIntegerFromWordNumber(numberMatch[0]);
         }
@@ -352,6 +366,28 @@ class Actor5e {
         }
 
         return currentAttackResult;
+    }
+
+    getCantripMultiplier()
+    {
+        let spellLevel = FoundryUtils.getDataObjectFromObject(this.actor).details.spellLevel;
+
+        if (isNaN(spellLevel) || spellLevel < 5)
+        {
+            return 1;
+        }
+        else if (spellLevel < 11)
+        {
+            return 2;
+        }
+        else if (spellLevel < 17)
+        {
+            return 3;
+        }
+        else
+        {
+            return 4;
+        }
     }
 
     static getAverageDamageFromDescription(damageDescription, abilityModValue) {
