@@ -31,8 +31,7 @@ class NPCActor5e {
         {
             let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat")
                 && i.name.toLowerCase() != "multiattack"
-                && i.hasAttack
-                && i.hasDamage);
+                && i.hasAttack);
     
             // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
             let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
@@ -319,33 +318,48 @@ class NPCActor5e {
     getInfoForAttackObject(attackObject, numberOfAttacks) {
         let abilityModType = attackObject.abilityMod;
         let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
-        let damageList = FoundryUtils.getDataObjectFromObject(attackObject).damage.parts;
+        let dataObject = FoundryUtils.getDataObjectFromObject(attackObject);
+        let damageList = dataObject.damage.parts;
 
         let totalDamageForAttack = 0;
-        for (let i = 0; i < damageList.length; i++) {
-            let damageArray = damageList[i];
-            let damageDescription = damageArray[0];
-            let damageType = damageArray[1];
-            damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
-            let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
-            for (let j = 0; j < abilitiesModMatches.length; j++) {
-                let abilitiesDescription = abilitiesModMatches[j][0];
-                let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "attackObject.parent.data.data.abilities.");
-                let abilitiesModValue = eval(newAbilitiesDescription);
-                damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
-            }
+
+        if (damageList.length === 0 && dataObject.formula != "")
+        {
+            let damageDescription = dataObject.formula;
+            damageDescription = damageDescription.toLowerCase().replaceAll(/\[.+\]/gm,"");
 
             let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
-            if (isNaN(totalAverageRollResult))
+            if (!isNaN(totalAverageRollResult))
             {
-                if (damageType != "healing")
-                {
-                    console.warn(`No damage for ${this.actorname}, ${this.actorid}, attack ${attackObject.name}, damage type ${damageType}`);
-                }
-                continue;
+                totalDamageForAttack += totalAverageRollResult;
             }
-
-            totalDamageForAttack += totalAverageRollResult;
+        }
+        else
+        {
+            for (let i = 0; i < damageList.length; i++) {
+                let damageArray = damageList[i];
+                let damageDescription = damageArray[0];
+                let damageType = damageArray[1];
+                damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+                let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
+                for (let j = 0; j < abilitiesModMatches.length; j++) {
+                    let abilitiesDescription = abilitiesModMatches[j][0];
+                    let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "attackObject.parent.data.data.abilities.");
+                    let abilitiesModValue = eval(newAbilitiesDescription);
+                    damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
+                }
+    
+                let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
+                if (isNaN(totalAverageRollResult))
+                {
+                    if (damageType != "healing")
+                    {
+                        console.warn(`No damage for ${this.actorname}, ${this.actorid}, attack ${attackObject.name}, damage type ${damageType}`);
+                    }
+                    continue;
+                }
+                totalDamageForAttack += totalAverageRollResult;
+            }
         }
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
