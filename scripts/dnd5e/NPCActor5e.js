@@ -59,7 +59,7 @@ class NPCActor5e {
     
                 let attackMatches = [...multiAttackDescription.matchAll(`(?<attackDescription>${parsedAttackRegex})`)];
                 let numberMatches = [...multiAttackDescription.matchAll(NPCActor5e.numberRegex)];
-                let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers> or )`)];
+                let orMatches = [...multiAttackDescription.matchAll(`(?<qualifiers>( or | and\/or ))`)];
     
                 let previousAttackIndex = -1;
                 for (let i = 0; i < attackMatches.length; i++) {
