@@ -162,12 +162,16 @@ class NPCActor5e {
         let actor = this.actor;
         try
         {
-            let spellList = actor.items.filter(i => (i.type.toLowerCase() === "spell") && i.hasAttack);
+            let spellList = actor.items.filter(i => (i.type.toLowerCase() === "spell"));
             let bestSpellObject = null;
             let maxDamage = 0;
             for (let i = 0; i < spellList.length; i++) {
                 try {
                     let currentSpellObject = this.getInfoForSpellObject(spellList[i], 1);
+                    if (!currentSpellObject)
+                    {
+                        continue;
+                    }
                     let totalDamage = currentSpellObject.averagedamage * currentSpellObject.numberofattacks;
                     if (maxDamage < totalDamage) {
                         bestSpellObject = currentSpellObject;
@@ -254,9 +258,14 @@ class NPCActor5e {
     }
 
     getInfoForSpellObject(spellObject) {
+        if (spellObject.hasDamage === false)
+        {
+            return;
+        }
         let abilityModType = spellObject.abilityMod;
         let abilityModValue = eval("spellObject.parent.data.data.abilities." + abilityModType + ".mod");
-        let damageList = FoundryUtils.getDataObjectFromObject(spellObject).damage.parts;
+        let spellDataObject = FoundryUtils.getDataObjectFromObject(spellObject);
+        let damageList = spellDataObject.damage.parts;
 
         let totalDamageForAttack = 0;
         for (let i = 0; i < damageList.length; i++) {
@@ -282,25 +291,41 @@ class NPCActor5e {
             totalDamageForAttack += totalAverageRollResult;
         }
 
-        let scalingObject = FoundryUtils.getDataObjectFromObject(spellObject).scaling;
+        let scalingObject = spellDataObject.scaling;
         if (scalingObject && scalingObject.mode === "cantrip")
         {
             let cantripMultiplier = this.getCantripMultiplier();
             totalDamageForAttack = totalDamageForAttack * cantripMultiplier;
         }
 
+        if (totalDamageForAttack === 0)
+        {
+            return;
+        }
+
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
-        let isProficient = spellObject.data.data.proficient;
+        let isProficient = spellDataObject.prof.hasProficiency;
         let attackBonus = 0;
         if (isProficient) {
-            attackBonus += spellObject.data.data.prof.flat;
+            attackBonus += spellDataObject.prof.flat;
         }
 
         attackBonus += abilityModValue;
         currentAttackResult["attackbonustohit"] = attackBonus;
-        currentAttackResult["numberofattacks"] = 1;
+        if (spellObject.hasAreaTarget)
+        {
+            currentAttackResult["numberofattacks"] = 2; // assume an average of two creatures hit with AOE
+        }
+        else
+        {
+            currentAttackResult["numberofattacks"] = 1;
+        }
         currentAttackResult["attackdescription"] = spellObject.name;
+        if (isNaN(attackBonus))
+        {
+            return;
+        }
         return currentAttackResult;
     }
 
