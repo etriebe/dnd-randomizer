@@ -173,6 +173,11 @@ class NPCActor5e {
                         continue;
                     }
                     let totalDamage = currentSpellObject.averagedamage * currentSpellObject.numberofattacks;
+                    if (currentSpellObject.hasareaofeffect)
+                    {
+                        // Assume AOE attacks hit two PCs
+                        totalDamage = totalDamage * 2;
+                    }
                     if (maxDamage < totalDamage) {
                         bestSpellObject = currentSpellObject;
                         maxDamage = totalDamage;
@@ -313,14 +318,8 @@ class NPCActor5e {
 
         attackBonus += abilityModValue;
         currentAttackResult["attackbonustohit"] = attackBonus;
-        if (spellObject.hasAreaTarget)
-        {
-            currentAttackResult["numberofattacks"] = 2; // assume an average of two creatures hit with AOE
-        }
-        else
-        {
-            currentAttackResult["numberofattacks"] = 1;
-        }
+        currentAttackResult["numberofattacks"] = 1;
+        currentAttackResult["hasareaofeffect"] = spellObject.hasAreaTarget;
         currentAttackResult["attackdescription"] = spellObject.name;
         if (isNaN(attackBonus))
         {
