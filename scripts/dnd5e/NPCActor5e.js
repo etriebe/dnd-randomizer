@@ -30,10 +30,7 @@ class NPCActor5e {
         try
         {
             let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat")
-                && i.name.toLowerCase() != "multiattack"
-                && i.hasAttack);
-    
-            // let spellList = actor.items.filter(i => i.type.toLowerCase() === "spell");
+                && i.name.toLowerCase() != "multiattack");
             let multiAttack = actor.items.filter(i => i.name.toLowerCase() === "multiattack");
             if (multiAttack && multiAttack.length > 0) {
                 // Description types supported:
@@ -90,13 +87,13 @@ class NPCActor5e {
     
                     if (previousAttackIndex != -1) {
                         let previousAttackObject = allAttackResultObjects.pop();
-    
+
                         // Check to see if an or is between the previous attack object and the current
                         let orMatchesBetweenAttacks = orMatches.filter(o => o.index > previousAttackIndex && o.index < currentAttackIndex);
                         if (orMatchesBetweenAttacks.length > 0) {
                             // decide which object is better and push that one.
-                            if ((currentAttackObject.numberofattacks * currentAttackObject.averagedamage) >
-                                (previousAttackObject.numberofattacks * previousAttackObject.averagedamage)) {
+                            if ((NPCActor5e.getTotalDamageForAttackObject(currentAttackObject)) >
+                                (NPCActor5e.getTotalDamageForAttackObject(previousAttackObject))) {
                                 allAttackResultObjects.push(currentAttackObject);
                             }
                             else {
@@ -129,7 +126,7 @@ class NPCActor5e {
                 for (let i = 0; i < attackList.length; i++) {
                     try {
                         let currentAttackObject = this.getInfoForAttackObject(attackList[i], 1);
-                        let totalDamage = currentAttackObject.averagedamage * currentAttackObject.numberofattacks;
+                        let totalDamage = NPCActor5e.getTotalDamageForAttackObject(currentAttackObject);
                         if (maxDamage < totalDamage) {
                             bestAttackObject = currentAttackObject;
                             maxDamage = totalDamage;
@@ -155,6 +152,17 @@ class NPCActor5e {
             console.warn(`Error parsing attack information for ${actor.name}, ${actor.id}. Error: ${error}`);
         }
         return allAttackResultObjects;
+    }
+
+    static getTotalDamageForAttackObject(attackObject)
+    {
+        let totalDamage = attackObject.averagedamage * attackObject.numberofattacks;
+        if (attackObject.hasareaofeffect)
+        {
+            // Assume AOE attacks hit two PCs
+            totalDamage = totalDamage * 2;
+        }
+        return totalDamage;
     }
 
     getSpellDataPerRound() {
@@ -317,6 +325,11 @@ class NPCActor5e {
         }
 
         attackBonus += abilityModValue;
+
+        if (spellObject.hasSave)
+        {
+            attackBonus = NPCActor5e.getSaveDC(spellObject) - 10;
+        }
         currentAttackResult["attackbonustohit"] = attackBonus;
         currentAttackResult["numberofattacks"] = 1;
         currentAttackResult["hasareaofeffect"] = spellObject.hasAreaTarget;
@@ -394,8 +407,14 @@ class NPCActor5e {
         }
 
         attackBonus += abilityModValue;
+
+        if (attackObject.hasSave)
+        {
+            attackBonus = NPCActor5e.getSaveDC(attackObject) - 10;
+        }
         currentAttackResult["attackbonustohit"] = attackBonus;
         currentAttackResult["numberofattacks"] = numberOfAttacks;
+        currentAttackResult["hasareaofeffect"] = attackObject.hasAreaTarget;
         currentAttackResult["attackdescription"] = attackObject.name;
 
         if (isNaN(attackBonus) || isNaN(numberOfAttacks) || isNaN(totalDamageForAttack))
@@ -404,6 +423,11 @@ class NPCActor5e {
         }
 
         return currentAttackResult;
+    }
+
+    static getSaveDC(attackObject)
+    {
+        return attackObject.data.data.save.dc;
     }
 
     getCantripMultiplier()
