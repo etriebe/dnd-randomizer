@@ -760,6 +760,23 @@ const SFLOCALCONSTS = {
             "pf2e": "level",
         }
     },
+    SYSTEM_VARIABLES_V10: {
+        // Object is for actor
+        "CreatureType": {
+            "dnd5e": "details.type.value",
+            "pf2e": "details.creatureType",
+        },
+        // Object is for spell
+        "SpellLevel": {
+            "dnd5e": "labels.level",
+            "pf2e": "level",
+        },
+        // Object is for actor
+        "CreatureXP": {
+            "dnd5e": "details.xp.value",
+            "pf2e": "level",
+        }
+    },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {
         // Key=Encounter Difficulty : Value=[XP Budget, Character Adjustment]
         "Trivial": [40, 10],

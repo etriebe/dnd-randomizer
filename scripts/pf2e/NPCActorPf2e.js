@@ -1,8 +1,8 @@
 class NPCActorPf2e {
     constructor(data) {
       this.actor = data;
-      this.actorname = this.actor.data.name;
-      this.actorid = this.actor.data._id;
+      this.actorname = FoundryUtils.getDataObjectFromObject(this.actor).name;
+      this.actorid = FoundryUtils.getDataObjectFromObject(this.actor)._id;
       this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
       this.environment = ActorUtils.getActorEnvironments(this.actor);
       this.combatdata = this.getCombatDataPerRound();
@@ -10,7 +10,7 @@ class NPCActorPf2e {
 
     getActorEnvironments()
     {
-      let environment = this.actor.data.data.details.environment;
+      let environment = FoundryUtils.getDataObjectFromObject(this.actor).details.environment;
       if (!environment || environment.trim() === "")
       {
         environment = "Any";

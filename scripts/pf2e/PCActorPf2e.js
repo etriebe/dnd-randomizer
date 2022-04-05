@@ -1,8 +1,8 @@
 class PCActorPf2e {
     constructor(data) {
         this.actor = data;
-        this.actorname = this.actor.data.name;
-        this.actorid = this.actor.data._id;
+        this.actorname = FoundryUtils.getDataObjectFromObject(this.actor).name;
+        this.actorid = FoundryUtils.getDataObjectFromObject(this.actor)._id;
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
         this.environment = ActorUtils.getActorEnvironments();
         this.combatdata = this.getCombatDataPerRound();

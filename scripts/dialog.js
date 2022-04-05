@@ -42,7 +42,7 @@ class SFDialog extends FormApplication {
 	getDefaultsFromScene(){
 		const characters = canvas.tokens.placeables.filter(t => t.actor?.data.type === "character" && t.actor?.hasPlayerOwner)
 		let level = 0
-		characters.forEach((c) => level+=c.actor.data.data.details.level)
+		characters.forEach((c) => level+= FoundryUtils.getDataObjectFromObject(c.actor).details.level)
 		level = Math.round(level / characters.length)
 		return {chars: characters.length || 4, level: level || 5}
 	}

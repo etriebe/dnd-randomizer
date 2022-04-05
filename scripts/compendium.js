@@ -125,7 +125,7 @@ class SFCompendiumSorter extends FormApplication {
 			let playerClasses = player.classes;
 			let currentClassNameCasedCorrect = currentClass.charAt(0).toUpperCase() + currentClass.slice(1);
 			let currentClassObject = playerClasses[currentClass];
-			let currentClassLevel = currentClassObject.data.data.levels;
+			let currentClassLevel = FoundryUtils.getDataObjectFromObject(currentClassObject).levels;
 			let currentClassSpan = `<span class="player-character-info" data-type="${currentClass}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
 			return currentClassSpan;
 		}

@@ -288,7 +288,7 @@ class EncItem {
     let item = game.items.find((a) => a.name === this.name);
 
     if (item) {
-      this.name = item.data.name;
+      this.name = FoundryUtils.getDataObjectFromObject(item).name;
       this._itemDocument = this.isScroll
         ? await this.toSpellScroll(item)
         : item.toObject();
@@ -309,7 +309,7 @@ class EncItem {
         ? await this.toSpellScroll(item)
         : item.toObject();
       if (!this._itemDocument) return undefined;
-      this.name = item.data.name;
+      this.name = FoundryUtils.getDataObjectFromObject(item).name;
       this._itemDocument.data.quantity = this.quantity || 1;
       this.dynamicLink = `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${this._itemDocument.name}}`;
       return this._itemDocument;
@@ -334,30 +334,31 @@ class EncItem {
   }
 
   async toSpellScroll(item) {
-    if (item.data.type !== "spell") return undefined;
+    if (FoundryUtils.getDataObjectFromObject(item).type !== "spell") return undefined;
     const itemData = item.toObject();
-    const level = itemData.data.level
+    const level = FoundryUtils.getDataObjectFromObject(itemData).level
     // Get scroll data
     const scrollUuid = `Compendium.${CONFIG.DND5E.sourcePacks.ITEMS}.${CONFIG.DND5E.spellScrollIds[level]}`;
     const scrollItem = await fromUuid(scrollUuid);
-    const scrollData = scrollItem.data;
+    const scrollData = FoundryUtils.getDataObjectFromObject(scrollItem);
 
     // Split the scroll description into an intro paragraph and the remaining details
-    const scrollDescription = scrollData.data.description.value;
+    const scrollDescription = FoundryUtils.getDataObjectFromObject(scrollData).description.value;
     const pdel = '</p>';
     const scrollIntroEnd = scrollDescription.indexOf(pdel);
     const scrollIntro = scrollDescription.slice(0, scrollIntroEnd + pdel.length);
     const scrollDetails = scrollDescription.slice(scrollIntroEnd + pdel.length);
 
+    let itemDataObject = FoundryUtils.getDataObjectFromObject(itemData);
     // Create a composite description from the scroll description and the spell details
-    const desc = `${scrollIntro}<hr/><h3>${itemData.name} (Level ${level})</h3><hr/>${itemData.data.description.value}<hr/><h3>Scroll Details</h3><hr/>${scrollDetails}`;
-    itemData.data.description.value = desc.trim()
+    const desc = `${scrollIntro}<hr/><h3>${itemData.name} (Level ${level})</h3><hr/>${itemDataObject.description.value}<hr/><h3>Scroll Details</h3><hr/>${scrollDetails}`;
+    itemDataObject.description.value = desc.trim()
 
     itemData.type = "consumable";
-    itemData.name = `Spell Scroll: ${item.data.name}`;
-    itemData.data.price = SFCONSTS.SPELLCOST[itemData.data.level ?? 0];
-    itemData.data.weight = 0;
-    itemData.data.uses = {
+    itemData.name = `Spell Scroll: ${itemDataObject.name}`;
+    itemDataObject.price = SFCONSTS.SPELLCOST[itemDataObject.level ?? 0];
+    itemDataObject.weight = 0;
+    itemDataObject.uses = {
       value: 1,
       max: 1,
       per: "charges",
