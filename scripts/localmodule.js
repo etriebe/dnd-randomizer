@@ -220,7 +220,7 @@ class SFLocalHelpers {
           try {
             let actor = await compendium.getDocument(entry._id);
             let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
-            let actorName = actorDataObject.name;
+            let actorName = actor.name;
             actorName = actorName.replaceAll("\"", "");
             if (actorName === "#[CF_tempEntity]")
             {
@@ -232,7 +232,7 @@ class SFLocalHelpers {
 
             if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
             {
-              console.log(`Already have actor ${actorName}, actor id ${actorDataObject._id} in dictionary`);
+              console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
               continue;
             }
             let monsterObject = {};

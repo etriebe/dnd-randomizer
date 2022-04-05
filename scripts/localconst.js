@@ -763,7 +763,7 @@ const SFLOCALCONSTS = {
     SYSTEM_VARIABLES_V10: {
         // Object is for actor
         "CreatureType": {
-            "dnd5e": "details.type.value",
+            "dnd5e": "system.details.type.value",
             "pf2e": "details.creatureType",
         },
         // Object is for spell
