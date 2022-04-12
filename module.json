@@ -32,10 +32,10 @@
   "scripts": [
       "./scripts/dnd5e/EncounterUtils5e.js",
       "./scripts/dnd5e/PCActor5e.js",
-      "./scripts/dnd5e/Actor5e.js",
+      "./scripts/dnd5e/NPCActor5e.js",
       "./scripts/pf2e/EncounterUtilsPf2e.js",
       "./scripts/pf2e/PCActorPf2e.js",
-      "./scripts/pf2e/ActorPf2e.js",
+      "./scripts/pf2e/NPCActorPf2e.js",
       "./scripts/utils/ActorUtils.js",
       "./scripts/utils/FoundryUtils.js",
       "./scripts/utils/GeneralUtils.js",

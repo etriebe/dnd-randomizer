@@ -35,11 +35,11 @@ class ActorUtils
 
       if (currentSystem === "dnd5e")
       {
-        return new Actor5e(actor);
+        return new NPCActor5e(actor);
       }
       else if (currentSystem === "pf2e")
       {
-        return new ActorPf2e(actor);
+        return new NPCActorPf2e(actor);
       }
       else
       {

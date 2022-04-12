@@ -96,7 +96,8 @@ class SFDialog extends FormApplication {
 			{
 				combatSummaryHTML = `<div class="combat-summary">Per Round: 
 					<span class="combat-numberofattacks">${encounter.combatsummary.totalattacks} attacks</span>
-					<span class="combat-totaldamage"> | ${encounter.combatsummary.totaldamage} dmg</span>
+					${encounter.combatsummary.totaldamage > 0 ? `<span class="combat-totaldamage"> | ${encounter.combatsummary.totaldamage} dmg</span>` : ''}
+					${encounter.combatsummary.totalaoedamage > 0 ? `<span class="combat-totalaoedamage"> | ${encounter.combatsummary.totalaoedamage} AOE dmg</span>` : ''}
 					<span class="combat-averageattackbonus"> | ${encounter.combatsummary.averageattackbonus.toFixed(0)} average attack bonus</span>
 				</div>`;
 			}

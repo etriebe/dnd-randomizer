@@ -39,6 +39,7 @@ class Encounter {
 
     let totalAttacks = 0;
     let totalDamage = 0;
+    let totalAOEDamage = 0;
     let allAttackBonuses = [];
     for (let creature of this.creatures)
     {
@@ -55,7 +56,14 @@ class Encounter {
             for (var j = 0; j < numberOfAttacks; j++)
             {
               totalAttacks++;
-              totalDamage += averageDamage;
+              if (attack.hasareaofeffect)
+              {
+                totalAOEDamage += averageDamage;
+              }
+              else
+              {
+                totalDamage += averageDamage;
+              }
               allAttackBonuses.push(attackBonus);
             }
           }
@@ -74,6 +82,7 @@ class Encounter {
     let allAttackBonusAverage = attackBonusTotal / allAttackBonuses.length;
     this.combatsummary["totalattacks"] = totalAttacks;
     this.combatsummary["totaldamage"] = totalDamage;
+    this.combatsummary["totalaoedamage"] = totalAOEDamage;
     this.combatsummary["averageattackbonus"] = allAttackBonusAverage;
     return this;
   }
