@@ -18,12 +18,13 @@ class EncounterUtils5e
           j++;
           let randomMonsterIndex = Math.floor((Math.random() * monsterList.length));
           let randomMonster = monsterList[randomMonsterIndex];
+          let randomMonsterData = FoundryUtils.getDataObjectFromObject(randomMonster);
           let monsterName;
   
           try
           {
             monsterName = randomMonster.name;
-            if (!randomMonster.data || !randomMonster.data.data)
+            if (!randomMonsterData)
             {
               console.warn(`Monster chosen ${randomMonster.name} didn't have a valid data property.`)
               continue;
@@ -397,6 +398,7 @@ class EncounterUtils5e
         catch (error)
         {
           console.error(`Unable to generate Treasure Horde for maximum CR ${maximumCRFromGroup} and d100 roll of ${d100Roll}. Error: ${error}`);
+          console.error(error);
         }
       }
   

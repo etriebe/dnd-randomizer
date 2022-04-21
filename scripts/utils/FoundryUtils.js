@@ -1,5 +1,10 @@
 class FoundryUtils {
 
+    static isFoundryVersion10()
+    {
+      return game.version.match(/^10\./) != null;
+    }
+
     static getSystemId()
     {
       return game.system.id;
@@ -12,7 +17,16 @@ class FoundryUtils {
     static getSystemVariableForObject(object, variableName)
     {
       let currentSystem = game.system.id;
-      let variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES[variableName];
+      let variableValues;
+      if (FoundryUtils.isFoundryVersion10())
+      {
+        variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES_V10[variableName];
+      }
+      else
+      {
+        variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES[variableName];
+      }
+
       if (!variableValues)
       {
         console.error(`Unable to find variable name ${variableName} information`);
@@ -30,13 +44,27 @@ class FoundryUtils {
 
     static getDataObjectFromObject(obj)
     {
-      if (obj.data.data)
+      if (FoundryUtils.isFoundryVersion10())
       {
-        return obj.data.data;
+        if (obj.system)
+        {
+          return obj.system;
+        }
+        else
+        {
+          return obj;
+        }
       }
       else
       {
-        return obj.data;
+        if (obj.data.data)
+        {
+          return obj.data.data;
+        }
+        else
+        {
+          return obj.data;
+        }
       }
     }
 

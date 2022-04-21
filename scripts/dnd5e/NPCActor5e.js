@@ -2,8 +2,8 @@ class NPCActor5e {
     static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;
     constructor(data) {
         this.actor = data;
-        this.actorname = this.actor.data.name;
-        this.actorid = this.actor.data._id;
+        this.actorname = this.actor.name;
+        this.actorid = this.actor._id;
         this.actorxp = NPCActor5e.getXPFromActorObject(this.actor);
         this.actorcr = NPCActor5e.getCRFromActorObject(this.actor);
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
@@ -14,7 +14,7 @@ class NPCActor5e {
     }
 
     getActorEnvironments() {
-        let environment = this.actor.data.data.details.environment;
+        let environment = FoundryUtils.getDataObjectFromObject(this.actor).details.environment;
         if (!environment || environment.trim() === "") {
             environment = "Any";
         }
@@ -276,7 +276,8 @@ class NPCActor5e {
             return;
         }
         let abilityModType = spellObject.abilityMod;
-        let abilityModValue = eval("spellObject.parent.data.data.abilities." + abilityModType + ".mod");
+        let parentDataObject = FoundryUtils.getDataObjectFromObject(spellObject.parent);
+        let abilityModValue = eval("parentDataObject.abilities." + abilityModType + ".mod");
         let spellDataObject = FoundryUtils.getDataObjectFromObject(spellObject);
         let damageList = spellDataObject.damage.parts;
 
@@ -294,7 +295,7 @@ class NPCActor5e {
             let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
             for (let j = 0; j < abilitiesModMatches.length; j++) {
                 let abilitiesDescription = abilitiesModMatches[j][0];
-                let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "spellObject.parent.data.data.abilities.");
+                let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "parentDataObject.abilities.");
                 let abilitiesModValue = eval(newAbilitiesDescription);
                 damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
             }
@@ -354,15 +355,16 @@ class NPCActor5e {
 
     getInfoForAttackObject(attackObject, numberOfAttacks) {
         let abilityModType = attackObject.abilityMod;
-        let abilityModValue = eval("attackObject.parent.data.data.abilities." + abilityModType + ".mod");
-        let dataObject = FoundryUtils.getDataObjectFromObject(attackObject);
-        let damageList = dataObject.damage.parts;
+        let attackDataObject = FoundryUtils.getDataObjectFromObject(attackObject);
+        let parentDataObject = FoundryUtils.getDataObjectFromObject(attackObject.parent);
+        let abilityModValue = eval("parentDataObject.abilities." + abilityModType + ".mod");
+        let damageList = attackDataObject.damage.parts;
 
         let totalDamageForAttack = 0;
 
-        if (damageList.length === 0 && dataObject.formula != "")
+        if (damageList.length === 0 && attackDataObject.formula != "")
         {
-            let damageDescription = dataObject.formula;
+            let damageDescription = attackDataObject.formula;
             damageDescription = damageDescription.toLowerCase().replaceAll(/\[.+\]/gm,"");
 
             let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
@@ -381,7 +383,7 @@ class NPCActor5e {
                 let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
                 for (let j = 0; j < abilitiesModMatches.length; j++) {
                     let abilitiesDescription = abilitiesModMatches[j][0];
-                    let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "attackObject.parent.data.data.abilities.");
+                    let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "parentDataObject.abilities.");
                     let abilitiesModValue = eval(newAbilitiesDescription);
                     damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
                 }
@@ -400,10 +402,10 @@ class NPCActor5e {
         }
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
-        let isProficient = attackObject.data.data.proficient;
+        let isProficient = attackDataObject.proficient;
         let attackBonus = 0;
         if (isProficient) {
-            attackBonus += attackObject.data.data.prof.flat;
+            attackBonus += attackDataObject.prof.flat;
         }
 
         attackBonus += abilityModValue;
@@ -427,7 +429,7 @@ class NPCActor5e {
 
     static getSaveDC(attackObject)
     {
-        return attackObject.data.data.save.dc;
+        return FoundryUtils.getDataObjectFromObject(attackObject).save.dc;
     }
 
     getCantripMultiplier()
@@ -483,20 +485,21 @@ class NPCActor5e {
     static getActorTraits(actor) {
         let characterTraits = {};
 
-        if (actor.data.data.traits.ci.value.length > 0) {
-            characterTraits["conditionimmunities"] = actor.data.data.traits.ci.value;
+        let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
+        if (actorDataObject.traits.ci.value.length > 0) {
+            characterTraits["conditionimmunities"] = actorDataObject.traits.ci.value;
         }
-        if (actor.data.data.traits.di.value.length > 0) {
-            characterTraits["damageimmunities"] = actor.data.data.traits.di.value;
+        if (actorDataObject.traits.di.value.length > 0) {
+            characterTraits["damageimmunities"] = actorDataObject.traits.di.value;
         }
-        if (actor.data.data.traits.dr.value.length > 0) {
-            characterTraits["damageresistances"] = actor.data.data.traits.dr.value;
+        if (actorDataObject.traits.dr.value.length > 0) {
+            characterTraits["damageresistances"] = actorDataObject.traits.dr.value;
         }
-        if (actor.data.data.traits.dv.value.length > 0) {
-            characterTraits["damagevulnerabilities"] = actor.data.data.traits.dv.value;
+        if (actorDataObject.traits.dv.value.length > 0) {
+            characterTraits["damagevulnerabilities"] = actorDataObject.traits.dv.value;
         }
 
-        let actorSpells = actor.data.data.spells;
+        let actorSpells = actorDataObject.spells;
         let maxSpellLevel = 0;
         for (let i = 1; i <= 9; i++) {
             let currentSpellLevelObject = eval("actorsSpells.spell" + i);
@@ -519,15 +522,15 @@ class NPCActor5e {
             characterTraits["spelldamagetypelist"] = spellList.map(s => s.data.data.damage.parts).filter(p => p.length > 0).map(z => z[0][1]).filter(t => t != "");
         }
 
-        if (actor.data.data.resources.lair.value) {
+        if (actorDataObject.resources.lair.value) {
             characterTraits["lairactions"] = true;
         }
 
-        if (actor.data.data.resources.legact.max > 0) {
+        if (actorDataObject.resources.legact.max > 0) {
             characterTraits["legendaryactions"] = true;
         }
 
-        if (actor.data.data.resources.legres.max > 0) {
+        if (actorDataObject.resources.legres.max > 0) {
             characterTraits["legendaryresistances"] = true;
         }
 

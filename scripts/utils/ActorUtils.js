@@ -78,7 +78,7 @@ class ActorUtils
     }
 
     static getActorEnvironments(actor) {
-        let environment = actor.data.data.details.environment;
+        let environment = FoundryUtils.getDataObjectFromObject(actor).details.environment;
         if (!environment || environment.trim() === "") {
             environment = "Any";
         }

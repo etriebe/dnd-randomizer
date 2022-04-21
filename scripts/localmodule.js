@@ -118,7 +118,7 @@ class SFLocalHelpers {
         let totalLevelCount = 0;
         for (let i = 0; i < playerClassList.length; i++)
         {
-          let currentClassLevel = playerClasses[playerClassList[i]].data.data.levels;
+          let currentClassLevel = FoundryUtils.getDataObjectFromObject(playerClasses[playerClassList[i]]).levels;
           totalLevelCount += currentClassLevel;
         }
         return totalLevelCount;
@@ -219,7 +219,8 @@ class SFLocalHelpers {
   
           try {
             let actor = await compendium.getDocument(entry._id);
-            let actorName = actor.data.name;
+            let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
+            let actorName = actor.name;
             actorName = actorName.replaceAll("\"", "");
             if (actorName === "#[CF_tempEntity]")
             {
@@ -231,7 +232,7 @@ class SFLocalHelpers {
 
             if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
             {
-              console.log(`Already have actor ${actorName}, actor id ${actor.data._id} in dictionary`);
+              console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
               continue;
             }
             let monsterObject = {};
@@ -290,6 +291,7 @@ class SFLocalHelpers {
       if (this.allMonsters.length > 0)
       {
         this.dictionariesPopulated = true;
+        this.dictionariesInitialized = true;
         return true;
       }
       else
