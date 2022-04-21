@@ -291,6 +291,7 @@ class SFLocalHelpers {
       if (this.allMonsters.length > 0)
       {
         this.dictionariesPopulated = true;
+        this.dictionariesInitialized = true;
         return true;
       }
       else
