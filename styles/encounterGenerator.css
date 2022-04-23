@@ -278,14 +278,19 @@
 	display: inline-block;
 }
 
+#SFDialog .window-content .form-encounters .filter-controller input + button ,
 #SFDialog .window-content .form-encounters .filter-controller input + button + button,
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button {
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button,
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button,
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button,
+	#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
 	border: 1px solid rgb(122, 121, 113);
 	border-radius: 0;
 	flex: 0;
 	margin: 0px;
 }
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button {
+
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button{
 	border-left-width: 0px;
 	border-bottom-right-radius: 0.25rem;
 	border-top-right-radius: 0.25rem;
@@ -514,7 +519,7 @@
 }
 
 
-#SFCompendiumSorter .window-content h3 {
+#SFChooser .window-content h3 {
     align-items: center;
     font-size: 18px;
     font-weight: 600;
@@ -522,14 +527,14 @@
     margin: 0px;
     padding: 0.75rem 0.75rem 0rem;
 }
-#SFCompendiumSorter form ul {
+#SFChooser form ul {
 	display: flex;
     flex-direction: column;
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
 }
-#SFCompendiumSorter form ul li {
+#SFChooser form ul li {
     align-items: center;
     border: 1px solid #00000020;
 	display: flex;
@@ -537,7 +542,7 @@
     padding: 0.5rem;
     text-decoration: none;
 }
-#SFCompendiumSorter form ul li span.compendium-type {
+#SFChooser form ul li span.compendium-type {
     background-color: var(--palette-primary, #116b86);
     color: var(--palette-primary-contrast-text, #fff);
     order: 2;
@@ -546,20 +551,20 @@
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
 }
-#SFCompendiumSorter form ul li span.compendium-type[data-type="Item"] {
+#SFChooser form ul li span.compendium-type[data-type="Item"] {
     background-color: var(--palette-secondary, #118655);
     color: var(--palette-secondary-contrast-text, #fff);
 }
 
-#SFCompendiumSorter form ul li span.compendium-title:after,
-#SFCompendiumSorter form ul li span.environment-type:after {
+#SFChooser form ul li span.compendium-title:after,
+#SFChooser form ul li span.environment-type:after {
     content: attr(data-name);
     display: block;
     font-size: 0.7rem;
     opacity: 0.8;
 }
 
-#SFCompendiumSorter form ul li span.player-character-info {
+#SFChooser form ul li span.player-character-info {
     background-color: var(--palette-primary, #116b86);
     color: var(--palette-primary-contrast-text, #fff);
     order: 2;
@@ -569,101 +574,101 @@
     border-radius: 0.25rem;
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="artificer"] {
+#SFChooser form ul li span.player-character-info[data-type="artificer"] {
     background-color: var(--palette-primary, #7D673C);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="barbarian"] {
+#SFChooser form ul li span.player-character-info[data-type="barbarian"] {
     background-color: var(--palette-primary, #D1775F);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="blood-hunter"] {
+#SFChooser form ul li span.player-character-info[data-type="blood-hunter"] {
     background-color: var(--palette-primary, #5A0505);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="bard"] {
+#SFChooser form ul li span.player-character-info[data-type="bard"] {
     background-color: var(--palette-primary, #B087B1);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="cleric"] {
+#SFChooser form ul li span.player-character-info[data-type="cleric"] {
     background-color: var(--palette-primary, #8E8F91);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="druid"] {
+#SFChooser form ul li span.player-character-info[data-type="druid"] {
     background-color: var(--palette-primary, #8A9554);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="fighter"] {
+#SFChooser form ul li span.player-character-info[data-type="fighter"] {
     background-color: var(--palette-primary, #715348);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="monk"] {
+#SFChooser form ul li span.player-character-info[data-type="monk"] {
     background-color: var(--palette-primary, #81C1DA);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="paladin"] {
+#SFChooser form ul li span.player-character-info[data-type="paladin"] {
     background-color: var(--palette-primary, #BCA863);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="ranger"] {
+#SFChooser form ul li span.player-character-info[data-type="ranger"] {
     background-color: var(--palette-primary, #48795B);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="rogue"] {
+#SFChooser form ul li span.player-character-info[data-type="rogue"] {
     background-color: var(--palette-primary, #494A44);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="sorcerer"] {
+#SFChooser form ul li span.player-character-info[data-type="sorcerer"] {
     background-color: var(--palette-primary, #C4545A);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="warlock"] {
+#SFChooser form ul li span.player-character-info[data-type="warlock"] {
     background-color: var(--palette-primary, #8050B1);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="wizard"] {
+#SFChooser form ul li span.player-character-info[data-type="wizard"] {
     background-color: var(--palette-primary, #3E6EBE);
 }
 
 /* Pf2e classes */
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="alchemist"] {
+#SFChooser form ul li span.player-character-info[data-type="alchemist"] {
     background-color: var(--palette-primary, #49be3e);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="champion"] {
+#SFChooser form ul li span.player-character-info[data-type="champion"] {
     background-color: var(--palette-primary, #808080);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="gunslinger"] {
+#SFChooser form ul li span.player-character-info[data-type="gunslinger"] {
     background-color: var(--palette-primary, #1b1e24);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="inventor"] {
+#SFChooser form ul li span.player-character-info[data-type="inventor"] {
     background-color: var(--palette-primary, #bb5d1f);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="investigator"] {
+#SFChooser form ul li span.player-character-info[data-type="investigator"] {
     background-color: var(--palette-primary, #3c5d95);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="magus"] {
+#SFChooser form ul li span.player-character-info[data-type="magus"] {
     background-color: var(--palette-primary, #3eafbe);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="oracle"] {
+#SFChooser form ul li span.player-character-info[data-type="oracle"] {
     background-color: var(--palette-primary, #850d0d);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="summoner"] {
+#SFChooser form ul li span.player-character-info[data-type="summoner"] {
     background-color: var(--palette-primary, #4d750b);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="swashbuckler"] {
+#SFChooser form ul li span.player-character-info[data-type="swashbuckler"] {
     background-color: var(--palette-primary, #087aaf);
 }
 
-#SFCompendiumSorter form ul li span.player-character-info[data-type="witch"] {
+#SFChooser form ul li span.player-character-info[data-type="witch"] {
     background-color: var(--palette-primary, #cc0b0b);
 }
 
