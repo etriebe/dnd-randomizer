@@ -8,6 +8,7 @@ class Encounter {
     this.creatures = [];
     this.combatsummary = {};
     this.loot = [];
+    this.lootActorId = "";
     this.id = data.id || randomID(40);
   }
 
@@ -150,6 +151,10 @@ class Encounter {
     const _this = this;
     Hooks.once("preCreateMeasuredTemplate", (template) => {
       canvas.tokens.activate();
+      if (this.lootActorId === "")
+      {
+        this.createLootSheet();
+      }
       CreatureSpawner.fromTemplate(template, _this);
       return false;
     });
@@ -173,44 +178,23 @@ class Encounter {
       data: {
         currency: {
           // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
-          cp:
-            game.modules.get("lootsheetnpc5e")?.active ?? false
-              ? { value: this.currency.cp }
-              : this.currency.cp,
-          sp:
-            game.modules.get("lootsheetnpc5e")?.active ?? false
-              ? { value: this.currency.sp }
-              : this.currency.sp,
-          ep:
-            game.modules.get("lootsheetnpc5e")?.active ?? false
-              ? { value: this.currency.ep }
-              : this.currency.ep,
-          gp:
-            game.modules.get("lootsheetnpc5e")?.active ?? false
-              ? { value: this.currency.gp }
-              : this.currency.gp,
-          pp:
-            game.modules.get("lootsheetnpc5e")?.active ?? false
-              ? { value: this.currency.pp }
-              : this.currency.pp,
+          cp: this.currency.cp,
+          sp: this.currency.sp,
+          ep: this.currency.ep,
+          gp: this.currency.gp,
+          pp: this.currency.pp,
         },
       },
       folder: folder.id,
-      flags: {
-        core: {
-          sheetClass: "dnd5e.LootSheet5eNPC",
-        },
-        lootsheetnpc5e: {
-          lootsheettype: "Loot",
-        },
-      },
     };
+
     const actor = await Actor.create(actorData);
     let items = [];
     for (let item of this.loot) {
       items.push(await item.getData());
     }
     await actor.createEmbeddedDocuments("Item", items);
+    this.lootActorId = actor.id;
   }
 }
 
