@@ -19,6 +19,7 @@ class EncounterUtils5e
         let randomMonsterIndex = Math.floor((Math.random() * monsterList.length));
         let randomMonsterObject = monsterList[randomMonsterIndex];
         let randomMonster = randomMonsterObject.actor;
+        let randomMonsterActorId = randomMonster.actor.id ?? randomMonster.actor._id;
         let randomMonsterData = FoundryUtils.getDataObjectFromObject(randomMonster);
         let monsterName;
 
@@ -82,7 +83,7 @@ class EncounterUtils5e
           creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
-          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonster.id).combatdata;
+          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => ((randomMonster.actorid != null || randomMonster.actorid) != undefined && m.actorid === randomMonster.actorid) || (m.actor.actor.id === randomMonsterActorId)).combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
@@ -139,6 +140,7 @@ class EncounterUtils5e
 
           let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
           let randomMonster = filteredMonsterList[randomMonsterIndex];
+          let randomMonsterActorId = randomMonster.actor.id ?? randomMonster.actor._id;
           let monsterName = randomMonster.actorname;
           let randomMonsterXP = randomMonster.actorxp;
           let monsterCR = randomMonster.actorcr;
@@ -147,7 +149,7 @@ class EncounterUtils5e
           creatureCombatDetails["quantity"] = numberOfCreatures;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
-          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonster.actorid).combatdata;
+          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => (randomMonster.actorid != null && randomMonster.actorid != undefined && m.actorid === randomMonster.actorid) || (m.actor.actor.id === randomMonsterActorId)).combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           break;
         }

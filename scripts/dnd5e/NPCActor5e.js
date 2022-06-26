@@ -5,7 +5,7 @@ class NPCActor5e
     {
         this.actor = data;
         this.actorname = this.actor.name;
-        this.actorid = this.actor._id;
+        this.actorid = this.actor.id;
         this.actorxp = NPCActor5e.getXPFromActorObject(this.actor);
         this.actorcr = NPCActor5e.getCRFromActorObject(this.actor);
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
