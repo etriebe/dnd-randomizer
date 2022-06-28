@@ -1,5 +1,5 @@
-name: Release Creation
 
+name: Release Creation
 on: 
   release:
     types: [published]
@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    # get part of the tag after the `v`
+    - name: Extract tag version number
+      id: get_version
+      uses: battila7/get-version-action@v2
 
     # Substitute the Manifest and Download URLs in the module.json
     - name: Substitute Manifest and Download Links For Versioned Ones
@@ -28,7 +33,7 @@ jobs:
         changelog: https://github.com/${{github.repository}}/releases/tag/${{github.event.release.tag_name}}
 
     # Create a zip file with all files required by the module to add to the release
-    - run: zip -r ./module.zip module.json LICENSE styles/ scripts/ templates/ languages/
+    - run: zip -r ./module.zip module.json README.md LICENSE styles/ scripts/ templates/ languages/
 
     # Create a release for this specific version
     - name: Update Release with Files
@@ -37,8 +42,8 @@ jobs:
       with:
         allowUpdates: true # Set this to false if you want to prevent updating existing releases
         name: ${{ github.event.release.name }}
-        draft: false
-        prerelease: false
+        draft: ${{ github.event.release.unpublished }}
+        prerelease: ${{ github.event.release.prerelease }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: './module.json, ./module.zip'
         tag: ${{ github.event.release.tag_name }}
