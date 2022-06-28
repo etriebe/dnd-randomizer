@@ -65,17 +65,7 @@ class SFCompendiumSorter extends FormApplication {
 			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
 		}
 
-		html.find('button#index-compendiums').on('click', async (event) => {
-			event.preventDefault();
-			const $button = $(event.currentTarget);
-			$button.prop('disabled', true).addClass('disabled');
-			let forceReload = true;
-			html.find('button#index-compendiums')[0].innerText = `Currently indexing...`;
-			let doneIndexing = await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-			savedIndexDate = SFLocalHelpers._indexCacheDate;
-			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
-			$button.prop('disabled', false).removeClass('disabled');
-		});
+		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#compendium_filter', 'li.compendiumTypeLi');
 	}
 
 	async close(options) {
