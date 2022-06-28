@@ -60,8 +60,8 @@
   ],
   "packs": [
   ],
-  "minimumCoreVersion": "0.8.6",
-  "compatibleCoreVersion": "10.260",
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "10",
   "url": "https://github.com/theripper93/dnd-randomizer",
   "manifest": "https://github.com/theripper93/dnd-randomizer/releases/latest/download/module.json",
   "download": "https://github.com/theripper93/dnd-randomizer/releases/latest/download/module.zip",
