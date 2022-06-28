@@ -90,6 +90,8 @@ class SFPlayerChooser extends FormApplication {
 
 	async activateListeners(html) {
 		this.populatePlayerCharacters();
+
+		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#player_filter', 'li.playerCharacterLi');
 	}
 
 	async close(options) { 

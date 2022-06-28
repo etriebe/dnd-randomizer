@@ -38,6 +38,7 @@
       "./scripts/pf2e/PCActorPf2e.js",
       "./scripts/pf2e/NPCActorPf2e.js",
       "./scripts/utils/ActorUtils.js",
+      "./scripts/utils/DialogUtils.js",
       "./scripts/utils/FoundryUtils.js",
       "./scripts/utils/GeneralUtils.js",
       "./scripts/compendium.js",
