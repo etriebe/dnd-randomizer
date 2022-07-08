@@ -1,4 +1,5 @@
-class FoundryUtils {
+import { SFLOCALCONSTS } from "./localconst";
+export class FoundryUtils {
 
     static isFoundryVersion10()
     {

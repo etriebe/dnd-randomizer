@@ -1,4 +1,4 @@
-const FuzzySet = function(arr, useLevenshtein, gramSizeLower, gramSizeUpper) {
+export const FuzzySet = function(arr, useLevenshtein, gramSizeLower, gramSizeUpper) {
     var fuzzyset = {
 
     };

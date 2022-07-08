@@ -1,4 +1,4 @@
-var sortable = (function () {
+export var sortable = (function () {
   "use strict";
   function d(e, t, n) {
     if (void 0 === n) return e && e.h5s && e.h5s.data && e.h5s.data[t];

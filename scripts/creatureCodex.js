@@ -1,4 +1,6 @@
-class SFCreatureCodex extends FormApplication
+import { SFLocalHelpers } from "./localmodule";
+import { ModuleUtils } from "./utils/ModuleUtils";
+export class SFCreatureCodex extends FormApplication
 {
 	constructor()
 	{

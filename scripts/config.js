@@ -1,3 +1,7 @@
+import { SFCONSTS } from "./main";
+import { SFDialog } from "./dialog";
+import { SFCreatureCodex } from "./creatureCodex";
+
 Hooks.once("init", async function () {
 	const debouncedReload = foundry.utils.debounce(function () { window.location.reload(); }, 100);
   game.settings.register(SFCONSTS.MODULE_NAME, "actorFolder", {
@@ -110,6 +114,11 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: false,
   });
+});
+
+Hooks.once('ready', async function ()
+{
+
 });
 
 Hooks.on("renderSidebarTab",(settings) => {

@@ -29,33 +29,10 @@
           "path": "languages/en.json"
       }
   ],
+  "esmodules": [
+    "scripts/config.js"
+  ],
   "scripts": [
-      "./scripts/dnd5e/EncounterUtils5e.js",
-      "./scripts/dnd5e/PCActor5e.js",
-      "./scripts/dnd5e/NPCActor5e.js",
-      "./scripts/pf2e/EncounterUtilsPf2e.js",
-      "./scripts/pf2e/PCActorPf2e.js",
-      "./scripts/pf2e/NPCActorPf2e.js",
-      "./scripts/utils/ActorUtils.js",
-      "./scripts/utils/FoundryUtils.js",
-      "./scripts/utils/GeneralUtils.js",
-      "./scripts/utils/ModuleUtils.js",
-      "./scripts/compendium.js",
-      "./scripts/config.js",
-      "./scripts/creatureCodex.js",
-      "./scripts/creaturetypechooser.js",
-      "./scripts/dialog.js",
-      "./scripts/encounter.js",
-      "./scripts/environmentchooser.js",
-      "./scripts/fuzzyset.js",
-      "./scripts/localconst.js",
-      "./scripts/localmodule.js",
-      "./scripts/main.js",
-      "./scripts/module.js",
-      "./scripts/propagator.js",
-      "./scripts/playerchooser.js",
-      "./scripts/sortables.js",
-      "./scripts/spawner.js"
   ],
   "styles": [
       "./styles/encounterGenerator.css"

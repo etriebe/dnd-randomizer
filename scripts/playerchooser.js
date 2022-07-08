@@ -1,4 +1,9 @@
-class SFPlayerChooser extends FormApplication {
+import { FoundryUtils } from "./utils/FoundryUtils";
+import { SFLocalHelpers } from "./localmodule";
+import { SFCONSTS } from "./main";
+import { sortable } from "./sortables";
+
+export class SFPlayerChooser extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;

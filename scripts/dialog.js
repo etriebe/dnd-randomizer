@@ -1,4 +1,12 @@
-class SFDialog extends FormApplication
+import { ModuleUtils } from "./utils/ModuleUtils";
+import { FoundryUtils } from "./utils/FoundryUtils";
+import { SFLocalHelpers } from "./localmodule";
+import { SFHelpers } from "./module";
+import { FuzzySet } from "./fuzzyset";
+import { SFLOCALCONSTS } from "./localconst";
+import { SFCONSTS } from "./main";
+
+export class SFDialog extends FormApplication
 {
 	constructor()
 	{

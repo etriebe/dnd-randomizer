@@ -1,4 +1,9 @@
-class ModuleUtils {
+import { SFCompendiumSorter } from "../compendium";
+import { SFEnvironmentChooser } from "../environmentchooser";
+import { SFPlayerChooser } from "../playerchooser";
+import { SFCreatureTypeChooser } from "../creaturetypechooser";
+
+export class ModuleUtils {
     static setupFilterBarListeners(html) {
 		html.find('button#clear-button').on('click', function (event)
 		{

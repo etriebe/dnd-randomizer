@@ -1,4 +1,12 @@
-class SFLocalHelpers {
+import { ActorUtils } from "./utils/ActorUtils";
+import { GeneralUtils } from "./utils/GeneralUtils";
+import { FoundryUtils } from "./utils/FoundryUtils";
+import { SFLOCALCONSTS } from "./localconst";
+import { SFCONSTS } from "./main";
+import { EncounterUtilsPf2e } from "./pf2e/EncounterUtilsPf2e";
+import { EncounterUtils5e } from "./dnd5e/EncounterUtils5e";
+
+export class SFLocalHelpers {
     static allMonsters = [];
     static creatureTypeCount = {};
     static environmentCreatureCount = {};

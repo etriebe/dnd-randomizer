@@ -1,4 +1,10 @@
-class ActorUtils
+import { FoundryUtils } from "./FoundryUtils";
+import { PCActorPf2e } from "../pf2e/PCActorPf2e";
+import { NPCActorPf2e } from "../pf2e/NPCActorPf2e";
+import { NPCActor5e } from "../dnd5e/NPCActor5e";
+import { PCActor5e } from "../dnd5e/PCActor5e";
+
+export class ActorUtils
 {
     static getCreatureTypeForActor(actor)
     {

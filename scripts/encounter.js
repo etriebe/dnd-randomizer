@@ -1,4 +1,11 @@
-class Encounter {
+import { SFHelpers } from "./module";
+import { CreatureSpawner } from "./spawner";
+import { FoundryUtils } from "./utils/FoundryUtils";
+import { FuzzySet } from "./fuzzyset";
+import { SFCONSTS } from "./main";
+
+
+export class Encounter {
   constructor(data) {
     this.data = data;
     this.name = data.name;

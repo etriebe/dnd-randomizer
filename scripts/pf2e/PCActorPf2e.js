@@ -1,4 +1,5 @@
-class PCActorPf2e {
+import { ActorUtils } from "./utils/ActorUtils";
+export class PCActorPf2e {
     constructor(data) {
         this.actor = data;
         this.actorname = this.actor.name;

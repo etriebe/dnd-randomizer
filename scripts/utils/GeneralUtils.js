@@ -1,4 +1,4 @@
-class GeneralUtils {
+export class GeneralUtils {
     static getIntegerFromWordNumber(number)
     {
       // This feels stupid but parseInt can't work with text format like we have.

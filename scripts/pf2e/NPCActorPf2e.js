@@ -1,4 +1,6 @@
-class NPCActorPf2e {
+import { ActorUtils } from "./utils/ActorUtils";
+import { FoundryUtils } from "../utils/FoundryUtils";
+export class NPCActorPf2e {
     constructor(data) {
       this.actor = data;
       this.actorname = this.actor.name;

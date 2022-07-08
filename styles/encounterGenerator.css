@@ -265,7 +265,6 @@
 	border-top-left-radius: 0.25rem;
 }
 
-#SFCreatureCodex .window-content .form-encounters .filter-controller input,
 #SFDialog .window-content .form-encounters .filter-controller input {
 	border-left-width: 0px;
 	border-right-width: 0px;
@@ -309,7 +308,6 @@
 	margin: 0px;
 }
 
-#SFCreatureCodex .window-content .form-encounters .filter-controller input + button + button + button + button + button + button,
 #SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
 	border-left-width: 0px;
 	border-bottom-right-radius: 0.25rem;

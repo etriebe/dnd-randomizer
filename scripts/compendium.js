@@ -1,4 +1,8 @@
-class SFCompendiumSorter extends FormApplication {
+import { FoundryUtils } from "./utils/FoundryUtils";
+import { sortable } from "./sortables";
+import { SFCONSTS } from "./main";
+
+export class SFCompendiumSorter extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;

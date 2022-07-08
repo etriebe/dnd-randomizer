@@ -1,4 +1,9 @@
-class SFHelpers {
+import { SFCreatureCodex } from "./creatureCodex";
+import { SFCONSTS } from "./main";
+import { Encounter } from "./encounter";
+import { SFDialog } from "./dialog";
+
+export class SFHelpers {
   static getFolder(type) {
     return game.settings.get(SFCONSTS.MODULE_NAME, `${type}Folder`);
   }
@@ -34,7 +39,7 @@ class SFHelpers {
   }
 }
 
-class StocasticFantastic {
+export class StocasticFantastic {
   static async addToDialog(data) {
     const encounterData = await SFHelpers.parseEncounter(data);
     if (!canvas.sfDialog?.rendered) await canvas.sfDialog.render(true);
