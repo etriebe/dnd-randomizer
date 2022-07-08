@@ -39,6 +39,7 @@
       "./scripts/utils/ActorUtils.js",
       "./scripts/utils/FoundryUtils.js",
       "./scripts/utils/GeneralUtils.js",
+      "./scripts/utils/ModuleUtils.js",
       "./scripts/compendium.js",
       "./scripts/config.js",
       "./scripts/creatureCodex.js",

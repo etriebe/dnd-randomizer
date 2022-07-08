@@ -1,5 +1,17 @@
 <form>
 	<h3 class="flexrow">Creature Codex</h3><hr/>
-	<ul class="sortable-compendiums" id="creature_codex">
-	</ul>
+	<div class="form-encounters">
+		<div class="filter-controller">
+			<input id="search-box" type="text" spellcheck="false" placeholder="Start typing to filter Encounters">
+			<button title="Clear search field" id="clear-button"><i class="fas fa-times"></i></button>
+			<button class="filter-creatures" id="filter-creatures" title="Choose Creature Types"><i class="fas fa-skull"></i></button>
+			<button class="filter-environments" id="filter-environments" title="Choose Environments"><i class="fas fa-tree"></i></button>
+			<button class="filter-compendiums" id="filter-compendium" title="Filter Compendiums"><i class="fas fa-filter"></i></button>
+			<button class="license-and-credits" id="license-and-credits" title="licensing & Credits"><i class="fas fa-info-circle"></i></button>
+		</div>
+		<div class="creatures">
+			<ul class="sortable-compendiums" id="creature_codex">
+			</ul>
+		</div>
+	</div>
 </form>

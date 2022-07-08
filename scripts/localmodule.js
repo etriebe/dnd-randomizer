@@ -424,7 +424,7 @@ class SFLocalHelpers {
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
     }
 
-    static async filterMonstersFromCompendiums(params)
+    static async filterMonstersFromCompendiums()
     {
       let filteredMonsters = [];
 

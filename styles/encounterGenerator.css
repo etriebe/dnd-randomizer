@@ -61,6 +61,7 @@
 	color: var(--palette-app-background-contrast-text, #f0f0e0);
 	text-align: center;
   }
+
   #SFDialog .window-content .form-controls .form-groups .input-container {
 	border-bottom: 1px dashed var(--palette-app-background-shaded-text, #f0f0e0);
 	color: var(--palette-app-background-shaded-text, #f0f0e0);
@@ -220,6 +221,8 @@
 #SFDialog .window-content form .form-group {
 	flex-direction: column;
 }
+
+#SFCreatureCodex .window-content form .form-group .button-group input,
 #SFDialog .window-content form .form-group .button-group input {
 	position: absolute;
     clip: rect(0,0,0,0);
@@ -241,20 +244,28 @@
     vertical-align: middle;
 	width: 200px;
 }
-#SFDialog .window-content .form-encounters .filter-controller {
+#SFDialog .window-content .form-encounters .filter-controller,
+#SFCreatureCodex .window-content .form-encounters .filter-controller {
     border-bottom: 1px solid var(--palette-dialog-background-dark, #782e22);
 	display: flex;
     padding: 2rem 0.5rem 1rem;
 }
+
+#SFCreatureCodex .window-content .form-encounters .filter-controller select,
+#SFCreatureCodex .window-content .form-encounters .filter-controller input,
 #SFDialog .window-content .form-encounters .filter-controller select,
 #SFDialog .window-content .form-encounters .filter-controller input {
     border-radius: 0;
 	height: auto;
 }
+
+#SFCreatureCodex .window-content .form-encounters .filter-controller select,
 #SFDialog .window-content .form-encounters .filter-controller select {
 	border-bottom-left-radius: 0.25rem;
 	border-top-left-radius: 0.25rem;
 }
+
+#SFCreatureCodex .window-content .form-encounters .filter-controller input,
 #SFDialog .window-content .form-encounters .filter-controller input {
 	border-left-width: 0px;
 	border-right-width: 0px;
@@ -274,6 +285,7 @@
     width: 32px;
 }
 
+#SFCreatureCodex .window-content .form-encounters .filter-controller input:not(:placeholder-shown) + button,
 #SFDialog .window-content .form-encounters .filter-controller input:not(:placeholder-shown) + button {
 	display: inline-block;
 }
@@ -283,14 +295,22 @@
 #SFDialog .window-content .form-encounters .filter-controller input + button + button + button,
 #SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button,
 #SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button,
-	#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
 	border: 1px solid rgb(122, 121, 113);
 	border-radius: 0;
 	flex: 0;
 	margin: 0px;
 }
 
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button{
+#SFCreatureCodex button {
+	border: 1px solid rgb(122, 121, 113);
+	border-radius: 0;
+	flex: 0;
+	margin: 0px;
+}
+
+#SFCreatureCodex .window-content .form-encounters .filter-controller input + button + button + button + button + button + button,
+#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
 	border-left-width: 0px;
 	border-bottom-right-radius: 0.25rem;
 	border-top-right-radius: 0.25rem;
@@ -325,8 +345,10 @@
 #SFDialog .window-content .form-encounters ul li.is-favorited-true {
 	order: 2;
 }
+/*
 #SFDialog .window-content .form-encounters ul li div {
 }
+*/
 #SFDialog .window-content .form-encounters ul li div.favorite-encounter,
 #SFDialog .window-content .form-encounters ul li div.create-encounter {
 	align-items: center;

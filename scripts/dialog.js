@@ -289,7 +289,7 @@ class SFDialog extends FormApplication
 			{
 				let forceReload = false;
 				await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-				let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums(params);
+				let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
 				let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, params, 30);
 				generateEncounters = generateEncounters.sort((a, b) =>
 				{
@@ -326,41 +326,7 @@ class SFDialog extends FormApplication
 			$(event.currentTarget).closest('.form-encounters').attr('data-show', $(event.currentTarget).val());
 		});
 
-		html.find('button#clear-button').on('click', function (event)
-		{
-			event.preventDefault();
-			html.find('input#search-box').val('').trigger('change');
-		});
-
-		html.find('button#filter-compendium').on('click', (event) =>
-		{
-			event.preventDefault();
-			new SFCompendiumSorter().render(true);
-		});
-
-		html.find('button#filter-environments').on('click', (event) =>
-		{
-			event.preventDefault();
-			new SFEnvironmentChooser().render(true);
-		});
-
-		html.find('button#filter-people').on('click', (event) =>
-		{
-			event.preventDefault();
-			new SFPlayerChooser().render(true);
-		});
-
-		html.find('button#filter-creatures').on('click', (event) =>
-		{
-			event.preventDefault();
-			new SFCreatureTypeChooser().render(true);
-		});
-
-		html.find('button#clear-encounters-button').on('click', function (event)
-		{
-			event.preventDefault();
-			// html.find('input#search-box').val('').trigger('change');
-		});
+		ModuleUtils.setupFilterBarListeners(html);
 
 		html.find('button#license-and-credits').on('click', (event) =>
 		{

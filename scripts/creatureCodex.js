@@ -22,8 +22,17 @@ class SFCreatureCodex extends FormApplication
 	async activateListeners(html)
 	{
 		super.activateListeners(html);
+		ModuleUtils.setupFilterBarListeners(html);
+		let forceReload = false;
+		await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+		let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
 	}
 
+	populateCreatures(filteredMonsters)
+	{
+		const html = this.element;
+		let $ul = html.find('.form-encounters ul').first();
+	}
 }
 
 Hooks.once('ready', async () =>
