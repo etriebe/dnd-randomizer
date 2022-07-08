@@ -113,17 +113,35 @@ Hooks.once("init", async function () {
 });
 
 Hooks.on("renderSidebarTab",(settings) => {
-  if(!game.user.isGM || settings.id != "actors") return
-  const html = settings.element
-  if(html.find("#sfButton").length !== 0) return
-  const button = `<button id="sfButton" style="flex-basis: auto;">
-  <i class="fas fa-dice"></i> Generate Encounter
-</button>`
-  html.find(`.header-actions`).first().append(button)
-  html.find("#sfButton").on("click",async (e) => {
-    e.preventDefault();
-    if (!canvas.sfDialog?.rendered) await canvas.sfDialog.render(true);
-  })
+  if(!game.user.isGM) {
+    return;
+  }
+
+  if (settings.id === "actors"){
+    const html = settings.element
+    if(html.find("#sfButton").length !== 0) return
+    const button = `<button id="sfButton" style="flex-basis: auto;">
+    <i class="fas fa-dice"></i> Generate Encounter
+  </button>`
+    html.find(`.header-actions`).first().append(button)
+    html.find("#sfButton").on("click",async (e) => {
+      e.preventDefault();
+      if (!canvas.sfDialog?.rendered) await canvas.sfDialog.render(true);
+    })
+  }
+
+  if (settings.id === "compendium") {
+    const html = settings.element
+    if(html.find("#sfCreatureCodexButton").length !== 0) return
+    const button = `<button id="sfCreatureCodexButton" style="flex-basis: auto;">
+    <i class="fas fa-dice"></i> Creature Codex
+  </button>`
+    html.find(`.header-actions`).first().append(button)
+    html.find("#sfCreatureCodexButton").on("click",async (e) => {
+      e.preventDefault();
+      if (!canvas.sfCreatureCodex?.rendered) await canvas.sfCreatureCodex.render(true);
+    })
+  }
 });
 
 Hooks.once("ready", async function () {});

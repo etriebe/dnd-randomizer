@@ -41,6 +41,7 @@
       "./scripts/utils/GeneralUtils.js",
       "./scripts/compendium.js",
       "./scripts/config.js",
+      "./scripts/creatureCodex.js",
       "./scripts/creaturetypechooser.js",
       "./scripts/dialog.js",
       "./scripts/encounter.js",

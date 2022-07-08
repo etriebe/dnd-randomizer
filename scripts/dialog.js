@@ -184,7 +184,6 @@ class SFDialog extends FormApplication
 
 				$element.toggleClass('favorited');
 
-
 				if ($element.hasClass('favorited'))
 				{
 					savedEncounters = foundry.utils.mergeObject(savedEncounters, encounterDetails, { inplace: false });
