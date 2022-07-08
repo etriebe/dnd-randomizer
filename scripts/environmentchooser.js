@@ -1,6 +1,6 @@
-import { SFCONSTS } from "./main";
-import { SFLocalHelpers } from "./localmodule";
-import { sortable } from "./sortables";
+import { SFCONSTS } from "./main.js";
+import { SFLocalHelpers } from "./localmodule.js";
+import { sortable } from "./sortables.js";
 
 export class SFEnvironmentChooser extends FormApplication {
 	constructor() {

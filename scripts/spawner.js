@@ -1,4 +1,4 @@
-import { Propagator } from "./propagator";
+import { Propagator } from "./propagator.js";
 
 export class CreatureSpawner {
   static async fromTemplate(template, encounterData) {

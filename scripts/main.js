@@ -1,4 +1,4 @@
-import { CreatureSpawner } from "./spawner";
+import { CreatureSpawner } from "./spawner.js";
 
 export const SFCONSTS = {
     MODULE_NAME: "dnd-randomizer",

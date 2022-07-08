@@ -1,10 +1,10 @@
-import { ActorUtils } from "./utils/ActorUtils";
-import { GeneralUtils } from "./utils/GeneralUtils";
-import { FoundryUtils } from "./utils/FoundryUtils";
-import { SFLOCALCONSTS } from "./localconst";
-import { SFCONSTS } from "./main";
-import { EncounterUtilsPf2e } from "./pf2e/EncounterUtilsPf2e";
-import { EncounterUtils5e } from "./dnd5e/EncounterUtils5e";
+import { ActorUtils } from "./utils/ActorUtils.js";
+import { GeneralUtils } from "./utils/GeneralUtils.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
+import { SFLOCALCONSTS } from "./localconst.js";
+import { SFCONSTS } from "./main.js";
+import { EncounterUtilsPf2e } from "./pf2e/EncounterUtilsPf2e.js";
+import { EncounterUtils5e } from "./dnd5e/EncounterUtils5e.js";
 
 export class SFLocalHelpers {
     static allMonsters = [];

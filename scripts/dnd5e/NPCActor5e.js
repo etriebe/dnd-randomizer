@@ -1,6 +1,6 @@
-import { ActorUtils } from "./utils/ActorUtils";
-import { GeneralUtils } from "../utils/GeneralUtils";
-import { FoundryUtils } from "../utils/FoundryUtils";
+import { ActorUtils } from "../utils/ActorUtils.js";
+import { GeneralUtils } from "../utils/GeneralUtils.js";
+import { FoundryUtils } from "../utils/FoundryUtils.js";
 export class NPCActor5e
 {
     static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;

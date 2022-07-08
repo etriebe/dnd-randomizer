@@ -1,7 +1,7 @@
-import { SFCONSTS } from "./main";
-import { SFLOCALCONSTS } from "./localconst";
-import { SFLocalHelpers } from "./localmodule";
-import { sortable } from "./sortables";
+import { SFCONSTS } from "./main.js";
+import { SFLOCALCONSTS } from "./localconst.js";
+import { SFLocalHelpers } from "./localmodule.js";
+import { sortable } from "./sortables.js";
 
 export class SFCreatureTypeChooser extends FormApplication {
 	constructor() {

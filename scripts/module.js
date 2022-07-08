@@ -1,7 +1,7 @@
-import { SFCreatureCodex } from "./creatureCodex";
-import { SFCONSTS } from "./main";
-import { Encounter } from "./encounter";
-import { SFDialog } from "./dialog";
+import { SFCreatureCodex } from "./creatureCodex.js";
+import { SFCONSTS } from "./main.js";
+import { Encounter } from "./encounter.js";
+import { SFDialog } from "./dialog.js";
 
 export class SFHelpers {
   static getFolder(type) {

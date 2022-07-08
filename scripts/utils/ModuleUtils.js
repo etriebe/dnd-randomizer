@@ -1,7 +1,7 @@
-import { SFCompendiumSorter } from "../compendium";
-import { SFEnvironmentChooser } from "../environmentchooser";
-import { SFPlayerChooser } from "../playerchooser";
-import { SFCreatureTypeChooser } from "../creaturetypechooser";
+import { SFCompendiumSorter } from "../compendium.js";
+import { SFEnvironmentChooser } from "../environmentchooser.js";
+import { SFPlayerChooser } from "../playerchooser.js";
+import { SFCreatureTypeChooser } from "../creaturetypechooser.js";
 
 export class ModuleUtils {
     static setupFilterBarListeners(html) {

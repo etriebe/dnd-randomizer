@@ -1,7 +1,7 @@
-import { FoundryUtils } from "./utils/FoundryUtils";
-import { SFLocalHelpers } from "./localmodule";
-import { SFCONSTS } from "./main";
-import { sortable } from "./sortables";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
+import { SFLocalHelpers } from "./localmodule.js";
+import { SFCONSTS } from "./main.js";
+import { sortable } from "./sortables.js";
 
 export class SFPlayerChooser extends FormApplication {
 	constructor() {

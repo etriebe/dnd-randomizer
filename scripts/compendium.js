@@ -1,6 +1,7 @@
-import { FoundryUtils } from "./utils/FoundryUtils";
-import { sortable } from "./sortables";
-import { SFCONSTS } from "./main";
+
+import { FoundryUtils } from "./utils/FoundryUtils.js";
+import { sortable } from "./sortables.js";
+import { SFCONSTS } from "./main.js";
 
 export class SFCompendiumSorter extends FormApplication {
 	constructor() {

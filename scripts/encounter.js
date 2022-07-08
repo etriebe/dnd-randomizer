@@ -1,8 +1,8 @@
-import { SFHelpers } from "./module";
-import { CreatureSpawner } from "./spawner";
-import { FoundryUtils } from "./utils/FoundryUtils";
-import { FuzzySet } from "./fuzzyset";
-import { SFCONSTS } from "./main";
+import { SFHelpers } from "./module.js";
+import { CreatureSpawner } from "./spawner.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
+import { FuzzySet } from "./fuzzyset.js";
+import { SFCONSTS } from "./main.js";
 
 
 export class Encounter {

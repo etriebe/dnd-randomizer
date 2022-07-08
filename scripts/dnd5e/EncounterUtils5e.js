@@ -1,6 +1,6 @@
-import { FoundryUtils } from "../utils/FoundryUtils";
-import { SFLOCALCONSTS } from "./localconst";
-import { SFLocalHelpers } from "./localmodule";
+import { FoundryUtils } from "../utils/FoundryUtils.js";
+import { SFLOCALCONSTS } from "../localconst.js";
+import { SFLocalHelpers } from "../localmodule.js";
 export class EncounterUtils5e
 {
   static createEncounterDnd5e(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)

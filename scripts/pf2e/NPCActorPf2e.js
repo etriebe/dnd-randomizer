@@ -1,5 +1,5 @@
-import { ActorUtils } from "./utils/ActorUtils";
-import { FoundryUtils } from "../utils/FoundryUtils";
+import { ActorUtils } from "../utils/ActorUtils.js";
+import { FoundryUtils } from "../utils/FoundryUtils.js";
 export class NPCActorPf2e {
     constructor(data) {
       this.actor = data;

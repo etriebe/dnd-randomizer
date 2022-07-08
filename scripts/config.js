@@ -1,6 +1,6 @@
-import { SFCONSTS } from "./main";
-import { SFDialog } from "./dialog";
-import { SFCreatureCodex } from "./creatureCodex";
+import { SFCONSTS } from "./main.js";
+import { SFDialog } from "./dialog.js";
+import { SFCreatureCodex } from "./creatureCodex.js";
 
 Hooks.once("init", async function () {
 	const debouncedReload = foundry.utils.debounce(function () { window.location.reload(); }, 100);

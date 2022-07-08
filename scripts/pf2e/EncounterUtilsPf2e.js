@@ -1,6 +1,6 @@
-import { FoundryUtils } from "../utils/FoundryUtils";
-import { SFLOCALCONSTS } from "./localconst";
-import { SFLocalHelpers } from "./localmodule";
+import { FoundryUtils } from "../utils/FoundryUtils.js";
+import { SFLOCALCONSTS } from "../localconst.js";
+import { SFLocalHelpers } from "../localmodule.js";
 export class EncounterUtilsPf2e
 {
     static createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params)

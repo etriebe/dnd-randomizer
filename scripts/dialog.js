@@ -1,10 +1,10 @@
-import { ModuleUtils } from "./utils/ModuleUtils";
-import { FoundryUtils } from "./utils/FoundryUtils";
-import { SFLocalHelpers } from "./localmodule";
-import { SFHelpers } from "./module";
-import { FuzzySet } from "./fuzzyset";
-import { SFLOCALCONSTS } from "./localconst";
-import { SFCONSTS } from "./main";
+import { ModuleUtils } from "./utils/ModuleUtils.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
+import { SFLocalHelpers } from "./localmodule.js";
+import { SFHelpers } from "./module.js";
+import { FuzzySet } from "./fuzzyset.js";
+import { SFLOCALCONSTS } from "./localconst.js";
+import { SFCONSTS } from "./main.js";
 
 export class SFDialog extends FormApplication
 {
