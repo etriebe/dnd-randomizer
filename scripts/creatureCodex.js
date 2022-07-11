@@ -31,23 +31,27 @@ export class SFCreatureCodex extends FormApplication
 		let forceReload = false;
 		await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
 		let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
-		new gridjs.Grid({
-			columns: ["Name", "Email", "Phone Number"],
-			sort: true,
-			data: [
-			  ["John", "john@example.com", "(353) 01 222 3333"],
-			  ["Mark", "mark@gmail.com", "(01) 22 888 4444"],
-			  ["Eoin", "eoin@gmail.com", "0097 22 654 00033"],
-			  ["Sarah", "sarahcdd@gmail.com", "+322 876 1233"],
-			  ["Afshin", "afshin@mail.com", "(353) 22 87 8356"]
-			]
-		  }).render(document.getElementById("creatureCodex"));
-	}
 
-	populateCreatures(filteredMonsters)
-	{
-		const html = this.element;
-		let $ul = html.find('.form-encounters ul').first();
+		let creatureGrid = new gridjs.Grid({
+			columns: ["Creature Name", "Type", "CR", "XP", "Environments"],
+			pagination: true,
+			sort: true,
+			search: true,
+			data: []
+		  })
+		
+		for (let i = 0; i < filteredMonsters.length; i++)
+		{
+			let currentMonster = filteredMonsters[i];
+			creatureGrid.config.data.push([
+				currentMonster.actorname, 
+				currentMonster.creaturetype, 
+				currentMonster.actorcr,
+				currentMonster.actorxp,
+				currentMonster.environment.join(", ")
+			]);
+		}
+		creatureGrid.render(document.getElementById("creatureCodex"));
 	}
 }
 
