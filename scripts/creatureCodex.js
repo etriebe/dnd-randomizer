@@ -31,7 +31,7 @@ export class SFCreatureCodex extends FormApplication
 		let forceReload = false;
 		await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
 		let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
-		/*new gridjs.Grid({
+		new gridjs.Grid({
 			columns: ["Name", "Email", "Phone Number"],
 			data: [
 			  ["John", "john@example.com", "(353) 01 222 3333"],
@@ -40,8 +40,7 @@ export class SFCreatureCodex extends FormApplication
 			  ["Sarah", "sarahcdd@gmail.com", "+322 876 1233"],
 			  ["Afshin", "afshin@mail.com", "(353) 22 87 8356"]
 			]
-		  }).render(document.getElementById("wrapper"));
-		  */
+		  }).render(document.getElementById("creatureCodex"));
 	}
 
 	populateCreatures(filteredMonsters)

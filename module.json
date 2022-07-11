@@ -33,9 +33,11 @@
     "scripts/config.js"
   ],
   "scripts": [
+    "./scripts/lib/gridjs.umd.js"
   ],
   "styles": [
-      "./styles/encounterGenerator.css"
+    "./styles/encounterGenerator.css",
+    "./styles/mermaid.min.css"
   ],
   "packs": [
   ],
