@@ -1,4 +1,5 @@
 import { SFLocalHelpers } from "./localmodule.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { ModuleUtils } from "./utils/ModuleUtils.js";
 // import { Grid } from "gridjs";
 // import "../node_modules/gridjs/dist/theme/mermaid.css";
@@ -33,7 +34,13 @@ export class SFCreatureCodex extends FormApplication
 		let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
 
 		let creatureGrid = new gridjs.Grid({
-			columns: ["Creature Name", "Type", "CR", "XP", "Environments"],
+			columns: [
+				"Creature Name",
+				"Type",
+				"CR",
+				"XP",
+				"Environments"
+			],
 			pagination: true,
 			sort: true,
 			search: true,
@@ -42,9 +49,13 @@ export class SFCreatureCodex extends FormApplication
 		
 		for (let i = 0; i < filteredMonsters.length; i++)
 		{
+			// <a class="entity-link content-link" draggable="true" data-pack="world.um-monsters" data-id="rtTaiSoGwFGBYjHa"><i class="fas fa-user"></i> Flesh Fortress</a>
+			// ${TextEditor.enrichHTML(creature.dynamicLink)}
 			let currentMonster = filteredMonsters[i];
+			let compendiumName = currentMonster.compendiumname;
+			let creatureLink = FoundryUtils.getActorLink(currentMonster.actor, compendiumName);
 			creatureGrid.config.data.push([
-				currentMonster.actorname, 
+				gridjs.html(creatureLink),
 				currentMonster.creaturetype, 
 				currentMonster.actorcr,
 				currentMonster.actorxp,

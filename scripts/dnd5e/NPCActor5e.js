@@ -16,6 +16,7 @@ export class NPCActor5e
         this.attackdata = this.getCombatDataPerRound();
         this.spelldata = this.getSpellDataPerRound();
         this.combatdata = this.getBestCombat();
+        this.compendiumname = this.actor.pack;
     }
 
     getActorEnvironments()

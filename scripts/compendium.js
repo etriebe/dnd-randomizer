@@ -3,6 +3,7 @@ import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { sortable } from "./sortables.js";
 import { SFCONSTS } from "./main.js";
 import { DialogUtils } from "./utils/DialogUtils.js";
+import { SFLocalHelpers } from "./localmodule.js";
 
 export class SFCompendiumSorter extends FormApplication {
 	constructor() {
