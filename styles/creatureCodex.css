@@ -1,0 +1,8 @@
+
+.gridjs-th-content {
+    text-shadow: none;
+}
+
+.table td:first-child {
+    padding-left: 10px;
+}

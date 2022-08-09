@@ -38,7 +38,8 @@
   ],
   "styles": [
     "./styles/encounterGenerator.css",
-    "./styles/mermaid.min.css"
+    "./styles/mermaid.min.css",
+    "./styles/creatureCodex.css"
   ],
   "packs": [
   ],
