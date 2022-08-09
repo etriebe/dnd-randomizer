@@ -145,11 +145,8 @@ export class FoundryUtils {
       return totalDiceResult;
     }
 
-    static getActorLink(actor, compendiumName)
+    static getActorLink(actorID, actorName, compendiumName)
     {
-      let actorID = actor._id || actor.id;
-      let actorName = actor.name;
-      // `<a class="entity-link content-link" draggable="true" data-pack="world.um-monsters" data-id="rtTaiSoGwFGBYjHa"><i class="fas fa-user"></i> Flesh Fortress</a>`;
       return `<a class="entity-link content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><i class="fas fa-user"></i> ${actorName}</a>`;
     }
 }

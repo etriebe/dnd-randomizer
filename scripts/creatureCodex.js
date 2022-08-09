@@ -49,11 +49,9 @@ export class SFCreatureCodex extends FormApplication
 		
 		for (let i = 0; i < filteredMonsters.length; i++)
 		{
-			// <a class="entity-link content-link" draggable="true" data-pack="world.um-monsters" data-id="rtTaiSoGwFGBYjHa"><i class="fas fa-user"></i> Flesh Fortress</a>
-			// ${TextEditor.enrichHTML(creature.dynamicLink)}
 			let currentMonster = filteredMonsters[i];
 			let compendiumName = currentMonster.compendiumname;
-			let creatureLink = FoundryUtils.getActorLink(currentMonster.actor, compendiumName);
+			let creatureLink = FoundryUtils.getActorLink(currentMonster.actorid, currentMonster.actorname, compendiumName);
 			creatureGrid.config.data.push([
 				gridjs.html(creatureLink),
 				currentMonster.creaturetype, 
