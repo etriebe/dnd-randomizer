@@ -710,10 +710,6 @@
     padding-left: 10px;
 }
 
-table.gridjs-table {
-    background: url(../../../ui/parchment.jpg) repeat;
-}
-
 .creature-codex-header-buttons {
 	display: block;
 	text-align: right;
@@ -730,4 +726,8 @@ table.gridjs-table {
 
 #SFCreatureCodex th.gridjs-th {
 	padding: 10px 10px;
+}
+
+#SFCreatureCodex table {
+	border: none;
 }
