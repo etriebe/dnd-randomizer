@@ -301,13 +301,6 @@
 	margin: 0px;
 }
 
-#SFCreatureCodex button {
-	border: 1px solid rgb(122, 121, 113);
-	border-radius: 0;
-	flex: 0;
-	margin: 0px;
-}
-
 #SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
 	border-left-width: 0px;
 	border-bottom-right-radius: 0.25rem;
@@ -729,4 +722,12 @@ table.gridjs-table {
 .creature-codex-header-buttons .btn {
 	float: none;
 	width: auto;
+	border: 1px solid rgb(122, 121, 113);
+	border-radius: 0;
+	flex: 0;
+	margin: 0px;
+}
+
+#SFCreatureCodex th.gridjs-th {
+	padding: 10px 10px;
 }
