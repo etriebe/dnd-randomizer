@@ -1,4 +1,9 @@
-class SFEnvironmentChooser extends FormApplication {
+import { SFCONSTS } from "./main.js";
+import { SFLocalHelpers } from "./localmodule.js";
+import { sortable } from "./sortables.js";
+import { DialogUtils } from "./utils/DialogUtils.js";
+
+export class SFEnvironmentChooser extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;

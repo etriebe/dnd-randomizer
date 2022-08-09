@@ -1,4 +1,10 @@
-class SFCreatureTypeChooser extends FormApplication {
+import { SFCONSTS } from "./main.js";
+import { SFLOCALCONSTS } from "./localconst.js";
+import { SFLocalHelpers } from "./localmodule.js";
+import { sortable } from "./sortables.js";
+import { DialogUtils } from "./utils/DialogUtils.js";
+
+export class SFCreatureTypeChooser extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;

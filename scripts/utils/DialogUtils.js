@@ -1,4 +1,4 @@
-class DialogUtils {
+export class DialogUtils {
     static checkBoxes(button, element, ulListID, liItemIdentifier, checkedStatus)
     {
         let invert = false;

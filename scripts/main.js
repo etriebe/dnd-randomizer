@@ -1,4 +1,6 @@
-const SFCONSTS = {
+import { CreatureSpawner } from "./spawner.js";
+
+export const SFCONSTS = {
     MODULE_NAME: "dnd-randomizer",
     GEN_OPT: {
         loot_type: ["individual treasure", "Treasure Horde"],

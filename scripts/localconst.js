@@ -1,4 +1,4 @@
-const SFLOCALCONSTS = {
+export const SFLOCALCONSTS = {
     CACHE_FILE: "CompendiumCache.json",
     SPELL_CACHE_FILE: "spellsbylevel_cache.json",
     GENERAL_CACHE_FILE: "general_cache.json",

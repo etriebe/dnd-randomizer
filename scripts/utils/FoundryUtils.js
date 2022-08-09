@@ -1,4 +1,5 @@
-class FoundryUtils {
+import { SFLOCALCONSTS } from "../localconst.js";
+export class FoundryUtils {
 
     static isFoundryVersion10()
     {
@@ -142,5 +143,10 @@ class FoundryUtils {
       }
   
       return totalDiceResult;
+    }
+
+    static getActorLink(actorID, actorName, compendiumName)
+    {
+      return `<a class="entity-link content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><i class="fas fa-user"></i> ${actorName}</a>`;
     }
 }

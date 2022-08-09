@@ -1,4 +1,12 @@
-class SFLocalHelpers {
+import { ActorUtils } from "./utils/ActorUtils.js";
+import { GeneralUtils } from "./utils/GeneralUtils.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
+import { SFLOCALCONSTS } from "./localconst.js";
+import { SFCONSTS } from "./main.js";
+import { EncounterUtilsPf2e } from "./pf2e/EncounterUtilsPf2e.js";
+import { EncounterUtils5e } from "./dnd5e/EncounterUtils5e.js";
+
+export class SFLocalHelpers {
     static allMonsters = [];
     static creatureTypeCount = {};
     static environmentCreatureCount = {};
@@ -424,7 +432,7 @@ class SFLocalHelpers {
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
     }
 
-    static async filterMonstersFromCompendiums(params)
+    static async filterMonstersFromCompendiums()
     {
       let filteredMonsters = [];
 

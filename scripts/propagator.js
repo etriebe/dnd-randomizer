@@ -1,4 +1,4 @@
-class Propagator {
+export class Propagator {
   // Find a non occupied cell in the grid that matches the size of the token given an origin
   static getFreePosition(
     tokenData,

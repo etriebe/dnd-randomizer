@@ -1,4 +1,6 @@
-class CreatureSpawner {
+import { Propagator } from "./propagator.js";
+
+export class CreatureSpawner {
   static async fromTemplate(template, encounterData) {
     switch (template.data.t) {
       case "circle":

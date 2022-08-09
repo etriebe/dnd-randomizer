@@ -1,4 +1,4 @@
-class RandomGeneratorParser {
+export class RandomGeneratorParser {
 
   static parseToEncounters(dataset) {
     return dataset.reduce(function (a, v) {
