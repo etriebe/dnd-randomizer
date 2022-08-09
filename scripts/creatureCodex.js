@@ -16,7 +16,7 @@ export class SFCreatureCodex extends FormApplication
 		let dialogTemplate = `modules/dnd-randomizer/templates/creatureCodex.hbs`;
 		return {
 			...super.defaultOptions,
-			title: game.i18n.localize('SF.dialog.title'),
+			title: game.i18n.localize('CreatureCodex.dialog.title'),
 			id: "SFCreatureCodex",
 			template: dialogTemplate,
 			resizable: true,

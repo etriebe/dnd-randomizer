@@ -9,7 +9,7 @@
 }
 #SFDialog .window-header {
 	line-height: normal;
-    flex: 0 0 58px;
+    flex: 0 0 58px;d
 }
 #SFDialog .window-header h4 {
 	font-size: 1.3rem;
@@ -703,4 +703,30 @@
 	line-height: normal;
 	margin-bottom: 10px;
 	margin-top: 10px;
+}
+
+.gridjs-th-content {
+    text-shadow: none;
+}
+
+.gridjs-pages button {
+    width: auto;
+}
+
+.gridjs-td[data-column-id="creatureName"]  {
+    padding-left: 10px;
+}
+
+table.gridjs-table {
+    background: url(../../../ui/parchment.jpg) repeat;
+}
+
+.creature-codex-header-buttons {
+	display: block;
+	text-align: right;
+}
+
+.creature-codex-header-buttons .btn {
+	float: none;
+	width: auto;
 }
