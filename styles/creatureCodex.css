@@ -3,6 +3,10 @@
     text-shadow: none;
 }
 
-.table td:first-child {
+.gridjs-pages button {
+    width: auto;
+}
+
+.gridjs-td[data-column-id="creatureName"]  {
     padding-left: 10px;
 }
