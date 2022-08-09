@@ -34,11 +34,17 @@ on the left of the searchbox you will find the filter for favorite only and on t
 
 ![image](https://user-images.githubusercontent.com/1346839/130235849-357b71f5-6859-4c1e-8710-61376eaa57f4.png)
 
+# Creature Codex
+
+A creature codex to browse the creatures you have in multiple compendiums and sort, filter by more than just name: XP, creature type, environment, etc. 
+
+![image](https://user-images.githubusercontent.com/7503160/183776978-a56a1a0e-04c4-489c-98ce-950d0069e93c.png)
+
 # License / Credits
 
 ## Donjon
 
-Stochastic, Fantastic! pulls it's data from https://donjon.bin.sh/ with permission from the author (Some content used under the Open Gaming License). Support this amazing website here https://ko-fi.com/donjon 
+Stochastic, Fantastic! can pull it's data from https://donjon.bin.sh/ with permission from the author (Some content used under the Open Gaming License). Support this amazing website here https://ko-fi.com/donjon 
 
 ## Sortable.Js
 
