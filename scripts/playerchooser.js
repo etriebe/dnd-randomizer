@@ -2,6 +2,7 @@ import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { SFLocalHelpers } from "./localmodule.js";
 import { SFCONSTS } from "./main.js";
 import { sortable } from "./sortables.js";
+import { DialogUtils } from "./utils/DialogUtils.js";
 
 export class SFPlayerChooser extends FormApplication {
 	constructor() {
@@ -95,6 +96,8 @@ export class SFPlayerChooser extends FormApplication {
 
 	async activateListeners(html) {
 		this.populatePlayerCharacters();
+
+		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#player_filter', 'li.playerCharacterLi');
 	}
 
 	async close(options) { 

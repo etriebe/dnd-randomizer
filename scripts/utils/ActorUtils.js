@@ -8,7 +8,13 @@ export class ActorUtils
 {
     static getCreatureTypeForActor(actor)
     {
-      return FoundryUtils.getSystemVariableForObject(actor, "CreatureType");
+      let creatureTypeValue = FoundryUtils.getSystemVariableForObject(actor, "CreatureType");
+      if (creatureTypeValue === '')
+      {
+        creatureTypeValue = 'any';
+      }
+
+      return creatureTypeValue;
     }
     
     static getLevelKeyForSpell(spell)

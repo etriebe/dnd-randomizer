@@ -2,6 +2,7 @@ import { SFCONSTS } from "./main.js";
 import { SFLOCALCONSTS } from "./localconst.js";
 import { SFLocalHelpers } from "./localmodule.js";
 import { sortable } from "./sortables.js";
+import { DialogUtils } from "./utils/DialogUtils.js";
 
 export class SFCreatureTypeChooser extends FormApplication {
 	constructor() {
@@ -61,6 +62,7 @@ export class SFCreatureTypeChooser extends FormApplication {
 			await SFLocalHelpers.loadFromCache();
 		}
 		this.populateCreatureTypes();
+		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#creature_filter', 'li.monsterTypeLi');
 	}
 
 	async close(options) { 

@@ -2,6 +2,7 @@
 import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { sortable } from "./sortables.js";
 import { SFCONSTS } from "./main.js";
+import { DialogUtils } from "./utils/DialogUtils.js";
 
 export class SFCompendiumSorter extends FormApplication {
 	constructor() {
@@ -81,6 +82,8 @@ export class SFCompendiumSorter extends FormApplication {
 			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
 			$button.prop('disabled', false).removeClass('disabled');
 		});
+
+		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#compendium_filter', 'li.compendiumTypeLi');
 	}
 
 	async close(options) {

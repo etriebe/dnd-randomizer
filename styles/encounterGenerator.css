@@ -698,3 +698,9 @@
     background-color: var(--palette-primary, #cc0b0b);
 }
 
+#SFChooser .check-helper {
+	width: auto;
+	line-height: normal;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
