@@ -99,4 +99,28 @@ export class ActorUtils
         environmentArray = environmentArray.map(e => e.trim());
         return environmentArray;
     }
+
+    static getActorItemList(actor)
+    {
+      let itemList = [];
+      actor.items.map(i => itemList.push(i.name));
+      return itemList;
+    }
+
+    static getActorItemDescriptionList(actor)
+    {
+      let descriptionList = [];
+      actor.items.map(i => descriptionList.push(FoundryUtils.getDataObjectFromObject(i).description.value));
+      return descriptionList;
+    }
+
+    static getActorBiography(actor)
+    {
+      return FoundryUtils.getDataObjectFromObject(actor).details.biography.value;
+    }
+
+    static getActorObject(currentMonster)
+    {
+      return currentMonster.actor.actor ?? currentMonster.actor;
+    }
 }

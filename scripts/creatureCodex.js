@@ -1,4 +1,5 @@
 import { SFLocalHelpers } from "./localmodule.js";
+import { ActorUtils } from "./utils/ActorUtils.js";
 import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { ModuleUtils } from "./utils/ModuleUtils.js";
 // import { Grid } from "gridjs";
@@ -20,7 +21,7 @@ export class SFCreatureCodex extends FormApplication
 			id: "SFCreatureCodex",
 			template: dialogTemplate,
 			resizable: true,
-			width: window.innerWidth > 700 ? 700 : window.innerWidth - 100,
+			width: window.innerWidth > 1200 ? 1200 : window.innerWidth - 100,
 			height: window.innerHeight > 800 ? 800 : window.innerHeight - 100
 		};
 	}
@@ -35,15 +36,50 @@ export class SFCreatureCodex extends FormApplication
 
 		let creatureGrid = new gridjs.Grid({
 			columns: [
-				"Creature Name",
-				"Type",
-				"CR",
-				"XP",
-				"Environments"
+				{
+					name: "Creature Name",
+					width: "100px"
+				},
+				{
+					name: "Type",
+					width: "100px"
+				},
+				{
+					name: "CR",
+					width: "50px"
+				},
+				{
+					name: "XP",
+					width: "50px"
+				},
+				{
+					name: "Environments",
+					width: "100px"
+				},
+				{
+					name: "Item List",
+					width: "200px"
+				},
+				{
+					name: "Biography",
+					hidden: true
+				},
+				{
+					name: "Item Description",
+					hidden: true
+				}
 			],
+			/*
+			style: { 
+			  table: { 
+				'white-space': 'nowrap'
+			  }
+			},
+			*/
 			pagination: true,
 			sort: true,
 			search: true,
+			// resizable: true,
 			data: []
 		  })
 		
@@ -52,12 +88,19 @@ export class SFCreatureCodex extends FormApplication
 			let currentMonster = filteredMonsters[i];
 			let compendiumName = currentMonster.compendiumname;
 			let creatureLink = FoundryUtils.getActorLink(currentMonster.actorid, currentMonster.actorname, compendiumName);
+			let actorObject = ActorUtils.getActorObject(currentMonster);
+			let itemList = ActorUtils.getActorItemList(actorObject);
+			let actorBiography = ActorUtils.getActorBiography(actorObject);
+			let itemDescriptionList = ActorUtils.getActorItemDescriptionList(actorObject);
 			creatureGrid.config.data.push([
 				gridjs.html(creatureLink),
 				currentMonster.creaturetype, 
 				currentMonster.actorcr,
 				currentMonster.actorxp,
-				currentMonster.environment.join(", ")
+				currentMonster.environment.join(", "),
+				itemList.join(", "),
+				actorBiography,
+				gridjs.html(itemDescriptionList.join(", "))
 			]);
 		}
 		creatureGrid.render(document.getElementById("creatureCodex"));
