@@ -9,7 +9,7 @@
 }
 #SFDialog .window-header {
 	line-height: normal;
-    flex: 0 0 58px;d
+	flex: 0 0 58px;d
 }
 #SFDialog .window-header h4 {
 	font-size: 1.3rem;
@@ -24,28 +24,28 @@
 }
 #SFDialog.minimized .window-header h4 {
 	font-size: 1rem;
-    padding: 0;
+	padding: 0;
 }
 #SFDialog .window-header a.header-button.close {
 	font-size: 0rem !important;
 }
 #SFDialog .window-header a.header-button.close i {
-    display: inline-block !important;
-    font-size: 1rem;
+	display: inline-block !important;
+	font-size: 1rem;
 	position: absolute;
 	right: 5px;
 	top: 5px;
 }
 #SFDialog.window-app .window-content {
-    background-color: transparent;
-    background-image: none;
-    backdrop-filter: none;
+	background-color: transparent;
+	background-image: none;
+	backdrop-filter: none;
 	font-size: 16px;
 	padding: 0rem;
 }
 #SFDialog.window-app .window-content form {
 	display: flex;
-    flex-direction: column;
+	flex-direction: column;
 }
 #SFDialog .window-content .form-controls {
 	flex: 0;
@@ -149,8 +149,8 @@
 	z-index: 2;
 	opacity: 0;
 	transform: translateY(-0%);
-    max-height: 600px;
-    overflow: auto;
+	max-height: 600px;
+	overflow: auto;
   }
   #SFDialog .window-content .form-controls .form-groups input[type=text], #SFDialog .window-content .form-controls .form-groups select[type=text] {
 	border: none;
@@ -158,8 +158,8 @@
 	margin: 0;
 	padding: 6px;
 	font-weight: 200;
-    font-size: 1.5rem;
-    line-height: normal;
+	font-size: 1.5rem;
+	line-height: normal;
 	display: block;
   }
   #SFDialog .window-content .form-controls .form-groups input.hidden, #SFDialog .window-content .form-controls .form-groups select.hidden {
@@ -198,19 +198,19 @@
 }*/
 #SFDialog .window-content .form-encounters {
 	background-color: var(--palette-dialog-background, #191813);
-    background-image: var(--palette-dialog-background-image, url("../../../ui/parchment.jpg"));
-    background-blend-mode: var(--palette-dialog-background-image-blend-mode, normal);
-    backdrop-filter: blur(8px);
-    color: var(--palette-dialog-background-contrast-text, #191813);
+	background-image: var(--palette-dialog-background-image, url("../../../ui/parchment.jpg"));
+	background-blend-mode: var(--palette-dialog-background-image-blend-mode, normal);
+	backdrop-filter: blur(8px);
+	color: var(--palette-dialog-background-contrast-text, #191813);
 	display: flex;
 	flex: 1;
-    flex-direction: column;
+	flex-direction: column;
 }
 #SFDialog .window-content .form-encounters .encounters {
-    display: flex;
+	display: flex;
 	flex: 1 0;
-    height: 0px;
-    overflow-y: auto;
+	height: 0px;
+	overflow-y: auto;
 }
 
 #SFDialog .window-content .form-controls .index-compendiums:disabled {
@@ -225,37 +225,37 @@
 #SFCreatureCodex .window-content form .form-group .button-group input,
 #SFDialog .window-content form .form-group .button-group input {
 	position: absolute;
-    clip: rect(0,0,0,0);
-    pointer-events: none;
+	clip: rect(0,0,0,0);
+	pointer-events: none;
 }
 #SFDialog .window-content form .form-group .button-group label {
-    border-radius: .25rem;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
+	border-radius: .25rem;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
 	margin-bottom: 0.5rem;
-    padding: 1.5rem 1rem;
-    user-select: none;
-    text-align: center;
-    text-decoration: none;
+	padding: 1.5rem 1rem;
+	user-select: none;
+	text-align: center;
+	text-decoration: none;
 	text-transform: uppercase;
-    vertical-align: middle;
+	vertical-align: middle;
 	width: 200px;
 }
 #SFDialog .window-content .form-encounters .filter-controller,
 #SFCreatureCodex .window-content .form-encounters .filter-controller {
-    border-bottom: 1px solid var(--palette-dialog-background-dark, #782e22);
+	border-bottom: 1px solid var(--palette-dialog-background-dark, #782e22);
 	display: flex;
-    padding: 2rem 0.5rem 1rem;
+	padding: 2rem 0.5rem 1rem;
 }
 
 #SFCreatureCodex .window-content .form-encounters .filter-controller select,
 #SFCreatureCodex .window-content .form-encounters .filter-controller input,
 #SFDialog .window-content .form-encounters .filter-controller select,
 #SFDialog .window-content .form-encounters .filter-controller input {
-    border-radius: 0;
+	border-radius: 0;
 	height: auto;
 }
 
@@ -272,16 +272,16 @@
 }
 
 #clear-button {
-    border-radius: 50%;
+	border-radius: 50%;
 	display: none;
-    margin: 0px;
-    padding: 0px;
-    position: absolute;
-    right: calc(0.5rem - 1px + 65px);
-    text-align: center;
-    transform: scale(0.8);
-    top: calc(2rem - 1px + 5px);
-    width: 32px;
+	margin: 0px;
+	padding: 0px;
+	position: absolute;
+	right: calc(0.5rem - 1px + 65px);
+	text-align: center;
+	transform: scale(0.8);
+	top: calc(2rem - 1px + 5px);
+	width: 32px;
 }
 
 #SFCreatureCodex .window-content .form-encounters .filter-controller input:not(:placeholder-shown) + button,
@@ -349,8 +349,8 @@
 }
 #SFDialog .window-content .form-encounters ul li div.favorite-encounter.favorited i:before {
 	color: var(--palette-yellow, #ffc800);
-    font-weight: 600;
-    text-shadow: 0px 0px 3px black;
+	font-weight: 600;
+	text-shadow: 0px 0px 3px black;
 }
 #SFDialog .window-content .form-encounters ul li div.favorite-encounter:not(.favorited) i:hover {
 	cursor: pointer;
@@ -358,7 +358,7 @@
 }
 #SFDialog .window-content .form-encounters ul li div.create-encounter {
 	flex-direction: column;
-    justify-content: space-evenly;
+	justify-content: space-evenly;
 }
 #SFDialog .window-content .form-encounters ul li div.create-encounter i:hover {
 	cursor: pointer;
@@ -369,10 +369,10 @@
 	flex: 0 0 60px;
 }
 #SFDialog .window-content .form-encounters ul li input[type="texT"].encounter-details-header-title {
-    background-color: transparent;
+	background-color: transparent;
 	border-color: transparent;
-    height: auto;
-    margin-bottom: 0.5rem;
+	height: auto;
+	margin-bottom: 0.5rem;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details {
 	border: 1px solid var(--palette-dialog-background-light, #782e22cc);
@@ -385,13 +385,13 @@
 	width: 100%;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data {
-    background-color: var(--palette-app-background-dark, #191813);
+	background-color: var(--palette-app-background-dark, #191813);
 	border-bottom-left-radius: 0.25rem;
-    color: var(--palette-app-background-dark-contrast-text, #f0f0e0);
+	color: var(--palette-app-background-dark-contrast-text, #f0f0e0);
 	font-size: 0.7rem;
 	position: absolute;
-    right: 60px;
-    top: 0px;
+	right: 60px;
+	top: 0px;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data span.loot-button,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-numberofattacks,
@@ -399,13 +399,13 @@
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-averageattackbonus,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp {
-    border-bottom: 1px solid var(--palette-app-background-dark, #191813cc);
+	border-bottom: 1px solid var(--palette-app-background-dark, #191813cc);
 	border-top-width: 0px;
 	display: inline-block;
 	padding: 0.25rem;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xpadjustment {
-    border-bottom: 1px solid var(--palette-app-background-dark, #ff8f10cc);
+	border-bottom: 1px solid var(--palette-app-background-dark, #ff8f10cc);
 	border-top-width: 0px;
 	display: inline-block;
 	padding: 0.25rem;
@@ -417,52 +417,52 @@
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.Trivial,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.easy {
-    background-color: var(--palette-success, rgb(64, 194, 64));
-    border-color: var(--palette-success-dark, rgb(8, 87, 8));
-    color: var(--palette-app-success-shaded-text, rgb(255, 255, 255));
+	background-color: var(--palette-success, rgb(64, 194, 64));
+	border-color: var(--palette-success-dark, rgb(8, 87, 8));
+	color: var(--palette-app-success-shaded-text, rgb(255, 255, 255));
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.Low,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.medium {
-    background-color: var(--palette-info, rgb(14, 94, 185));
-    border-color: var(--palette-info-dark, rgb(8, 53, 95));
-    color: var(--palette-app-info-shaded-text, white);
+	background-color: var(--palette-info, rgb(14, 94, 185));
+	border-color: var(--palette-info-dark, rgb(8, 53, 95));
+	color: var(--palette-app-info-shaded-text, white);
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.Moderate,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.hard {
-    background-color: var(--palette-warning, #ef6e00);
-    border-color: var(--palette-warning-dark, #b85600);
-    color: var(--palette-app-warning-shaded-text, rgb(255, 255, 255));
+	background-color: var(--palette-warning, #ef6e00);
+	border-color: var(--palette-warning-dark, #b85600);
+	color: var(--palette-app-warning-shaded-text, rgb(255, 255, 255));
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.Severe,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.deadly {
-    background-color: var(--palette-danger, #a00f0f);
-    border-color: var(--palette-danger-dark, #500808);
-    color: var(--palette-app-danger-shaded-text, white);
+	background-color: var(--palette-danger, #a00f0f);
+	border-color: var(--palette-danger-dark, #500808);
+	color: var(--palette-app-danger-shaded-text, white);
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-difficulty.Extreme {
-    background-color: var(--palette-danger, #520061);
-    border-color: var(--palette-danger-dark, #500808);
-    color: var(--palette-app-danger-shaded-text, white);
+	background-color: var(--palette-danger, #520061);
+	border-color: var(--palette-danger-dark, #500808);
+	color: var(--palette-app-danger-shaded-text, white);
 }
 
 #SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary {
-    background-color: var(--palette-app-background-dark, #191813);
+	background-color: var(--palette-app-background-dark, #191813);
 	border-bottom-left-radius: 0.25rem;
-    color: var(--palette-app-background-dark-contrast-text, #f0f0e0);
+	color: var(--palette-app-background-dark-contrast-text, #f0f0e0);
 	font-size: 0.7rem;
 	position: absolute;
-    right: 60px;
-    top: 20px;
+	right: 60px;
+	top: 20px;
 }
 
 #SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary .encounter-numberofattacks,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary .encounter-totaldamage,
 #SFDialog .window-content .form-encounters ul li div.encounter-info .combat-summary .encounter-averageattackbonus {
-    border-bottom: 1px solid var(--palette-app-background-dark, #191813cc);
+	border-bottom: 1px solid var(--palette-app-background-dark, #191813cc);
 	border-top-width: 0px;
 	display: inline-block;
 	padding: 0.25rem;
-    top: 20px;
+	top: 20px;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-info .encounter-data .encounter-xp {
 	border-right: 1px solid var(--palette-app-background-dark, #191813);
@@ -475,30 +475,30 @@
 	padding: 0.5rem 0.75rem;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button {
-    background-color: var(--palette-secondary, #116b86);
-    border: 1px solid var(--palette-secondary-dark, #0d4557);
+	background-color: var(--palette-secondary, #116b86);
+	border: 1px solid var(--palette-secondary-dark, #0d4557);
 	border-radius: 0.25rem;
-    bottom: 0px;
-    color: var(--palette-secondary-contrast-text, #f0f0e0);
-    display: inline-block;
-    margin-right: 0.5rem;
-    flex: 0 0;
-    z-index: 100;
+	bottom: 0px;
+	color: var(--palette-secondary-contrast-text, #f0f0e0);
+	display: inline-block;
+	margin-right: 0.5rem;
+	flex: 0 0;
+	z-index: 100;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button .creature-count {
-    padding: 0rem 0.5rem;
+	padding: 0rem 0.5rem;
 }
 /* Unstyle Foundry Styles */
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.content-link {
-    background-color: transparent;
-    border-color: transparent;
+	background-color: transparent;
+	border-color: transparent;
 	border-left: 1px solid var(--palette-secondary-dark, #203a42);
 	border-radius: 0px;
-    color: inherit;
+	color: inherit;
 	cursor: pointer;
-    display: inline-block;
-    font-size: 0.8rem;
+	display: inline-block;
+	font-size: 0.8rem;
 	padding: 0.25rem 0.5rem;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link i.fas,
@@ -508,14 +508,14 @@
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:hover,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.content-link:hover {
-    background-color: var(--palette-secondary-hover, #4f7480);
+	background-color: var(--palette-secondary-hover, #4f7480);
 	text-shadow: none;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:active,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:focus,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.content-link:active,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.content-link:focus {
-    background-color: var(--palette-secondary-active);
+	background-color: var(--palette-secondary-active);
 	text-shadow: none;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot {
@@ -523,172 +523,172 @@
 	padding: 0.5rem 0.75rem;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot .loot-button {
-    margin-bottom: 0.75rem;
-    margin-right: 0.75rem;
-    display: inline-block;
+	margin-bottom: 0.75rem;
+	margin-right: 0.75rem;
+	display: inline-block;
 }
 #SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot .loot-button a.entity-link,
 #SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot .loot-button a.content-link {
 	background-color: transparent;
-    border-width: 0px;
-    border-bottom: 1px dashed;
-    border-radius: 0px;
-    color: inherit;
-    padding: 0px;
+	border-width: 0px;
+	border-bottom: 1px dashed;
+	border-radius: 0px;
+	color: inherit;
+	padding: 0px;
 }
 
 
 #SFChooser .window-content h3 {
-    align-items: center;
-    font-size: 18px;
-    font-weight: 600;
-    justify-content: space-between;
-    margin: 0px;
-    padding: 0.75rem 0.75rem 0rem;
+	align-items: center;
+	font-size: 18px;
+	font-weight: 600;
+	justify-content: space-between;
+	margin: 0px;
+	padding: 0.75rem 0.75rem 0rem;
 }
 #SFChooser form ul {
 	display: flex;
-    flex-direction: column;
+	flex-direction: column;
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
 }
 #SFChooser form ul li {
-    align-items: center;
-    border: 1px solid #00000020;
+	align-items: center;
+	border: 1px solid #00000020;
 	display: flex;
-    position: relative;
-    padding: 0.5rem;
-    text-decoration: none;
+	position: relative;
+	padding: 0.5rem;
+	text-decoration: none;
 }
 #SFChooser form ul li span.compendium-type {
-    background-color: var(--palette-primary, #116b86);
-    color: var(--palette-primary-contrast-text, #fff);
-    order: 2;
-    margin-left: auto;
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+	background-color: var(--palette-primary, #116b86);
+	color: var(--palette-primary-contrast-text, #fff);
+	order: 2;
+	margin-left: auto;
+	font-size: 0.7rem;
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.25rem;
 }
 #SFChooser form ul li span.compendium-type[data-type="Item"] {
-    background-color: var(--palette-secondary, #118655);
-    color: var(--palette-secondary-contrast-text, #fff);
+	background-color: var(--palette-secondary, #118655);
+	color: var(--palette-secondary-contrast-text, #fff);
 }
 
 #SFChooser form ul li span.compendium-title:after,
 #SFChooser form ul li span.environment-type:after {
-    content: attr(data-name);
-    display: block;
-    font-size: 0.7rem;
-    opacity: 0.8;
+	content: attr(data-name);
+	display: block;
+	font-size: 0.7rem;
+	opacity: 0.8;
 }
 
 #SFChooser form ul li span.player-character-info {
-    background-color: var(--palette-primary, #116b86);
-    color: var(--palette-primary-contrast-text, #fff);
-    order: 2;
-    margin-left: auto;
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+	background-color: var(--palette-primary, #116b86);
+	color: var(--palette-primary-contrast-text, #fff);
+	order: 2;
+	margin-left: auto;
+	font-size: 0.7rem;
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.25rem;
 }
 
 #SFChooser form ul li span.player-character-info[data-type="artificer"] {
-    background-color: var(--palette-primary, #7D673C);
+	background-color: var(--palette-primary, #7D673C);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="barbarian"] {
-    background-color: var(--palette-primary, #D1775F);
+	background-color: var(--palette-primary, #D1775F);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="blood-hunter"] {
-    background-color: var(--palette-primary, #5A0505);
+	background-color: var(--palette-primary, #5A0505);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="bard"] {
-    background-color: var(--palette-primary, #B087B1);
+	background-color: var(--palette-primary, #B087B1);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="cleric"] {
-    background-color: var(--palette-primary, #8E8F91);
+	background-color: var(--palette-primary, #8E8F91);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="druid"] {
-    background-color: var(--palette-primary, #8A9554);
+	background-color: var(--palette-primary, #8A9554);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="fighter"] {
-    background-color: var(--palette-primary, #715348);
+	background-color: var(--palette-primary, #715348);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="monk"] {
-    background-color: var(--palette-primary, #81C1DA);
+	background-color: var(--palette-primary, #81C1DA);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="paladin"] {
-    background-color: var(--palette-primary, #BCA863);
+	background-color: var(--palette-primary, #BCA863);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="ranger"] {
-    background-color: var(--palette-primary, #48795B);
+	background-color: var(--palette-primary, #48795B);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="rogue"] {
-    background-color: var(--palette-primary, #494A44);
+	background-color: var(--palette-primary, #494A44);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="sorcerer"] {
-    background-color: var(--palette-primary, #C4545A);
+	background-color: var(--palette-primary, #C4545A);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="warlock"] {
-    background-color: var(--palette-primary, #8050B1);
+	background-color: var(--palette-primary, #8050B1);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="wizard"] {
-    background-color: var(--palette-primary, #3E6EBE);
+	background-color: var(--palette-primary, #3E6EBE);
 }
 
 /* Pf2e classes */
 
 #SFChooser form ul li span.player-character-info[data-type="alchemist"] {
-    background-color: var(--palette-primary, #49be3e);
+	background-color: var(--palette-primary, #49be3e);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="champion"] {
-    background-color: var(--palette-primary, #808080);
+	background-color: var(--palette-primary, #808080);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="gunslinger"] {
-    background-color: var(--palette-primary, #1b1e24);
+	background-color: var(--palette-primary, #1b1e24);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="inventor"] {
-    background-color: var(--palette-primary, #bb5d1f);
+	background-color: var(--palette-primary, #bb5d1f);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="investigator"] {
-    background-color: var(--palette-primary, #3c5d95);
+	background-color: var(--palette-primary, #3c5d95);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="magus"] {
-    background-color: var(--palette-primary, #3eafbe);
+	background-color: var(--palette-primary, #3eafbe);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="oracle"] {
-    background-color: var(--palette-primary, #850d0d);
+	background-color: var(--palette-primary, #850d0d);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="summoner"] {
-    background-color: var(--palette-primary, #4d750b);
+	background-color: var(--palette-primary, #4d750b);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="swashbuckler"] {
-    background-color: var(--palette-primary, #087aaf);
+	background-color: var(--palette-primary, #087aaf);
 }
 
 #SFChooser form ul li span.player-character-info[data-type="witch"] {
-    background-color: var(--palette-primary, #cc0b0b);
+	background-color: var(--palette-primary, #cc0b0b);
 }
 
 #SFChooser .check-helper {
@@ -699,15 +699,15 @@
 }
 
 .gridjs-th-content {
-    text-shadow: none;
+	text-shadow: none;
 }
 
 .gridjs-pages button {
-    width: auto;
+	width: auto;
 }
 
 .gridjs-td[data-column-id="creatureName"]  {
-    padding-left: 10px;
+	padding-left: 10px;
 }
 
 .creature-codex-header-buttons {
@@ -730,4 +730,14 @@
 
 #SFCreatureCodex table {
 	border: none;
+}
+
+#SFCreatureCodex a.entity-link, a.content-link, a.inline-roll {
+	background: inherit;
+	padding: inherit;
+	border: none;
+}
+
+#SFCreatureCodex .actor-link-name {
+	white-space: normal;
 }

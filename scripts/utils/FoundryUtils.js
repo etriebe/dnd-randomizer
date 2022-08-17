@@ -147,6 +147,6 @@ export class FoundryUtils {
 
     static getActorLink(actorID, actorName, compendiumName)
     {
-      return `<a class="entity-link content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><i class="fas fa-user"></i> ${actorName}</a>`;
+      return `<a class="entity-link content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
     }
 }
