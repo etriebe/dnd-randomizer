@@ -1,6 +1,7 @@
 import { FoundryUtils } from "../utils/FoundryUtils.js";
 import { SFLOCALCONSTS } from "../localconst.js";
 import { SFLocalHelpers } from "../localmodule.js";
+import { ActorUtils } from "../utils/ActorUtils.js";
 export class EncounterUtils5e
 {
   static createEncounterDnd5e(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)
@@ -21,8 +22,8 @@ export class EncounterUtils5e
         j++;
         let randomMonsterIndex = Math.floor((Math.random() * monsterList.length));
         let randomMonsterObject = monsterList[randomMonsterIndex];
-        let randomMonster = randomMonsterObject.actor;
-        let randomMonsterActorId = randomMonster.actor.id ?? randomMonster.actor._id;
+        let randomMonster = ActorUtils.getActualActorObject(randomMonsterObject);
+        let randomMonsterActorId = randomMonsterObject.actorid;
         let randomMonsterData = FoundryUtils.getDataObjectFromObject(randomMonster);
         let monsterName;
 
