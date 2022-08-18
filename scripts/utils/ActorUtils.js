@@ -119,7 +119,7 @@ export class ActorUtils
       return FoundryUtils.getDataObjectFromObject(actor).details.biography.value;
     }
 
-    static getActorObject(currentMonster)
+    static getActualActorObject(currentMonster)
     {
       return currentMonster.actor.actor ?? currentMonster.actor;
     }
