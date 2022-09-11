@@ -102,14 +102,11 @@ export class Propagator {
         }
       }
     }
-    return (
-      !collision ||
-      !canvas.walls.checkCollision(
-        new Ray(origin, {
-          x: position.x + (tokenData.width * canvas.scene.dimensions.size) / 2,
-          y: position.y + (tokenData.height * canvas.scene.dimensions.size) / 2,
-        })
-      )
-    );
+    const r = new Ray(origin, {
+      x: position.x + (tokenData.width * canvas.scene.dimensions.size) / 2,
+      y: position.y + (tokenData.height * canvas.scene.dimensions.size) / 2,
+    });
+    const collisionCheck = canvas.walls.checkCollision(r, { mode: "any" });
+    return (!collision || !collisionCheck);
   }
 }
