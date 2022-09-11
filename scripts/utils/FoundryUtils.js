@@ -69,6 +69,18 @@ export class FoundryUtils {
       }
     }
 
+    static getTemplateDataObject(obj)
+    {
+      if (FoundryUtils.isFoundryVersion10())
+      {
+        return obj;
+      }
+      else
+      {
+        return obj.data;
+      }
+    }
+
     static getResultFromRollTable(rollTable, rollResult)
     {
       let rowSelected;
@@ -147,6 +159,37 @@ export class FoundryUtils {
 
     static getActorLink(actorID, actorName, compendiumName)
     {
-      return `<a class="entity-link content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+      if (FoundryUtils.isFoundryVersion10())
+      {
+        
+        if (compendiumName != "")
+        {
+          const dataUUID = `Compendium.${compendiumName}.${actorID}`;
+          return `<a class="content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+        }
+        else
+        {
+          return `<a class="content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
+        }
+        return `<a class="content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+      }
+      else
+      {
+        return `<a class="entity-link content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+      }
+    }
+
+    static getItemLink(item)
+    {
+      let itemID = item.id;
+      let itemName = item.name;
+      if (FoundryUtils.isFoundryVersion10())
+      {
+        return `<a class="content-link" draggable="true" data-hash="undefined" data-uuid="Item.${itemID}" data-id="${itemID}" data-type="Item"><i class="fas fa-user"></i> ${itemName}</a>`;
+      }
+      else
+      {
+        return `<a class="entity-link content-link" draggable="true" data-type="Item" data-entity="Item" data-id="${itemID}">${itemName}</a>`;
+      }
     }
 }

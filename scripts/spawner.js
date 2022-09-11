@@ -1,22 +1,24 @@
 import { Propagator } from "./propagator.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
 
 export class CreatureSpawner {
   static async fromTemplate(template, encounterData) {
-    switch (template.data.t) {
+    const templateDataObject = FoundryUtils.getTemplateDataObject(template);
+    switch (templateDataObject.t) {
       case "circle":
         for (let creature of encounterData.creatures) {
           for (let i = 0; i < creature.quantity; i++) {
             await CreatureSpawner.wait(100);
-            const tD = await creature._actor.getTokenData();
+            const tD = await creature._actor.getTokenDocument();
             const position = Propagator.getFreePosition(
               tD,
               CreatureSpawner.randomInCircle(
-                {x:template.data.x,y:template.data.y},
-                (template.data.distance * canvas.dimensions.size) /
+                {x:templateDataObject.x,y:templateDataObject.y},
+                (templateDataObject.distance * canvas.dimensions.size) /
                   canvas.dimensions.distance
               )
             );
-            const tokenData = await creature._actor.getTokenData({
+            const tokenData = await creature._actor.getTokenDocument({
               x: position.x,
               y: position.y,
             });
@@ -25,16 +27,16 @@ export class CreatureSpawner {
         }
 
         let lootActor =  await game.actors.get(encounterData.lootActorId)
-        const tD = await lootActor.getTokenData();
+        const tD = await lootActor.getTokenDocument();
         const position = Propagator.getFreePosition(
           tD,
           CreatureSpawner.randomInCircle(
-            {x:template.data.x,y:template.data.y},
-            (template.data.distance * canvas.dimensions.size) /
+            {x:templateDataObject.x,y:templateDataObject.y},
+            (templateDataObject.distance * canvas.dimensions.size) /
             canvas.dimensions.distance
           )
         );
-        const tokenData = await lootActor.getTokenData({
+        const tokenData = await lootActor.getTokenDocument({
           x: position.x,
           y: position.y,
         });

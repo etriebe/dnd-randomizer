@@ -107,7 +107,7 @@ export class SFDialog extends FormApplication
 		}
 	}
 
-	populateEncounters(encounterData)
+	async populateEncounters(encounterData)
 	{
 		const html = this.element;
 		let $ul = html.find('.form-encounters ul').first();
@@ -218,7 +218,9 @@ export class SFDialog extends FormApplication
 			let $details = $ul.find('li:last-child .encounter-details');
 			for (const creature of encounter.creatures)
 			{
-				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${TextEditor.enrichHTML(creature.dynamicLink)}</span>`);
+				const creatureActorObject = await creature.getActor();
+				const actorLink = FoundryUtils.getActorLink(creatureActorObject.id, creatureActorObject.name, creature.compendium);
+				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}</span>`);
 			}
 
 
@@ -226,7 +228,7 @@ export class SFDialog extends FormApplication
 			{
 				$details.find('.encounter-details-loot').append(`<span class="loot-button">
 					${loot.quantity} <i class="fas fa-times" style="font-size: 0.5rem"></i>
-					${loot.dynamicLink.length > 0 ? TextEditor.enrichHTML(loot.dynamicLink) : loot.name}
+					${loot.dynamicLink.length > 0 ? FoundryUtils.getItemLink(loot) : loot.name}
 				</span>`);
 			}
 		}
@@ -245,7 +247,7 @@ export class SFDialog extends FormApplication
 			getFavoritedEncounters = await SFHelpers.parseEncounter(
 				Object.values(getFavoritedEncounters)
 			);
-			this.populateEncounters(getFavoritedEncounters);
+			await this.populateEncounters(getFavoritedEncounters);
 		}
 
 		this.populateEncounterTypes();
@@ -308,7 +310,7 @@ export class SFDialog extends FormApplication
 					return 0;
 				});
 				const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
-				_this.populateEncounters(encounterData);
+				await _this.populateEncounters(encounterData);
 			}
 			else
 			{
@@ -322,7 +324,7 @@ export class SFDialog extends FormApplication
 					return 0;
 				});
 				const encounterData = await SFHelpers.parseEncounter(fetchedData, params);
-				_this.populateEncounters(encounterData);
+				await _this.populateEncounters(encounterData);
 			}
 
 			$button.prop('disabled', false).removeClass('disabled');

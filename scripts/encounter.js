@@ -178,11 +178,15 @@ export class Encounter {
       ? game.folders.getName(folderName)
       : await Folder.create({ type: "Actor", name: folderName });
 
-    const actorData = {
-      name: this.name || this.id,
-      type: "npc",
-      img: await this.getRandomChestIcon(), //"icons/svg/chest.svg",
-      data: {
+    let actorData = null;
+    if (FoundryUtils.isFoundryVersion10())
+    {
+      actorData = {
+        name: this.name || this.id,
+        type: "npc",
+        texture: {
+          src: await this.getRandomChestIcon(),
+        },
         currency: {
           // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
           cp: this.currency.cp,
@@ -191,9 +195,28 @@ export class Encounter {
           gp: this.currency.gp,
           pp: this.currency.pp,
         },
-      },
-      folder: folder.id,
-    };
+        folder: folder.id,
+      };
+    }
+    else
+    {
+      actorData = {
+        name: this.name || this.id,
+        type: "npc",
+        img: await this.getRandomChestIcon(), //"icons/svg/chest.svg",
+        data: {
+          currency: {
+            // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
+            cp: this.currency.cp,
+            sp: this.currency.sp,
+            ep: this.currency.ep,
+            gp: this.currency.gp,
+            pp: this.currency.pp,
+          },
+        },
+        folder: folder.id,
+      };
+    }
 
     const actor = await Actor.create(actorData);
     let items = [];
@@ -210,6 +233,7 @@ class EncCreature {
     this.name = creature.name;
     this.quantity = creature.quantity;
     this.combatdata = creature.combatdata ?? [];
+    this.compendium = null;
     this.dynamicLink = this.getDLink();
     this._actor = null;
   }
@@ -238,10 +262,12 @@ class EncCreature {
   getDLink() {
     let actor = game.actors.find((a) => a.name === this.name);
     if (actor) {
+      this.compendium = "";
       return `@Actor[${actor.id}]{${this.name}}`;
     }
     if (!actor) {
       const compData = Encounter.getCompendiumEntryByName(this.name, "Actor");
+      this.compendium = compData.compendium.collection;
       return `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${this.name}}`;
     }
   }
@@ -301,7 +327,7 @@ class EncItem {
         : item.toObject();
       if (!this._itemDocument) return undefined;
       this.name = FoundryUtils.getDataObjectFromObject(item).name;
-      this._itemDocument.data.quantity = this.quantity || 1;
+      FoundryUtils.getDataObjectFromObject(this._itemDocument).quantity = this.quantity || 1;
       this.dynamicLink = `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${this._itemDocument.name}}`;
       return this._itemDocument;
     }
