@@ -33,6 +33,10 @@ export class SFLocalHelpers {
     }
   
     static async populateObjectsFromCompendiums(forceReload) {
+      const constCompFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterCompendiums"
+      );
       let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
       if (!this.dictionariesInitialized)
       {
@@ -54,8 +58,8 @@ export class SFLocalHelpers {
       if (!this.dictionariesPopulated || forceReload)
       {
         let promises = [];
-        promises.push(this.populateItemsFromCompendiums());
-        promises.push(this.populateMonstersFromCompendiums());
+        promises.push(this.populateItemsFromCompendiums(constCompFilter));
+        promises.push(this.populateMonstersFromCompendiums(constCompFilter));
         await Promise.all(promises);
         this.calculateCreatureTypeCounts();
         this.calculateEnvironmentCreatureCounts();
@@ -162,12 +166,19 @@ export class SFLocalHelpers {
       }
     }
   
-    static async populateItemsFromCompendiums()
+    static async populateItemsFromCompendiums(constCompFilter)
     {
       this.initializeDictionaries();
       let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
 
       for (let compendium of filteredCompendiums) {
+        let shouldProcessCompendium = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection);
+        if (shouldProcessCompendium && !shouldProcessCompendium[compendium.collection])
+        {
+          console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
+          continue;
+        }
+
         if (!compendium)
         {
           break;
@@ -203,12 +214,18 @@ export class SFLocalHelpers {
       }
     }
 
-    static async populateMonstersFromCompendiums()
+    static async populateMonstersFromCompendiums(constCompFilter)
     {
       this.allMonsters = [];
       let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
 
       for (let compendium of filteredCompendiums) {
+        let shouldProcessCompendium = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection);
+        if (shouldProcessCompendium && !shouldProcessCompendium[compendium.collection])
+        {
+          console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
+          continue;
+        }
         if (!compendium)
         {
           break;
