@@ -172,6 +172,13 @@ export class SFLocalHelpers {
       let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
 
       for (let compendium of filteredCompendiums) {
+        let shouldProcessCompendium = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection);
+        if (shouldProcessCompendium && !shouldProcessCompendium[compendium.collection])
+        {
+          console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
+          continue;
+        }
+
         if (!compendium)
         {
           break;
@@ -213,6 +220,12 @@ export class SFLocalHelpers {
       let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Actor" || p.metadata.entity === "Actor");
 
       for (let compendium of filteredCompendiums) {
+        let shouldProcessCompendium = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection);
+        if (shouldProcessCompendium && !shouldProcessCompendium[compendium.collection])
+        {
+          console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
+          continue;
+        }
         if (!compendium)
         {
           break;

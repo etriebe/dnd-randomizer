@@ -316,7 +316,7 @@ export class NPCActor5e
         }
         let abilityModType = spellObject.abilityMod;
         let parentDataObject = FoundryUtils.getDataObjectFromObject(spellObject.parent);
-        let abilityModValue = eval("parentDataObject.abilities." + abilityModType + ".mod");
+        let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
         let spellDataObject = FoundryUtils.getDataObjectFromObject(spellObject);
         let damageList = spellDataObject.damage.parts;
 
@@ -402,7 +402,7 @@ export class NPCActor5e
         let abilityModType = attackObject.abilityMod;
         let attackDataObject = FoundryUtils.getDataObjectFromObject(attackObject);
         let parentDataObject = FoundryUtils.getDataObjectFromObject(attackObject.parent);
-        let abilityModValue = eval("parentDataObject.abilities." + abilityModType + ".mod");
+        let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
         let damageList = attackDataObject.damage.parts;
 
         let totalDamageForAttack = 0;

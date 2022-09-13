@@ -78,6 +78,7 @@ export class SFCompendiumSorter extends FormApplication {
 			$button.prop('disabled', true).addClass('disabled');
 			let forceReload = true;
 			html.find('button#index-compendiums')[0].innerText = `Currently indexing...`;
+			await this.saveCompendiumSetting();
 			let doneIndexing = await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
 			savedIndexDate = SFLocalHelpers._indexCacheDate;
 			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
