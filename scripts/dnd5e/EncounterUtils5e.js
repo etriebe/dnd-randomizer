@@ -84,6 +84,8 @@ export class EncounterUtils5e
           let numberOfMonstersToPutInCombat = Math.min(Math.floor((Math.random() * numberOfMonstersAllowedInCombat)) + 1, 10);
           let creatureCombatDetails = {};
           creatureCombatDetails["name"] = monsterName;
+          creatureCombatDetails["actorid"] = randomMonsterActorId;
+          creatureCombatDetails["compendiumname"] = randomMonster.compendiumname;
           creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
@@ -150,6 +152,8 @@ export class EncounterUtils5e
           let monsterCR = randomMonster.actorcr;
           let creatureCombatDetails = {};
           creatureCombatDetails["name"] = monsterName;
+          creatureCombatDetails["actorid"] = randomMonsterActorId;
+          creatureCombatDetails["compendiumname"] = randomMonster.compendiumname;
           creatureCombatDetails["quantity"] = numberOfCreatures;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
