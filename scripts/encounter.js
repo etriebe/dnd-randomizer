@@ -231,6 +231,8 @@ export class Encounter {
 class EncCreature {
   constructor(creature) {
     this.name = creature.name;
+    this.actorid = creature.actorid;
+    this.compendiumname = creature.compendiumname;
     this.quantity = creature.quantity;
     this.combatdata = creature.combatdata ?? [];
     this.compendium = null;
