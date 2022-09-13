@@ -48,9 +48,9 @@ export class SFCompendiumSorter extends FormApplication {
 			const el = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection)
 			console.log(compendium);
 			$ul.append(`<li class="compendiumTypeLi">
-				<input type="checkbox" name="${compendium.metadata.package}.${compendium.metadata.name}" ${!el || el[compendium.collection] ? "checked" : ""}>
+				<input type="checkbox" name="${compendium.collection}" ${!el || el[compendium.collection] ? "checked" : ""}>
 				<span class="compendium-type" data-type="${compendium.documentName}">${compendium.documentName}</span>
-				<span class="compendium-title" data-name="${compendium.metadata.package}.${compendium.metadata.name}">${compendium.metadata.label}</span>
+				<span class="compendium-title" data-name="${compendium.collection}">${compendium.metadata.label}</span>
 			</li>`)
 		}
 
