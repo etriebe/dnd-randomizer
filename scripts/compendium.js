@@ -109,4 +109,9 @@ export class SFCompendiumSorter extends FormApplication {
 		
 		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterCompendiums',filterCompendiumSettings);
 	}
+
+	async _updateObject(event, formData)
+	{
+
+	}
 }
