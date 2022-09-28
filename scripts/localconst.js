@@ -833,5 +833,1406 @@ export const SFLOCALCONSTS = {
         "18": ["15600", "20800", "31200", "41600"],
         "19": ["26600", "35500", "53250", "71000"],
         "20": ["36800", "49000", "73500", "9800"]
-    }
+    },
+    TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING: {
+        "Alquam, Demon Lord of Night": [
+          "Any"
+        ],
+        "Chernomoi": [
+          "Urban"
+        ],
+        "Manabane Scarab Swarm": [
+          "Desert"
+        ],
+        "Moss Lurker": [
+          "Forests",
+          "Marshes",
+          "Ruins & Underground"
+        ],
+        "Swamp Adder": [
+          "Swamp"
+        ],
+        "J'ba Fofi Spider": [
+          "Forests"
+        ],
+        "Herald of Blood": [
+          "Any"
+        ],
+        "Wharfling Swarm": [
+          "Aquatic"
+        ],
+        "Monolith Champion": [
+          "Any"
+        ],
+        "Weeping Treant": [
+          "Forests"
+        ],
+        "Eleinomae": [
+          "Marshes"
+        ],
+        "Devilbound Gnomish Prince": [
+          "Any"
+        ],
+        "Bagiennik": [
+          "Forests",
+          "Marshes"
+        ],
+        "Kikimora": [
+          "Urban"
+        ],
+        "Tusked Skyfish": [
+          "Hills",
+          "Plains"
+        ],
+        "Young Mithral Dragon": [
+          "Mountains"
+        ],
+        "Guardian": [
+          "Any"
+        ],
+        "Thursir Giant": [
+          "Any"
+        ],
+        "Shabti": [
+          "Marshes",
+          "Ruins & Underground"
+        ],
+        "Burrowling": [
+          "Plains"
+        ],
+        "Cactid": [
+          "Desert"
+        ],
+        "Xhkarsh": [
+          "Any"
+        ],
+        "Boloti": [
+          "Marshes"
+        ],
+        "Valkyrie": [
+          "Any"
+        ],
+        "Jotun Giant": [
+          "Hills",
+          "Mountains",
+          "Plains"
+        ],
+        "Ancient Wind Dragon": [
+          "Mountains",
+          "Plains"
+        ],
+        "Doppelrat": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Koralk (Harvester Devil)": [
+          "Any"
+        ],
+        "Young Flame Dragon": [
+          "Mountains",
+          "Ruins & Underground"
+        ],
+        "Einherjar": [
+          "Any"
+        ],
+        "Eel Hound": [
+          "Aquatic"
+        ],
+        "Ancient Mithral Dragon": [
+          "Mountains"
+        ],
+        "Mask Wight": [
+          "Any"
+        ],
+        "Zmey Headling": [
+          "Forests",
+          "Marshes"
+        ],
+        "Glass Gator": [
+          "Aquatic",
+          "Marshes"
+        ],
+        "Lemurfolk (Kaguani)": [
+          "Forests"
+        ],
+        "Asanbosam": [
+          "Forests"
+        ],
+        "Ink Devil": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Feyward Tree": [
+          "Any"
+        ],
+        "Bright Day (Baba Yaga's Horseman)": [
+          "Any"
+        ],
+        "Monolith Footman": [
+          "Any"
+        ],
+        "Domovoi": [
+          "Desert",
+          "Forests"
+        ],
+        "Rootlet Swarm": [
+          "Desert",
+          "Badlands"
+        ],
+        "Vine Troll Skeleton": [
+          "Any"
+        ],
+        "Iron Ghoul": [
+          "Ruins & Underground"
+        ],
+        "Bear King": [
+          "Forests",
+          "Hills"
+        ],
+        "Gerridae": [
+          "Aquatic"
+        ],
+        "Child of the Briar": [
+          "Forests"
+        ],
+        "Gug": [
+          "Ruins & Underground"
+        ],
+        "Ancient Sea Dragon": [
+          "Aquatic"
+        ],
+        "Deep One Hybrid Priest": [
+          "Aquatic"
+        ],
+        "Sandman": [
+          "Any"
+        ],
+        "Dullahan": [
+          "Any"
+        ],
+        "Voidling": [
+          "Any"
+        ],
+        "Shadhavar": [
+          "Any"
+        ],
+        "Spider Thief": [
+          "Any",
+          "Urban"
+        ],
+        "Emerald Order Cult Leader": [
+          "Any"
+        ],
+        "Ostinato": [
+          "Any",
+          "Ruins & Underground"
+        ],
+        "Sea Dragon Wyrmling": [
+          "Aquatic"
+        ],
+        "Vine Lord": [
+          "Forests"
+        ],
+        "Redcap": [
+          "Forests",
+          "Hills"
+        ],
+        "Orobas Devil": [
+          "Any"
+        ],
+        "Living Wick": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Emerald Eye": [
+          "Any"
+        ],
+        "Lake Troll": [
+          "Aquatic"
+        ],
+        "Leshy": [
+          "Forests"
+        ],
+        "Bandit Lord": [
+          "Any"
+        ],
+        "Chort Devil": [
+          "Any"
+        ],
+        "Scheznyki": [
+          "Hills",
+          "Ruins & Underground"
+        ],
+        "Sathaq Worm": [
+          "Desert",
+          "Marshes",
+          "Ruins & Underground"
+        ],
+        "Vile Barber (Siabhra)": [
+          "Any"
+        ],
+        "Grim Jester": [
+          "Any"
+        ],
+        "Eala": [
+          "Any"
+        ],
+        "Liosalfar": [
+          "Any"
+        ],
+        "Chained Angel": [
+          "Any"
+        ],
+        "Derro Shadow Antipaladin": [
+          "Ruins & Underground"
+        ],
+        "Ngobou": [
+          "Plains"
+        ],
+        "Loxoda": [
+          "Forests",
+          "Plains"
+        ],
+        "Frostveil": [
+          "Hills",
+          "Plains"
+        ],
+        "Apau Perape": [
+          "Any"
+        ],
+        "Idolic Deity": [
+          "Ruins & Underground"
+        ],
+        "Duskthorn Dryad": [
+          "Forests"
+        ],
+        "Haugbui": [
+          "Any"
+        ],
+        "Adult Rime Worm": [
+          "Any"
+        ],
+        "Death Butterfly Swarm": [
+          "Forests",
+          "Plains"
+        ],
+        "Tendril Puppet": [
+          "Forests"
+        ],
+        "Qwyllion": [
+          "Any"
+        ],
+        "Star Drake": [
+          "Hills",
+          "Mountains"
+        ],
+        "Mirror Hag": [
+          "Any"
+        ],
+        "Buraq": [
+          "Any"
+        ],
+        "Vila": [
+          "Forests"
+        ],
+        "Spark": [
+          "Any"
+        ],
+        "Son of Fenris": [
+          "Any"
+        ],
+        "Elvish Veteran Archer": [
+          "Any"
+        ],
+        "Gnoll Havoc Runner": [
+          "Desert",
+          "Plains"
+        ],
+        "Mordant Snare": [
+          "Ruins & Underground"
+        ],
+        "Clockwork Beetle Swarm": [
+          "Any"
+        ],
+        "Alehouse Drake": [
+          "Urban"
+        ],
+        "Psoglav Demon": [
+          "Any"
+        ],
+        "Eonic Drifter": [
+          "Any"
+        ],
+        "Clockwork Watchman": [
+          "Urban"
+        ],
+        "Arboreal Grappler": [
+          "Forests"
+        ],
+        "Stryx": [
+          "Forests",
+          "Urban"
+        ],
+        "Ushabti": [
+          "Ruins & Underground"
+        ],
+        "Rust Drake": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Roachling Lord": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Witchlight": [
+          "Any"
+        ],
+        "River King": [
+          "Aquatic"
+        ],
+        "Aridni": [
+          "Any"
+        ],
+        "Oozasis": [
+          "Desert",
+          "Marshes"
+        ],
+        "Wolf Reaver Dwarf": [
+          "Any"
+        ],
+        "Sharkjaw Skeleton": [
+          "Any"
+        ],
+        "Ghostwalk Spider": [
+          "Badlands",
+          "Forests"
+        ],
+        "Deep Drake": [
+          "Ruins & Underground"
+        ],
+        "Void Dragon Wyrmling": [
+          "Mountains"
+        ],
+        "Pombero": [
+          "Forests"
+        ],
+        "Smaragdine Golem": [
+          "Any"
+        ],
+        "Adult Void Dragon": [
+          "Badlands",
+          "Mountains"
+        ],
+        "Wormhearted Suffragan": [
+          "Any"
+        ],
+        "Cikavak": [
+          "Any"
+        ],
+        "Shroud": [
+          "Any"
+        ],
+        "Deep One Archimandrite": [
+          "Aquatic"
+        ],
+        "Firebird": [
+          "Any"
+        ],
+        "Umbral Vampire": [
+          "Any"
+        ],
+        "Gbahali (Postosuchus)": [
+          "Plains"
+        ],
+        "Vapor Lynx": [
+          "Marshes",
+          "Plains"
+        ],
+        "Salt Devil": [
+          "Desert"
+        ],
+        "Fate Eater": [
+          "Any"
+        ],
+        "Snow Queen": [
+          "Any"
+        ],
+        "Young Void Dragon": [
+          "Mountains"
+        ],
+        "Horakh": [
+          "Desert",
+          "Plains",
+          "Ruins & Underground"
+        ],
+        "Emperor of the Ghouls": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Algorith": [
+          "Any"
+        ],
+        "Ramag": [
+          "Plains",
+          "Urban"
+        ],
+        "Lantern Dragonette": [
+          "Forests"
+        ],
+        "Bone Swarm": [
+          "Any"
+        ],
+        "Kongamato": [
+          "Marshes",
+          "Plains"
+        ],
+        "Selang": [
+          "Badlands"
+        ],
+        "Ash Drake": [
+          "Mountains",
+          "Urban"
+        ],
+        "Blood Hag": [
+          "Any"
+        ],
+        "Deep One": [
+          "Aquatic"
+        ],
+        "Lunar Devil": [
+          "Any"
+        ],
+        "Mi-Go": [
+          "Any"
+        ],
+        "Adult Mithral Dragon": [
+          "Mountains"
+        ],
+        "Deathcap Myconid": [
+          "Forests",
+          "Ruins & Underground"
+        ],
+        "Corrupted Ogre Chieftain": [
+          "Badlands",
+          "Hills",
+          "Ruins & Underground"
+        ],
+        "Sandwyrm": [
+          "Desert"
+        ],
+        "White Ape": [
+          "Forests"
+        ],
+        "Malphas (Storm Crow)": [
+          "Any"
+        ],
+        "Bukavac": [
+          "Forests",
+          "Marshes"
+        ],
+        "Rum Gremlin": [
+          "Aquatic"
+        ],
+        "Miremal": [
+          "Marshes"
+        ],
+        "Lich Hound": [
+          "Any"
+        ],
+        "Salt Golem": [
+          "Desert",
+          "Aquatic"
+        ],
+        "Fext": [
+          "Any"
+        ],
+        "Andrenjinyi": [
+          "Any"
+        ],
+        "Queen of Witches": [
+          "Any"
+        ],
+        "Lorelei": [
+          "Aquatic"
+        ],
+        "Forest Hunter": [
+          "Any"
+        ],
+        "Skitterhaunt": [
+          "Desert",
+          "Badlands",
+          "Ruins & Underground"
+        ],
+        "Fidele Angel": [
+          "Any"
+        ],
+        "Bereginyas": [
+          "Mountains"
+        ],
+        "Firegeist": [
+          "Any"
+        ],
+        "Soul Eater": [
+          "Any"
+        ],
+        "Hound of the Night": [
+          "Hills",
+          "Plains",
+          "Ruins & Underground"
+        ],
+        "Ghost Knight": [
+          "Any"
+        ],
+        "Ychen Bannog": [
+          "Forests",
+          "Hills",
+          "Mountains"
+        ],
+        "Greater Death Butterfly Swarm": [
+          "Forests",
+          "Plains"
+        ],
+        "Azza Gremlin": [
+          "Any",
+          "Mountains",
+          "Urban"
+        ],
+        "Dogmole Juggernaut": [
+          "Hills",
+          "Mountains",
+          "Ruins & Underground"
+        ],
+        "Desert Giant": [
+          "Desert"
+        ],
+        "Qorgeth, Demon Lord of the Devouring Worm": [
+          "Any"
+        ],
+        "Nihileth": [
+          "Any"
+        ],
+        "Rotting Wind": [
+          "Any"
+        ],
+        "Bouda": [
+          "Any"
+        ],
+        "Beli": [
+          "Any"
+        ],
+        "Corpse Mound": [
+          "Any"
+        ],
+        "Mamura": [
+          "Badlands",
+          "Ruins & Underground"
+        ],
+        "Shadow Beast": [
+          "Badlands",
+          "Forests",
+          "Ruins & Underground"
+        ],
+        "Broodiken": [
+          "Any"
+        ],
+        "Derro Fetal Savant": [
+          "Ruins & Underground"
+        ],
+        "Shoggoth": [
+          "Any"
+        ],
+        "Gilded Devil": [
+          "Any"
+        ],
+        "Kot Bayun": [
+          "Hills",
+          "Mountains",
+          "Ruins & Underground"
+        ],
+        "Lord of the Hunt": [
+          "Any"
+        ],
+        "Hulking Whelp": [
+          "Any"
+        ],
+        "Possessed Pillar": [
+          "Desert",
+          "Urban"
+        ],
+        "Ravenfolk Doom Croaker": [
+          "Forests",
+          "Hills",
+          "Urban"
+        ],
+        "Imperial Ghoul": [
+          "Ruins & Underground"
+        ],
+        "Enchantress": [
+          "Any"
+        ],
+        "Anubian": [
+          "Any"
+        ],
+        "Ia'Affrat the Insatiable": [
+          "Any"
+        ],
+        "Spawn of Arbeyach": [
+          "Any"
+        ],
+        "Bone Crab": [
+          "Aquatic"
+        ],
+        "Serpopard": [
+          "Marshes",
+          "Plains"
+        ],
+        "Dissimortuum": [
+          "Any"
+        ],
+        "Giant Ant Queen": [
+          "Any"
+        ],
+        "Drowned Maiden": [
+          "Aquatic"
+        ],
+        "Millitaur": [
+          "Forests"
+        ],
+        "War Ostrich": [
+          "Desert",
+          "Plains"
+        ],
+        "Hoard Golem": [
+          "Any"
+        ],
+        "Blemmyes": [
+          "Hills",
+          "Mountains"
+        ],
+        "Map Mimic": [
+          "Ruins & Underground"
+        ],
+        "Temple Dog": [
+          "Any",
+          "Urban"
+        ],
+        "Owl Harpy": [
+          "Desert",
+          "Forests",
+          "Urban"
+        ],
+        "Clockwork Weaving Spider": [
+          "Urban"
+        ],
+        "Ravenfolk Warrior": [
+          "Forests",
+          "Hills",
+          "Urban"
+        ],
+        "Dream Eater": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Bearfolk": [
+          "Forests"
+        ],
+        "Nightgarm": [
+          "Any"
+        ],
+        "Mechuiti, Demon Lord of Apes": [
+          "Any"
+        ],
+        "Cambium": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Baba Yaga's Horseman, Base": [
+          "Any"
+        ],
+        "Kalke": [
+          "Any"
+        ],
+        "Elder Shadow Drake": [
+          "Forests"
+        ],
+        "Adult Cave Dragon": [
+          "Ruins & Underground"
+        ],
+        "Clockwork Myrmidon": [
+          "Forests",
+          "Plains",
+          "Urban"
+        ],
+        "Cavelight Moss": [
+          "Ruins & Underground"
+        ],
+        "Skein Witch": [
+          "Any"
+        ],
+        "Zmey": [
+          "Forests"
+        ],
+        "Duelist": [
+          "Any"
+        ],
+        "Stygian Fat-Tailed Scorpion": [
+          "Desert",
+          "Forests",
+          "Plains",
+          "Ruins & Underground"
+        ],
+        "Tosculi Drone": [
+          "Desert",
+          "Hills",
+          "Plains"
+        ],
+        "Adult Wind Dragon": [
+          "Mountains",
+          "Plains"
+        ],
+        "Mbielu": [
+          "Aquatic",
+          "Marshes",
+          "Plains"
+        ],
+        "Young Cave Dragon": [
+          "Ruins & Underground"
+        ],
+        "Rubezahl": [
+          "Any"
+        ],
+        "Risen Reaver": [
+          "Any"
+        ],
+        "Ala": [
+          "Any"
+        ],
+        "Clockwork Huntsman": [
+          "Forests",
+          "Urban"
+        ],
+        "Tophet": [
+          "Any",
+          "Urban"
+        ],
+        "Tosculi Hive-Queen": [
+          "Desert",
+          "Hills",
+          "Plains"
+        ],
+        "Tosculi Elite Bow Raider": [
+          "Desert",
+          "Hills",
+          "Plains"
+        ],
+        "Red Hag": [
+          "Any"
+        ],
+        "Ancient Void Dragon": [
+          "Badlands",
+          "Mountains"
+        ],
+        "Stuhac": [
+          "Hills",
+          "Mountains"
+        ],
+        "Kobold Alchemist": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Kishi Demon": [
+          "Any"
+        ],
+        "Nihilethic Zombie": [
+          "Aquatic",
+          "Ruins & Underground"
+        ],
+        "Al-Aeshma Genie": [
+          "Any"
+        ],
+        "Oculo Swarm": [
+          "Ruins & Underground"
+        ],
+        "Mahoru": [
+          "Aquatic"
+        ],
+        "Herald of Darkness": [
+          "Any"
+        ],
+        "Flame Dragon Wyrmling": [
+          "Mountains",
+          "Ruins & Underground"
+        ],
+        "Jaculus": [
+          "Forests"
+        ],
+        "Morphoi": [
+          "Aquatic"
+        ],
+        "Scorpion Cultist": [
+          "Desert"
+        ],
+        "Automata Devil": [
+          "Any"
+        ],
+        "Rift Swine": [
+          "Any"
+        ],
+        "Dau": [
+          "Desert"
+        ],
+        "Swarm of Scarab Beetles": [
+          "Any",
+          "Ruins & Underground"
+        ],
+        "Sand Hag": [
+          "Desert"
+        ],
+        "Ice Maiden": [
+          "Any"
+        ],
+        "Noctiny": [
+          "Any"
+        ],
+        "Garroter Crab": [
+          "Aquatic"
+        ],
+        "Nkosi": [
+          "Plains"
+        ],
+        "Dragon Eel": [
+          "Aquatic",
+          "Ruins & Underground"
+        ],
+        "Black Knight Commander": [
+          "Any"
+        ],
+        "Carrion Beetle": [
+          "Any"
+        ],
+        "Mindrot Thrall": [
+          "Any"
+        ],
+        "Gypsosphinx": [
+          "Desert",
+          "Plains",
+          "Ruins & Underground"
+        ],
+        "Adult Sea Dragon": [
+          "Aquatic"
+        ],
+        "Trollkin Reaver": [
+          "Any"
+        ],
+        "Young Wind Dragon": [
+          "Mountains",
+          "Plains"
+        ],
+        "Putrid Haunt": [
+          "Marshes"
+        ],
+        "Spinosaurus": [
+          "Forests",
+          "Marshes"
+        ],
+        "Avatar of Boreas": [
+          "Any"
+        ],
+        "Queen of Night and Magic": [
+          "Any"
+        ],
+        "Dorreq": [
+          "Badlands"
+        ],
+        "Edimmu": [
+          "Desert"
+        ],
+        "Fellforged": [
+          "Any"
+        ],
+        "Night Scorpion": [
+          "Desert",
+          "Forests",
+          "Plains",
+          "Ruins & Underground"
+        ],
+        "Arcane Guardian": [
+          "Any"
+        ],
+        "Clurichaun": [
+          "Urban"
+        ],
+        "Flab Giant": [
+          "Hills",
+          "Mountains"
+        ],
+        "Corrupting Ooze": [
+          "Any"
+        ],
+        "Wampus Cat": [
+          "Forests",
+          "Hills"
+        ],
+        "Erina Defender": [
+          "Forests",
+          "Hills",
+          "Plains"
+        ],
+        "Vampire Warlock": [
+          "Any"
+        ],
+        "Nichny": [
+          "Any"
+        ],
+        "Shadow Fey": [
+          "Any"
+        ],
+        "Treacle": [
+          "Forests",
+          "Plains",
+          "Urban"
+        ],
+        "Arbeyach, Prince of Swarms": [
+          "Any"
+        ],
+        "Venomous Mummy": [
+          "Desert",
+          "Ruins & Underground"
+        ],
+        "Rime Worm Grub": [
+          "Any"
+        ],
+        "Slow Storm": [
+          "Any"
+        ],
+        "Spawn of Akyishigal": [
+          "Any"
+        ],
+        "Dune Mimic": [
+          "Desert",
+          "Plains"
+        ],
+        "Library Automaton": [
+          "Urban"
+        ],
+        "Elemental Locus": [
+          "Any"
+        ],
+        "Wolf Spirit Swarm": [
+          "Forests",
+          "Plains"
+        ],
+        "Steam Golem": [
+          "Any"
+        ],
+        "Wharfling": [
+          "Aquatic"
+        ],
+        "Koschei": [
+          "Any"
+        ],
+        "Fear Smith (Fiarsídhe)": [
+          "Any"
+        ],
+        "Vesiculosa": [
+          "Desert",
+          "Badlands"
+        ],
+        "Dust Goblin": [
+          "Desert",
+          "Badlands",
+          "Ruins & Underground"
+        ],
+        "Goat-Man": [
+          "Badlands",
+          "Forests",
+          "Hills"
+        ],
+        "Bonepowder Ghoul": [
+          "Ruins & Underground"
+        ],
+        "Ratfolk": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Sluagh Swarm": [
+          "Any"
+        ],
+        "Lemurfolk Greyfur": [
+          "Forests"
+        ],
+        "Naina": [
+          "Any"
+        ],
+        "Sand Spider": [
+          "Desert",
+          "Plains"
+        ],
+        "Theullai": [
+          "Any"
+        ],
+        "Alseid": [
+          "Forests"
+        ],
+        "Giant Ant": [
+          "Any"
+        ],
+        "Rusalka": [
+          "Aquatic"
+        ],
+        "Amphiptere": [
+          "Forests"
+        ],
+        "Bucca": [
+          "Any"
+        ],
+        "Gnarljak": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Tosculi Warrior": [
+          "Desert",
+          "Hills",
+          "Plains"
+        ],
+        "Rat King": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Zanskaran Viper": [
+          "Marshes"
+        ],
+        "Degenerate Titan": [
+          "Plains",
+          "Ruins & Underground"
+        ],
+        "Bone Collective": [
+          "Any"
+        ],
+        "Sarcophagus Slime": [
+          "Ruins & Underground"
+        ],
+        "Savager": [
+          "Forests",
+          "Plains"
+        ],
+        "Camazotz, Demon Lord of Bats and Fire": [
+          "Any"
+        ],
+        "Ratatosk": [
+          "Any",
+          "Forests"
+        ],
+        "Flutterflesh": [
+          "Any"
+        ],
+        "Prismatic Beetle Swarm": [
+          "Forests"
+        ],
+        "Black Night (Baba Yaga's Horseman)": [
+          "Any"
+        ],
+        "Folk of Leng": [
+          "Any"
+        ],
+        "Behtu": [
+          "Forests"
+        ],
+        "Berstuc": [
+          "Any"
+        ],
+        "City Watch Captain": [
+          "Urban"
+        ],
+        "Hundun": [
+          "Any"
+        ],
+        "Kobold Trapsmith": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Dwarven Ringmage": [
+          "Any"
+        ],
+        "Totivillus, Scribe of Hell": [
+          "Any"
+        ],
+        "Beggar Ghoul": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Mammon, Archduke of Greed": [
+          "Any"
+        ],
+        "Likho": [
+          "Forests"
+        ],
+        "Crystalline Devil": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Wind Dragon Wyrmling": [
+          "Hills",
+          "Mountains",
+          "Plains"
+        ],
+        "Dragonleaf Tree": [
+          "Forests",
+          "Urban"
+        ],
+        "Mavka": [
+          "Any"
+        ],
+        "Titanoboa": [
+          "Forests"
+        ],
+        "Eye Golem": [
+          "Any"
+        ],
+        "Urochar (Strangling Watcher)": [
+          "Ruins & Underground"
+        ],
+        "Fire Dancer Swarm": [
+          "Any"
+        ],
+        "Kobold Chieftain": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Dipsa": [
+          "Marshes"
+        ],
+        "Chronalmental": [
+          "Any"
+        ],
+        "Imy-ut Ushabti": [
+          "Any"
+        ],
+        "Angler Worm": [
+          "Ruins & Underground"
+        ],
+        "Young Spinosaurus": [
+          "Forests",
+          "Marshes"
+        ],
+        "Adult Flame Dragon": [
+          "Mountains",
+          "Ruins & Underground"
+        ],
+        "Akyishigal, Demon Lord of Cockroaches": [
+          "Any"
+        ],
+        "Subek": [
+          "Aquatic"
+        ],
+        "Suturefly": [
+          "Forests",
+          "Marshes"
+        ],
+        "Bastet Temple Cat": [
+          "Urban"
+        ],
+        "Star-Spawn of Cthulhu": [
+          "Any"
+        ],
+        "Alseid Grovekeeper": [
+          "Forests"
+        ],
+        "Eater of Dust (Yakat-Shi)": [
+          "Any"
+        ],
+        "Xanka": [
+          "Any"
+        ],
+        "Red-Banded Line Spider": [
+          "Any"
+        ],
+        "Crimson Drake": [
+          "Forests"
+        ],
+        "Dogmole": [
+          "Forests",
+          "Hills",
+          "Mountains"
+        ],
+        "Forest Marauder": [
+          "Badlands",
+          "Forests"
+        ],
+        "Cave Dragon Wyrmling": [
+          "Ruins & Underground"
+        ],
+        "Hraesvelgr the Corpse Swallower": [
+          "Any"
+        ],
+        "Shellycoat": [
+          "Ruins & Underground"
+        ],
+        "Myling": [
+          "Any"
+        ],
+        "Sap Demon": [
+          "Forests"
+        ],
+        "Spectral Guardian": [
+          "Any"
+        ],
+        "Water Leaper": [
+          "Aquatic"
+        ],
+        "Malakbel": [
+          "Any"
+        ],
+        "Nkosi Pridelord": [
+          "Plains"
+        ],
+        "Zimwi": [
+          "Any"
+        ],
+        "Skin Bat": [
+          "Any"
+        ],
+        "Angatra": [
+          "Forests"
+        ],
+        "Darakhul Ghoul": [
+          "Ruins & Underground"
+        ],
+        "Ancient Titan": [
+          "Any"
+        ],
+        "Isonade": [
+          "Aquatic"
+        ],
+        "Mirager": [
+          "Desert",
+          "Badlands"
+        ],
+        "Krake Spawn": [
+          "Aquatic"
+        ],
+        "Paper Drake": [
+          "Urban"
+        ],
+        "Coral Drake": [
+          "Aquatic"
+        ],
+        "Young Sea Dragon": [
+          "Aquatic",
+          "Mountains"
+        ],
+        "Fraughashar": [
+          "Any"
+        ],
+        "Sand Silhouette": [
+          "Desert"
+        ],
+        "Lindwurm": [
+          "Forests",
+          "Hills"
+        ],
+        "Chelicerae": [
+          "Badlands"
+        ],
+        "Gearforged Templar": [
+          "Any"
+        ],
+        "Moonlit King": [
+          "Any"
+        ],
+        "Gray Thirster": [
+          "Desert"
+        ],
+        "Clockwork Beetle": [
+          "Any"
+        ],
+        "Deathwisp": [
+          "Any"
+        ],
+        "Red Sun (Baba Yaga's Horseman)": [
+          "Any"
+        ],
+        "Ratfolk Rogue": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Accursed Defiler": [
+          "Desert",
+          "Badlands"
+        ],
+        "Erina Scrounger": [
+          "Forests",
+          "Hills",
+          "Plains"
+        ],
+        "Mallqui": [
+          "Desert",
+          "Mountains",
+          "Plains",
+          "Urban"
+        ],
+        "Roachling Skirmisher": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Empty Cloak": [
+          "Any"
+        ],
+        "Cobbleswarm": [
+          "Ruins & Underground",
+          "Urban"
+        ],
+        "Spider of Leng": [
+          "Hills",
+          "Mountains"
+        ],
+        "Far Darrig": [
+          "Forests",
+          "Plains"
+        ],
+        "Abominable Beauty": [
+          "Any"
+        ],
+        "Ravenala": [
+          "Forests"
+        ],
+        "Drakon": [
+          "Coastal"
+        ],
+        "Clockwork Hound": [
+          "Forests",
+          "Urban"
+        ],
+        "Vaettir": [
+          "Any"
+        ],
+        "Mngwa": [
+          "Badlands",
+          "Forests",
+          "Plains"
+        ],
+        "Ancient Flame Dragon": [
+          "Mountains",
+          "Ruins & Underground"
+        ],
+        "Spire Walker": [
+          "Any"
+        ],
+        "Clockwork Abomination": [
+          "Any"
+        ],
+        "Uraeus": [
+          "Any",
+          "Ruins & Underground"
+        ],
+        "Zaratan": [
+          "Aquatic"
+        ],
+        "Ravenfolk Scout": [
+          "Forests",
+          "Hills",
+          "Urban"
+        ]
+      }
+      
 };

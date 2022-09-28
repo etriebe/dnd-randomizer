@@ -96,6 +96,11 @@ export class ActorUtils
         }
 
         let environmentArray = environment.split(",");
+        let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[actor.actorname];
+        if (extraEnvironmentMapping)
+        {
+          environmentArray = environmentArray.concat(extraEnvironmentMapping);
+        }
         environmentArray = environmentArray.map(e => e.trim());
         return environmentArray;
     }

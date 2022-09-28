@@ -497,13 +497,21 @@ export class SFLocalHelpers {
             continue;
           }
 
+          let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[monsterObject.actorname];
+          if (extraEnvironmentMapping && extraEnvironmentMapping.filter(e => filteredEnvironments.filter(f => f === e).length > 0).length > 0)
+          {
+            console.log(`Added monster ${monsterObject.actorname} because it appeared in TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING`);
+            filteredMonsters.push(monsterObject.actor);
+            continue;
+          }
+
           if (monsterObject.environment.filter(e => filteredEnvironments.filter(f => f === e).length > 0).length > 0)
           {
             filteredMonsters.push(monsterObject.actor);
           }
         }
         catch (error) {
-          console.warn(`Unable to process creature: Name:${monsterObject.name}, Id: ${ActorUtils.getActorId(monsterObject)}`);
+          console.warn(`Unable to process creature: Name:${monsterObject.actorname}, Id: ${ActorUtils.getActorId(monsterObject)}`);
         }
       }
 
