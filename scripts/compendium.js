@@ -47,9 +47,12 @@ export class SFCompendiumSorter extends FormApplication {
 		for (let compendium of compendiums) {
 			const el = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection)
 			console.log(compendium);
+			const creatureCount = SFLocalHelpers.allMonsters.filter(m => m.compendiumname === compendium.metadata.label).length;
+			const creatureCountDescription = creatureCount > 0 ? ` - ${creatureCount} creatures` : ``;
+
 			$ul.append(`<li class="compendiumTypeLi">
 				<input type="checkbox" name="${compendium.collection}" ${!el || el[compendium.collection] ? "checked" : ""}>
-				<span class="compendium-type" data-type="${compendium.documentName}">${compendium.documentName}</span>
+				<span class="compendium-type" data-type="${compendium.documentName}">${compendium.documentName}${creatureCountDescription}</span>
 				<span class="compendium-title" data-name="${compendium.collection}">${compendium.metadata.label}</span>
 			</li>`)
 		}
