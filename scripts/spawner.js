@@ -1,4 +1,5 @@
 import { Propagator } from "./propagator.js";
+import { ActorUtils } from "./utils/ActorUtils.js";
 import { FoundryUtils } from "./utils/FoundryUtils.js";
 
 export class CreatureSpawner {
@@ -9,7 +10,7 @@ export class CreatureSpawner {
         for (let creature of encounterData.creatures) {
           for (let i = 0; i < creature.quantity; i++) {
             await CreatureSpawner.wait(100);
-            const tD = await creature._actor.getTokenDocument();
+            const tD = await ActorUtils.getTokenDocument(creature._actor);
             const position = Propagator.getFreePosition(
               tD,
               CreatureSpawner.randomInCircle(
@@ -18,7 +19,7 @@ export class CreatureSpawner {
                   canvas.dimensions.distance
               )
             );
-            const tokenData = await creature._actor.getTokenDocument({
+            const tokenData = await ActorUtils.getTokenDocument(creature._actor, {
               x: position.x,
               y: position.y,
             });
@@ -27,7 +28,7 @@ export class CreatureSpawner {
         }
 
         let lootActor =  await game.actors.get(encounterData.lootActorId)
-        const tD = await lootActor.getTokenDocument();
+        const tD = await ActorUtils.getTokenDocument(lootActor);
         const position = Propagator.getFreePosition(
           tD,
           CreatureSpawner.randomInCircle(
@@ -36,7 +37,8 @@ export class CreatureSpawner {
             canvas.dimensions.distance
           )
         );
-        const tokenData = await lootActor.getTokenDocument({
+
+        const tokenData = await ActorUtils.getTokenDocument(lootActor, {
           x: position.x,
           y: position.y,
         });

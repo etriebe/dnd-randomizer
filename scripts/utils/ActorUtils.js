@@ -3,6 +3,7 @@ import { PCActorPf2e } from "../pf2e/PCActorPf2e.js";
 import { NPCActorPf2e } from "../pf2e/NPCActorPf2e.js";
 import { NPCActor5e } from "../dnd5e/NPCActor5e.js";
 import { PCActor5e } from "../dnd5e/PCActor5e.js";
+import { SFLOCALCONSTS } from "../localconst.js";
 
 export class ActorUtils
 {
@@ -127,5 +128,17 @@ export class ActorUtils
     static getActualActorObject(currentMonster)
     {
       return currentMonster.actor.actor ?? currentMonster.actor;
+    }
+
+    static async getTokenDocument(actor, data)
+    {
+      if (FoundryUtils.isFoundryVersion10())
+      {
+        return await actor.getTokenDocument(data)
+      }
+      else
+      {
+        return await actor.getTokenData(data);
+      }
     }
 }
