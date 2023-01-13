@@ -36,7 +36,7 @@ export class EncounterUtils5e
             continue;
           }
 
-          let randomMonsterXP = FoundryUtils.getDataObjectFromObject(randomMonster).details.xp.value;
+          let randomMonsterXP = randomMonsterObject.actorxp;
           let currentEncounterXPMultiplier = EncounterUtils5e.getCurrentEncounterXPMultiplier(numberOfMonstersInCombat);
           let monsterCR = FoundryUtils.getDataObjectFromObject(randomMonster).details.cr;
           let currentEncounterAdjustedXP = EncounterUtils5e.getAdjustedXPOfEncounter(currentEncounter);
@@ -66,7 +66,7 @@ export class EncounterUtils5e
             continue;
           }
 
-          let numberOfMonstersAllowedInCombat = EncounterUtils5e.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster);
+          let numberOfMonstersAllowedInCombat = EncounterUtils5e.getNumberOfMonstersAllowedInCombat(currentEncounter, monsterList, targetEncounterXP, randomMonster, randomMonsterXP);
 
           if (numberOfMonstersAllowedInCombat == 0)
           {
@@ -89,7 +89,7 @@ export class EncounterUtils5e
           creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
-          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => ((randomMonster.actorid != null || randomMonster.actorid) != undefined && m.actorid === randomMonster.actorid) || (m.actor.actor.id === randomMonsterActorId)).combatdata;
+          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId).combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
@@ -170,11 +170,10 @@ export class EncounterUtils5e
     return currentEncounter;
   }
 
-  static getNumberOfMonstersAllowedInCombat(currentEncounter, fullMonsterList, targetEncounterXP, newMonster)
+  static getNumberOfMonstersAllowedInCombat(currentEncounter, fullMonsterList, targetEncounterXP, newMonster, newMonsterXP)
   {
     let currentEncounterMonsterCount = 0;
     let currentEncounterXP = 0;
-    let newMonsterXP = FoundryUtils.getDataObjectFromObject(newMonster).details.xp.value;
     if (currentEncounter["creatures"].length > 0)
     {
       for (const monsterIndex in currentEncounter["creatures"])
