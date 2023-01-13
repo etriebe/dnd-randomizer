@@ -278,6 +278,8 @@ class EncCreature {
 class EncItem {
   constructor(item, type, isScroll = false) {
     this.name = item.name;
+    this.compendiumname = "";
+    this.id = "";
     this.quantity = item.quantity || 1;
     this.value = parseInt(item.name.replace(/[^\d]/g, ""));
     this.type = type;
@@ -307,11 +309,12 @@ class EncItem {
     let item = game.items.find((a) => a.name === this.name);
 
     if (item) {
-      this.name = FoundryUtils.getDataObjectFromObject(item).name;
+      this.name = item.name;
       this._itemDocument = this.isScroll
         ? await this.toSpellScroll(item)
         : item.toObject();
       if (!this._itemDocument) return undefined;
+      this.id = item.id;
       this.dynamicLink = `@Item[${item.id}]{${this._itemDocument.name}}`;
       return this._itemDocument;
     }
@@ -328,8 +331,10 @@ class EncItem {
         ? await this.toSpellScroll(item)
         : item.toObject();
       if (!this._itemDocument) return undefined;
-      this.name = FoundryUtils.getDataObjectFromObject(item).name;
+      this.name = item.name;
       FoundryUtils.getDataObjectFromObject(this._itemDocument).quantity = this.quantity || 1;
+      this.id = compData.entry._id;
+      this.compendiumname = compData.compendium.collection;
       this.dynamicLink = `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${this._itemDocument.name}}`;
       return this._itemDocument;
     }

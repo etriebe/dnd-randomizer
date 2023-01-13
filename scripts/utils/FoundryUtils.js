@@ -183,9 +183,18 @@ export class FoundryUtils {
     {
       let itemID = item.id;
       let itemName = item.name;
+      let compendiumName = item.compendiumname;
       if (FoundryUtils.isFoundryVersion10())
       {
-        return `<a class="content-link" draggable="true" data-hash="undefined" data-uuid="Item.${itemID}" data-id="${itemID}" data-type="Item"><i class="fas fa-user"></i> ${itemName}</a>`;
+        if (compendiumName)
+        {
+          const dataUUID = `Compendium.${compendiumName}.${itemID}`;
+          return `<a class="content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${itemID}"><i class="fas fa-user"></i> ${itemName}</a>`;
+        }
+        else
+        {
+          return `<a class="content-link" draggable="true" data-hash="undefined" data-uuid="Item.${itemID}" data-id="${itemID}" data-type="Item"><i class="fas fa-user"></i> ${itemName}</a>`;
+        }
       }
       else
       {
