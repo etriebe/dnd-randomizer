@@ -165,17 +165,17 @@ export class FoundryUtils {
         if (compendiumName != "")
         {
           const dataUUID = `Compendium.${compendiumName}.${actorID}`;
-          return `<a class="content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+          return `<a class="content-link sf-dialog-content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
         }
         else
         {
-          return `<a class="content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
+          return `<a class="content-link sf-dialog-content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
         }
-        return `<a class="content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+        return `<a class="content-link sf-dialog-content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
       }
       else
       {
-        return `<a class="entity-link content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+        return `<a class="entity-link content-link sf-dialog-content-link" draggable="true" data-pack="${compendiumName}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
       }
     }
 
@@ -189,16 +189,16 @@ export class FoundryUtils {
         if (compendiumName)
         {
           const dataUUID = `Compendium.${compendiumName}.${itemID}`;
-          return `<a class="content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${itemID}"><i class="fas fa-user"></i> ${itemName}</a>`;
+          return `<a class="content-link sf-dialog-content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${itemID}"><i class="fas fa-user"></i> ${itemName}</a>`;
         }
         else
         {
-          return `<a class="content-link" draggable="true" data-hash="undefined" data-uuid="Item.${itemID}" data-id="${itemID}" data-type="Item"><i class="fas fa-user"></i> ${itemName}</a>`;
+          return `<a class="content-link sf-dialog-content-link" draggable="true" data-hash="undefined" data-uuid="Item.${itemID}" data-id="${itemID}" data-type="Item"><i class="fas fa-user"></i> ${itemName}</a>`;
         }
       }
       else
       {
-        return `<a class="entity-link content-link" draggable="true" data-type="Item" data-entity="Item" data-id="${itemID}">${itemName}</a>`;
+        return `<a class="entity-link content-link sf-dialog-content-link" draggable="true" data-type="Item" data-entity="Item" data-id="${itemID}">${itemName}</a>`;
       }
     }
 }
