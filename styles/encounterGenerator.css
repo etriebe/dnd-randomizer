@@ -489,7 +489,6 @@
 	padding: 0rem 0.5rem;
 }
 /* Unstyle Foundry Styles */
-#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.sf-dialog-content-link {
 	background-color: transparent;
 	border-color: transparent;
@@ -501,18 +500,14 @@
 	font-size: 0.8rem;
 	padding: 0.25rem 0.5rem;
 }
-#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link i.fas,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.sf-dialog-content-link i.fas {
 	color: inherit;
 	display: none;
 }
-#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:hover,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.sf-dialog-content-link:hover {
 	background-color: var(--palette-secondary-hover, #4f7480);
 	text-shadow: none;
 }
-#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:active,
-#SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.entity-link:focus,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.sf-dialog-content-link:active,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button a.sf-dialog-content-link:focus {
 	background-color: var(--palette-secondary-active);
@@ -527,7 +522,6 @@
 	margin-right: 0.75rem;
 	display: inline-block;
 }
-#SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot .loot-button a.entity-link,
 #SFDialog .window-content .form-encounters ul li div.encounter-details .encounter-details-loot .loot-button a.sf-dialog-content-link {
 	background-color: transparent;
 	border-width: 0px;
