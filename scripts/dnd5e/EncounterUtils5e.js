@@ -85,7 +85,7 @@ export class EncounterUtils5e
           let creatureCombatDetails = {};
           creatureCombatDetails["name"] = monsterName;
           creatureCombatDetails["actorid"] = randomMonsterActorId;
-          creatureCombatDetails["compendiumname"] = randomMonster.compendiumname;
+          creatureCombatDetails["compendiumname"] = randomMonsterObject.compendiumname;
           creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
