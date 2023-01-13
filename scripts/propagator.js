@@ -106,7 +106,7 @@ export class Propagator {
       x: position.x + (tokenData.width * canvas.scene.dimensions.size) / 2,
       y: position.y + (tokenData.height * canvas.scene.dimensions.size) / 2,
     });
-    const collisionCheck = canvas.walls.checkCollision(r, { mode: "any" });
+    const collisionCheck = canvas.walls.checkCollision(r, { mode: 'any', type: 'move' });
     return (!collision || !collisionCheck);
   }
 }
