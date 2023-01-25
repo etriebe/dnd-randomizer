@@ -161,7 +161,6 @@ export class FoundryUtils {
     {
       if (FoundryUtils.isFoundryVersion10())
       {
-        
         if (compendiumName != "")
         {
           const dataUUID = `Compendium.${compendiumName}.${actorID}`;
