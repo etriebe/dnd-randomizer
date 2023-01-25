@@ -5,6 +5,7 @@ import { SFHelpers } from "./module.js";
 import { FuzzySet } from "./fuzzyset.js";
 import { SFLOCALCONSTS } from "./localconst.js";
 import { SFCONSTS } from "./main.js";
+import { EncounterUtilsPf2e } from "./pf2e/EncounterUtilsPf2e.js";
 
 export class SFDialog extends FormApplication
 {
