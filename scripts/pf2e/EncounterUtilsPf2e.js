@@ -47,6 +47,8 @@ export class EncounterUtilsPf2e
         let randomMonsterLevel = FoundryUtils.getDataObjectFromObject(randomMonsterActorObj).details.level.value;
         let creatureCombatDetails = {};
         creatureCombatDetails["name"] = monsterName;
+        creatureCombatDetails["actorid"] = randomMonster.actorid;
+        creatureCombatDetails["compendiumname"] = randomMonster.compendiumname;
         creatureCombatDetails["quantity"] = numberOfCreatures;
         creatureCombatDetails["level"] = randomMonsterLevel;
         creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorObj.id || m.actorid === randomMonsterActorObj._id).combatdata;

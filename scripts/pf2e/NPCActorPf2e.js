@@ -5,6 +5,7 @@ export class NPCActorPf2e {
       this.actor = data;
       this.actorname = this.actor.name;
       this.actorid = this.actor._id;
+      this.compendiumname = this.actor.pack;
       this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
       this.environment = ActorUtils.getActorEnvironments(this.actor);
       this.combatdata = this.getCombatDataPerRound();
