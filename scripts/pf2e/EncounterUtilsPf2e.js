@@ -89,28 +89,48 @@ export class EncounterUtilsPf2e
       let lootResultObject = {};
       let currencyResultObject = {};
       let itemsResultObject = EncounterUtilsPf2e.getPF2EItemLootForEncounter(itemList, goldPieces, encounterLevel, lootType);
-      let totalItemGoldCount = 0;
+
+      currencyResultObject["pp"] = 0;
+      currencyResultObject["gp"] = goldPieces;
+      currencyResultObject["sp"] = 0;
+      currencyResultObject["cp"] = 0;
 
       for (let item of itemsResultObject)
       {
-        totalItemGoldCount += EncounterUtilsPf2e.getTotalGoldCostFromCostObject(item.object.itemcost);
+        currencyResultObject = EncounterUtilsPf2e.subtractCurrencyAmount(currencyResultObject, item.object.itemcost);
       }
-
-      goldPieces = goldPieces - totalItemGoldCount;
 
       let otherResultObject = [];
       let scrollsResultObject = [];
-      currencyResultObject["pp"] = 0;
-      currencyResultObject["gp"] = goldPieces;
-      currencyResultObject["ep"] = 0;
-      currencyResultObject["sp"] = 0;
-      currencyResultObject["cp"] = 0;
       lootResultObject["currency"] = currencyResultObject;
       lootResultObject["items"] = itemsResultObject;
       lootResultObject["other"] = otherResultObject;
       lootResultObject["scrolls"] = scrollsResultObject;
-  
       return lootResultObject;
+    }
+
+    static subtractCurrencyAmount(currencyObject, subtractionAmount)
+    {
+      let currentAmountTotal = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(currencyObject);
+      let subtractionAmountTotal = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(subtractionAmount);
+
+      if (subtractionAmountTotal > currentAmountTotal)
+      {
+        throw new Error(`Subtraction amount ${subtractionAmountTotal} was larger than total amount ${currentAmountTotal}`);
+      }
+
+      let leftOverCurerncy = currentAmountTotal - subtractionAmountTotal;
+
+      let currencyResultObject = {};
+      currencyResultObject["pp"] = 0;
+      currencyResultObject["gp"] = leftOverCurerncy - leftOverCurerncy % 1;
+      leftOverCurerncy -= currencyResultObject["gp"];
+      leftOverCurerncy *= 10;
+      currencyResultObject["sp"] = leftOverCurerncy - leftOverCurerncy % 1;
+      leftOverCurerncy -= currencyResultObject["sp"];
+      leftOverCurerncy *= 10;
+      currencyResultObject["cp"] = leftOverCurerncy - leftOverCurerncy % 1;
+      return currencyResultObject;
     }
 
     static getPF2EItemLootForEncounter(itemList, goldPieces, encounterLevel, lootType)
@@ -179,10 +199,10 @@ export class EncounterUtilsPf2e
     static getTotalGoldCostFromCostObject(costObject)
     {
       let totalGoldCost = 0;
-      totalGoldCost += costObject.pp * 10;
-      totalGoldCost += costObject.gp;
-      totalGoldCost += costObject.sp * 0.1;
-      totalGoldCost += costObject.cp * 0.01;
+      totalGoldCost += parseInt(costObject.pp) * 10;
+      totalGoldCost += parseInt(costObject.gp);
+      totalGoldCost += parseInt(costObject.sp) * 0.1;
+      totalGoldCost += parseInt(costObject.cp) * 0.01;
       return totalGoldCost;
     }
 

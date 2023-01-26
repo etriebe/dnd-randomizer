@@ -179,11 +179,12 @@ export class Encounter {
       : await Folder.create({ type: "Actor", name: folderName });
 
     let actorData = null;
+    let actorType = FoundryUtils.getSystemVariable("LootActorType");
     if (FoundryUtils.isFoundryVersion10())
     {
       actorData = {
         name: this.name || this.id,
-        type: "npc",
+        type: actorType,
         texture: {
           src: await this.getRandomChestIcon(),
         },
@@ -222,6 +223,28 @@ export class Encounter {
     let items = [];
     for (let item of this.loot) {
       items.push(await item.getData());
+    }
+
+    let currentSystem = game.system.id;
+    if (currentSystem === "pf2e")
+    {
+      let equipmentCompendium = game.packs.find(p => p.metadata.label === "Equipment");
+      let cpObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Copper Pieces")._id);
+      let spObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Silver Pieces")._id);
+      let gpObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Gold Pieces")._id);
+      let ppObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Platinum Pieces")._id);
+      let cpObjectCopy = cpObject.clone();
+      let spObjectCopy = spObject.clone();
+      let gpObjectCopy = gpObject.clone();
+      let ppObjectCopy = ppObject.clone();
+      cpObjectCopy.system.quantity = this.currency.cp;
+      spObjectCopy.system.quantity = this.currency.sp;
+      gpObjectCopy.system.quantity = this.currency.gp;
+      ppObjectCopy.system.quantity = this.currency.pp;
+      items.push(cpObjectCopy);
+      items.push(spObjectCopy);
+      items.push(gpObjectCopy);
+      items.push(ppObjectCopy);
     }
     await actor.createEmbeddedDocuments("Item", items);
     this.lootActorId = actor.id;
