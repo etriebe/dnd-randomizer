@@ -254,10 +254,10 @@ export class EncounterUtils5e
 
   static getLootForEncounter(currentEncounter, params)
   {
-    let loopType = params.loot_type;
+    let lootType = params.loot_type;
     let generatedLoot;
 
-    if (loopType === "Individual Treasure")
+    if (lootType === "Individual Treasure")
     {
       generatedLoot = EncounterUtils5e.getIndividualTreasureForEncounter(currentEncounter);
     }
