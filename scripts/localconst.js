@@ -3,6 +3,7 @@ export const SFLOCALCONSTS = {
     SPELL_CACHE_FILE: "spellsbylevel_cache.json",
     GENERAL_CACHE_FILE: "general_cache.json",
     MONSTER_CACHE_FILE_FORMAT: "##creaturetype##_cache.json",
+    ITEM_CACHE_FILE: "item_cache.json",
     CACHE_FOLDER: "dnd-randomizer",
     CREATURE_TYPES: [
         "aberration",
@@ -778,6 +779,10 @@ export const SFLOCALCONSTS = {
         "CreatureXP": {
             "dnd5e": "details.xp.value",
             "pf2e": "level",
+        },
+        "ItemRarity": {
+            "dnd5e": "system.rarity",
+            "pf2e": "system.traits.rarity"
         }
     },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {

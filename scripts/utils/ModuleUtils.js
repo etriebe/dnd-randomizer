@@ -2,6 +2,7 @@ import { SFCompendiumSorter } from "../compendium.js";
 import { SFEnvironmentChooser } from "../environmentchooser.js";
 import { SFPlayerChooser } from "../playerchooser.js";
 import { SFCreatureTypeChooser } from "../creaturetypechooser.js";
+import { SFTreasureChooser } from "../treasurechooser.js";
 
 export class ModuleUtils {
     static setupFilterBarListeners(html) {
@@ -33,6 +34,12 @@ export class ModuleUtils {
 		{
 			event.preventDefault();
 			new SFCreatureTypeChooser().render(true);
+		});
+
+		html.find('button#filter-treasure').on('click', (event) =>
+		{
+			event.preventDefault();
+			new SFTreasureChooser().render(true);
 		});
 
 		html.find('button#clear-encounters-button').on('click', function (event)

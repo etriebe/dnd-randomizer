@@ -8,14 +8,14 @@ import { EncounterUtils5e } from "./dnd5e/EncounterUtils5e.js";
 
 export class SFLocalHelpers {
     static allMonsters = [];
+    static allItems = []
     static creatureTypeCount = {};
     static environmentCreatureCount = {};
     static spellsByLevel = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
     static _indexCacheDate;
-    
-  
+
     static initializeDictionaries() {
       this.spellsByLevel = {};
       this.spellsByLevel["cantrip"] = [];
@@ -165,9 +165,10 @@ export class SFLocalHelpers {
         throw new Error ("Unsupported system!");
       }
     }
-  
+
     static async populateItemsFromCompendiums(constCompFilter)
     {
+      this.allItems = [];
       this.initializeDictionaries();
       let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
 
@@ -189,26 +190,66 @@ export class SFLocalHelpers {
           {
             break;
           }
-  
-          if (entry.type != "spell")
+
+          /*
+          Possible item types:
+            action
+            ancestry
+            armor
+            background
+            backpack
+            class
+            condition
+            consumable
+            deity
+            effect
+            equipment
+            feat
+            heritage
+            kit
+            spell
+            treasure
+            weapon
+          */
+
+          if (entry.type == "spell")
           {
-            continue;
-          }
-  
-          try
-          {
-            const currentSpell = await compendium.getDocument(entry._id);
-            let spellName = entry.name;
-            let spellLevel = ActorUtils.getLevelKeyForSpell(currentSpell);
-            if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
+            try
             {
-              this.spellsByLevel[spellLevel].push(currentSpell);
+              const currentSpell = await compendium.getDocument(entry._id);
+              let spellName = entry.name;
+              let spellLevel = ActorUtils.getLevelKeyForSpell(currentSpell);
+              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
+              {
+                this.spellsByLevel[spellLevel].push(currentSpell);
+              }
+            }
+            catch (error)
+            {
+              console.log(error);
+              console.log(`Spell id ${entry._id} failed to get added.`);
             }
           }
-          catch (error)
+          else if (entry.type == "armor" || entry.type == "consumable" || entry.type == "equipment" || entry.type == "treasure" || entry.type == "weapon")
           {
-            console.log(error);
-            console.log(`Spell id ${entry._id} failed to get added.`);
+            let itemObject = {};
+            const currentItem = await compendium.getDocument(entry._id);
+            let itemRarity = FoundryUtils.getSystemVariableForObject(currentItem, "ItemRarity");
+
+            if (!itemRarity  || itemRarity === "")
+            {
+              itemRarity = "common";
+            }
+
+            itemObject["itemtype"] = entry.type;
+            itemObject["itemcost"] = currentItem.price?.value ?? 0;
+            itemObject["compendiumname"] = compendium.metadata.label;
+            itemObject["level"] = currentItem.level;
+            itemObject["itemname"] = currentItem.name;
+            itemObject["itemid"] = currentItem.id;
+            itemObject["rarity"] = itemRarity;
+            itemObject["item"] = currentItem;
+            this.allItems.push(itemObject);
           }
         }
       }
@@ -281,6 +322,10 @@ export class SFLocalHelpers {
 
     static async loadFromCache()
     {
+      const constCompFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterCompendiums"
+      );
       let spellsbyLevelFromCache = await this.loadFile(SFLOCALCONSTS.SPELL_CACHE_FILE);
       if (spellsbyLevelFromCache)
       {
@@ -311,7 +356,18 @@ export class SFLocalHelpers {
         this.calculateEnvironmentCreatureCounts();
       }
 
+      let itemCache = await this.loadFile(SFLOCALCONSTS.ITEM_CACHE_FILE);
+      if (itemCache)
+      {
+        this.allItems = itemCache;
+      }
+      else
+      {
+        await this.populateItemsFromCompendiums(constCompFilter);
+      }
+
       console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
+      console.log(`${this.allItems.length} items loaded from cache`);
 
       if (this.allMonsters.length > 0)
       {
@@ -387,6 +443,7 @@ export class SFLocalHelpers {
         environmentCreatureCount : this.environmentCreatureCount
       };
       await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
+      await this.saveObjectToCache(SFLOCALCONSTS.ITEM_CACHE_FILE, this.allItems);
       await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
       const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
       for (let currentCreatureType of creatureTypes) {
@@ -447,6 +504,60 @@ export class SFLocalHelpers {
       // null out old settings
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', []);
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
+    }
+
+    static async filterItemsFromCompendiums()
+    {
+      let filteredItems = [];
+
+      const constCompFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterCompendiums"
+      );
+
+      const constTreasureFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterTreasure"
+      );
+
+      const savedEnvironmentSettings = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "environmentsToCreateEncountersFor"
+        );
+
+      const filteredCompendiums = Array.from(FoundryUtils.getCompendiums()).filter((p) => {
+        if (p.documentName !== "Item") return false;
+        const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
+        return !el || el[p.collection] ? true : false;
+      });
+
+      let allItemRarities = this.allItems.map(i => i.rarity).filter(GeneralUtils.onlyUnique).sort();
+      const filteredTreasureTypes = Array.from(allItemRarities).filter((p) => {
+        const el = constTreasureFilter.find((i) => Object.keys(i)[0] == p);
+        return !el || el[p] ? true : false;
+      });
+
+      for (const itemObject of this.allItems)
+      {
+        try {
+          if (filteredCompendiums.filter((c) => c.metadata.label === itemObject.compendiumname).length === 0) 
+          {
+            continue;
+          }
+
+          if (filteredTreasureTypes.filter(m => itemObject.rarity && m === itemObject.rarity.toLowerCase()).length === 0)
+          {
+            continue;
+          }
+
+          filteredItems.push(itemObject);
+        }
+        catch (error) {
+          console.warn(`Unable to process item: Name:${itemObject.itemname}, Id: ${itemObject.itemid}`);
+        }
+      }
+
+      return filteredItems;
     }
 
     static async filterMonstersFromCompendiums()
@@ -518,7 +629,7 @@ export class SFLocalHelpers {
       return filteredMonsters;
     }
   
-    static async createEncounters(monsterList, params, numberOfEncounters)
+    static async createEncounters(monsterList, filteredItems, params, numberOfEncounters)
     {
       let averageLevelOfPlayers = params.averageLevelOfPlayers;
       let numberOfPlayers = params.numberOfPlayers;
@@ -553,7 +664,7 @@ export class SFLocalHelpers {
         case "pf2e":
           for (let i = 0; i < 30; i++)
           {
-            let currentEncounter = EncounterUtilsPf2e.createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = EncounterUtilsPf2e.createEncounterPf2e(monsterList, filteredItems, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
       }

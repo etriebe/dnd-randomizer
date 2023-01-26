@@ -3,7 +3,7 @@ import { SFLOCALCONSTS } from "../localconst.js";
 import { SFLocalHelpers } from "../localmodule.js";
 export class EncounterUtilsPf2e
 {
-    static createEncounterPf2e(monsterList, averageLevelOfPlayers, numberOfPlayers, params)
+    static createEncounterPf2e(monsterList, itemList, averageLevelOfPlayers, numberOfPlayers, params)
     {
       let currentEncounter = {};
       currentEncounter["creatures"] = [];
@@ -56,17 +56,15 @@ export class EncounterUtilsPf2e
       }
 
       currentEncounter["level"] = averageLevelOfPlayers;
-      let generatedLootObject = EncounterUtilsPf2e.getPF2ELootForEncounter(currentEncounter, params);
+      let generatedLootObject = EncounterUtilsPf2e.getPF2ELootForEncounter(currentEncounter, itemList, params);
       currentEncounter["loot"] = generatedLootObject;
       currentEncounter["amounttoadjustencounter"] = amountToAdjustEncounter;
       return currentEncounter;
     }
 
-    static getPF2ELootForEncounter(currentEncounter, params)
+    static getPF2ELootForEncounter(currentEncounter, itemList, params)
     {
-      let loopType = params.loot_type;
-      let generatedLoot;
-  
+      let lootType = params.loot_type;
       let currencyTable = SFLOCALCONSTS.PF2E_CURRENCY_TABLE;
       let encounterLevel = currentEncounter["level"];
       let encounterDifficulty = currentEncounter["difficulty"];
@@ -90,7 +88,16 @@ export class EncounterUtilsPf2e
 
       let lootResultObject = {};
       let currencyResultObject = {};
-      let itemsResultObject = [];
+      let itemsResultObject = EncounterUtilsPf2e.getPF2EItemLootForEncounter(itemList, goldPieces, encounterLevel, lootType);
+      let totalItemGoldCount = 0;
+
+      for (let item of itemsResultObject)
+      {
+        totalItemGoldCount += EncounterUtilsPf2e.getTotalGoldCostFromCostObject(item.object.itemcost);
+      }
+
+      goldPieces = goldPieces - totalItemGoldCount;
+
       let otherResultObject = [];
       let scrollsResultObject = [];
       currencyResultObject["pp"] = 0;
@@ -104,6 +111,79 @@ export class EncounterUtilsPf2e
       lootResultObject["scrolls"] = scrollsResultObject;
   
       return lootResultObject;
+    }
+
+    static getPF2EItemLootForEncounter(itemList, goldPieces, encounterLevel, lootType)
+    {
+      let itemsResultObject = [];
+      let itemCount = 0;
+      let goldPiecesLeft = goldPieces;
+      if (lootType === "Individual Treasure")
+      {
+        itemCount = 1;
+      }
+      else
+      {
+        itemCount = FoundryUtils.getRollResult("2d4");
+      }
+
+      for (let i = 0; i < itemCount; i++)
+      {
+        // Leave at least 10 gp left
+        if (goldPiecesLeft < 10)
+        {
+          break;
+        }
+
+        let j = 0;
+        while (j < 50) // attempt to put in 50 items before giving up so we don't spin forever
+        {
+          j++;
+          let randomItemIndex = Math.floor((Math.random() * itemList.length));
+          let randomItemObject = itemList[randomItemIndex];
+          let itemType = randomItemObject.itemtype;
+          let itemLevel = randomItemObject.level;
+          let itemCost = randomItemObject.itemcost;
+          let itemName = randomItemObject.itemname;
+          let item = randomItemObject.item;
+
+          let totalGoldCost = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(itemCost);
+
+          if (totalGoldCost === 0)
+          {
+            // ignore treasure with 0 cost
+            continue;
+          }
+
+          if (totalGoldCost <= goldPiecesLeft)
+          {
+            if (itemType === "consumable" && encounterLevel < itemLevel)
+            {
+              continue;
+            }
+
+            goldPiecesLeft = goldPiecesLeft - totalGoldCost;
+
+            let currentObjectDictionary = {};
+            currentObjectDictionary.quantity = 1;
+            currentObjectDictionary.name = itemName;
+            currentObjectDictionary.object = randomItemObject;
+            itemsResultObject.push(currentObjectDictionary);
+            break;
+          }
+        }
+      }
+      return itemsResultObject;
+    }
+
+    static getTotalGoldCostFromCostObject(costObject)
+    {
+      let totalGoldCost = 0;
+      totalGoldCost += costObject.pp * 10;
+      totalGoldCost += costObject.gp;
+      totalGoldCost += costObject.sp * 0.1;
+      totalGoldCost += costObject.cp * 0.01;
+      return totalGoldCost;
     }
 
     static getAdjustedXPString(amountToAdjustEncounter)
