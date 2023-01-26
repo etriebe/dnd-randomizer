@@ -300,7 +300,8 @@ export class SFDialog extends FormApplication
 				let forceReload = false;
 				await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
 				let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
-				let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, params, 30);
+				let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
+				let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, filteredItems, params, 30);
 				generateEncounters = generateEncounters.sort((a, b) =>
 				{
 					const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ", "")];

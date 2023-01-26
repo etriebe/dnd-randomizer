@@ -120,11 +120,11 @@ export class EncounterUtilsPf2e
       let goldPiecesLeft = goldPieces;
       if (lootType === "Individual Treasure")
       {
-        itemCount = FoundryUtils.getRollResult("1d4");
+        itemCount = 1;
       }
       else
       {
-        itemCount = FoundryUtils.getRollResult("2d6");
+        itemCount = FoundryUtils.getRollResult("2d4");
       }
 
       for (let i = 0; i < itemCount; i++)
@@ -148,6 +148,13 @@ export class EncounterUtilsPf2e
           let item = randomItemObject.item;
 
           let totalGoldCost = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(itemCost);
+
+          if (totalGoldCost === 0)
+          {
+            // ignore treasure with 0 cost
+            continue;
+          }
+
           if (totalGoldCost <= goldPiecesLeft)
           {
             if (itemType === "consumable" && encounterLevel < itemLevel)

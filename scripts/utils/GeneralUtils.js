@@ -49,4 +49,8 @@ export class GeneralUtils {
         let dateTime = cDate + ' ' + cTime;
         return dateTime;
     };
+
+    static onlyUnique(value, index, self) {
+      return self.indexOf(value) === index;
+    }
 }

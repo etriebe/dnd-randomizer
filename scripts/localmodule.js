@@ -168,6 +168,7 @@ export class SFLocalHelpers {
 
     static async populateItemsFromCompendiums(constCompFilter)
     {
+      this.allItems = [];
       this.initializeDictionaries();
       let filteredCompendiums = game.packs.filter((p) => p.metadata.type === "Item" || p.metadata.entity === "Item");
 
@@ -233,10 +234,20 @@ export class SFLocalHelpers {
           {
             let itemObject = {};
             const currentItem = await compendium.getDocument(entry._id);
+            let itemRarity = FoundryUtils.getSystemVariableForObject(currentItem, "ItemRarity");
+
+            if (!itemRarity  || itemRarity === "")
+            {
+              itemRarity = "common";
+            }
+
             itemObject["itemtype"] = entry.type;
-            itemObject["itemcost"] = currentItem.price.value;
+            itemObject["itemcost"] = currentItem.price?.value ?? 0;
+            itemObject["compendiumname"] = compendium.metadata.label;
             itemObject["level"] = currentItem.level;
             itemObject["itemname"] = currentItem.name;
+            itemObject["itemid"] = currentItem.id;
+            itemObject["rarity"] = itemRarity;
             itemObject["item"] = currentItem;
             this.allItems.push(itemObject);
           }
@@ -495,6 +506,60 @@ export class SFLocalHelpers {
       await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
     }
 
+    static async filterItemsFromCompendiums()
+    {
+      let filteredItems = [];
+
+      const constCompFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterCompendiums"
+      );
+
+      const constTreasureFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterTreasure"
+      );
+
+      const savedEnvironmentSettings = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "environmentsToCreateEncountersFor"
+        );
+
+      const filteredCompendiums = Array.from(FoundryUtils.getCompendiums()).filter((p) => {
+        if (p.documentName !== "Item") return false;
+        const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
+        return !el || el[p.collection] ? true : false;
+      });
+
+      let allItemRarities = this.allItems.map(i => i.rarity).filter(GeneralUtils.onlyUnique).sort();
+      const filteredTreasureTypes = Array.from(allItemRarities).filter((p) => {
+        const el = constTreasureFilter.find((i) => Object.keys(i)[0] == p);
+        return !el || el[p] ? true : false;
+      });
+
+      for (const itemObject of this.allItems)
+      {
+        try {
+          if (filteredCompendiums.filter((c) => c.metadata.label === itemObject.compendiumname).length === 0) 
+          {
+            continue;
+          }
+
+          if (filteredTreasureTypes.filter(m => itemObject.rarity && m === itemObject.rarity.toLowerCase()).length === 0)
+          {
+            continue;
+          }
+
+          filteredItems.push(itemObject);
+        }
+        catch (error) {
+          console.warn(`Unable to process item: Name:${itemObject.itemname}, Id: ${itemObject.itemid}`);
+        }
+      }
+
+      return filteredItems;
+    }
+
     static async filterMonstersFromCompendiums()
     {
       let filteredMonsters = [];
@@ -564,7 +629,7 @@ export class SFLocalHelpers {
       return filteredMonsters;
     }
   
-    static async createEncounters(monsterList, params, numberOfEncounters)
+    static async createEncounters(monsterList, filteredItems, params, numberOfEncounters)
     {
       let averageLevelOfPlayers = params.averageLevelOfPlayers;
       let numberOfPlayers = params.numberOfPlayers;
@@ -599,7 +664,7 @@ export class SFLocalHelpers {
         case "pf2e":
           for (let i = 0; i < 30; i++)
           {
-            let currentEncounter = EncounterUtilsPf2e.createEncounterPf2e(monsterList, this.allItems, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = EncounterUtilsPf2e.createEncounterPf2e(monsterList, filteredItems, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
       }

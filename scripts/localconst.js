@@ -779,6 +779,10 @@ export const SFLOCALCONSTS = {
         "CreatureXP": {
             "dnd5e": "details.xp.value",
             "pf2e": "level",
+        },
+        "ItemRarity": {
+            "dnd5e": "system.rarity",
+            "pf2e": "system.traits.rarity"
         }
     },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {
