@@ -237,10 +237,6 @@ export class Encounter {
       let spObjectCopy = spObject.clone();
       let gpObjectCopy = gpObject.clone();
       let ppObjectCopy = ppObject.clone();
-      cpObjectCopy.system.quantity = this.currency.cp;
-      spObjectCopy.system.quantity = this.currency.sp;
-      gpObjectCopy.system.quantity = this.currency.gp;
-      ppObjectCopy.system.quantity = this.currency.pp;
       items.push(cpObjectCopy);
       items.push(spObjectCopy);
       items.push(gpObjectCopy);
@@ -248,6 +244,19 @@ export class Encounter {
     }
     await actor.createEmbeddedDocuments("Item", items);
     this.lootActorId = actor.id;
+
+    if (currentSystem === "pf2e")
+    {
+      let newActorObject = await game.actors.get(this.lootActorId);
+      let cpObject = newActorObject.items.find(i => i.name === "Copper Pieces");
+      let spObject = newActorObject.items.find(i => i.name === "Silver Pieces");
+      let gpObject = newActorObject.items.find(i => i.name === "Gold Pieces");
+      let ppObject = newActorObject.items.find(i => i.name === "Platinum Pieces");
+      cpObject.system.quantity = this.currency.cp;
+      spObject.system.quantity = this.currency.sp;
+      gpObject.system.quantity = this.currency.gp;
+      ppObject.system.quantity = this.currency.pp;
+    }
   }
 }
 

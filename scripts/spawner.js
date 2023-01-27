@@ -42,6 +42,7 @@ export class CreatureSpawner {
           x: position.x,
           y: position.y,
         });
+        tokenData.actorLink = true;
         let lootToken = await canvas.scene.createEmbeddedDocuments("Token", [tokenData]);
         await CreatureSpawner.createItemPiles(lootToken[0]);
     }
