@@ -228,35 +228,22 @@ export class Encounter {
     let currentSystem = game.system.id;
     if (currentSystem === "pf2e")
     {
-      let equipmentCompendium = game.packs.find(p => p.metadata.label === "Equipment");
-      let cpObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Copper Pieces")._id);
-      let spObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Silver Pieces")._id);
-      let gpObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Gold Pieces")._id);
-      let ppObject = await equipmentCompendium.getDocument(equipmentCompendium.index.find(i => i.name === "Platinum Pieces")._id);
-      let cpObjectCopy = cpObject.clone();
-      let spObjectCopy = spObject.clone();
-      let gpObjectCopy = gpObject.clone();
-      let ppObjectCopy = ppObject.clone();
-      items.push(cpObjectCopy);
-      items.push(spObjectCopy);
-      items.push(gpObjectCopy);
-      items.push(ppObjectCopy);
+      const pack = game.packs.get("pf2e.equipment-srd");
+      const cp = (await pack.getDocument(pack.index.find(i => i.name === "Copper Pieces")._id)).toObject();
+      const sp = (await pack.getDocument(pack.index.find(i => i.name === "Silver Pieces")._id)).toObject();
+      const gp = (await pack.getDocument(pack.index.find(i => i.name === "Gold Pieces")._id)).toObject();
+      const pp = (await pack.getDocument(pack.index.find(i => i.name === "Platinum Pieces")._id)).toObject();
+      cp.system.quantity = parseInt(this.currency.cp);
+      sp.system.quantity = parseInt(this.currency.sp);
+      gp.system.quantity = parseInt(this.currency.gp);
+      pp.system.quantity = parseInt(this.currency.pp);
+      items.push(cp);
+      items.push(sp);
+      items.push(gp);
+      items.push(pp);
     }
     await actor.createEmbeddedDocuments("Item", items);
     this.lootActorId = actor.id;
-
-    if (currentSystem === "pf2e")
-    {
-      let newActorObject = await game.actors.get(this.lootActorId);
-      let cpObject = newActorObject.items.find(i => i.name === "Copper Pieces");
-      let spObject = newActorObject.items.find(i => i.name === "Silver Pieces");
-      let gpObject = newActorObject.items.find(i => i.name === "Gold Pieces");
-      let ppObject = newActorObject.items.find(i => i.name === "Platinum Pieces");
-      cpObject.system.quantity = this.currency.cp;
-      spObject.system.quantity = this.currency.sp;
-      gpObject.system.quantity = this.currency.gp;
-      ppObject.system.quantity = this.currency.pp;
-    }
   }
 }
 
