@@ -8,20 +8,6 @@ export class SFHelpers {
     return game.settings.get(SFCONSTS.MODULE_NAME, `${type}Folder`);
   }
 
-  static useLocalEncounterGenerator() {
-    return game.settings.get(SFCONSTS.MODULE_NAME, "useLocalEncounterGenerator");
-  }
-
-  static async fetchData(params) {
-    return await fetch(
-      `https://theripper93.com/encounterData.php?${new URLSearchParams(
-        params
-      ).toString()}`
-    )
-      .then((response) => response.json())
-      .then((data) => data);
-  }
-
   static async parseEncounter(data, params={}) {
     const encounters = data.reduce((a, v) => {
       const enc = new Encounter(v).validate();

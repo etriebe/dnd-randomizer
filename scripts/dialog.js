@@ -295,38 +295,21 @@ export class SFDialog extends FormApplication
 				averageLevelOfPlayers: averageLevelOfPlayers
 			};
 
-			if (SFHelpers.useLocalEncounterGenerator())
+			let forceReload = false;
+			await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+			let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
+			let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
+			let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, filteredItems, params, 30);
+			generateEncounters = generateEncounters.sort((a, b) =>
 			{
-				let forceReload = false;
-				await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-				let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
-				let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
-				let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, filteredItems, params, 30);
-				generateEncounters = generateEncounters.sort((a, b) =>
-				{
-					const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ", "")];
-					const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ", "")];
-					if (da > db) return -1;
-					if (da < db) return 1;
-					return 0;
-				});
-				const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
-				await _this.populateEncounters(encounterData);
-			}
-			else
-			{
-				let fetchedData = await SFHelpers.fetchData(params);
-				fetchedData = fetchedData.sort((a, b) =>
-				{
-					const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ", "")];
-					const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ", "")];
-					if (da > db) return -1;
-					if (da < db) return 1;
-					return 0;
-				});
-				const encounterData = await SFHelpers.parseEncounter(fetchedData, params);
-				await _this.populateEncounters(encounterData);
-			}
+				const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ", "")];
+				const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ", "")];
+				if (da > db) return -1;
+				if (da < db) return 1;
+				return 0;
+			});
+			const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
+			await _this.populateEncounters(encounterData);
 
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
@@ -350,8 +333,6 @@ export class SFDialog extends FormApplication
 				<p>This module uses a proxy to retrieve the data it needs (tl;dr it costs money) consider supporting on Patreon to keep the module alive.</p>
 				<hr/>
 				<h1>License / Credits</h1>
-				<h2>Donjon</h2>
-				<p>Stochastic, Fantastic! pulls it's data from <a href="https://donjon.bin.sh/" target="_blank">https://donjon.bin.sh/</a> with permission from the author (Some content used under the Open Gaming License). Support this amazing website here <a href="https://ko-fi.com/donjon" target="_blank"></a>https://ko-fi.com/donjon</a></p>
 				<h2>Sortable.Js</h2>
 				More info here <a href="https://github.com/SortableJS/Sortable" target="_blank">https://github.com/SortableJS/Sortable</a>
 				<h2>Fuzzyset.js</h2>

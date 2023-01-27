@@ -20,14 +20,6 @@ Hooks.once("init", async function () {
     type: String,
     default: "SF - Loot",
   });
-  game.settings.register(SFCONSTS.MODULE_NAME, "useLocalEncounterGenerator", {
-    name: "Use Local Encounter Generator",
-    hint: "If checked, we will generate encounters using all the creatures from local compendiums.",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
   game.settings.register(SFCONSTS.MODULE_NAME, "usePlayerOwnedCharactersForGeneration", {
     name: "Use Player-owned Actors in-game to generate encounters.",
     hint: "If checked, we will find all player-owned characters and use that to generate encounters. Select/deselect individuals in Filter dialog.",
