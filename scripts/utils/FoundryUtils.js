@@ -17,6 +17,12 @@ export class FoundryUtils {
 
     static getSystemVariableForObject(object, variableName)
     {
+      let currentSystemVariableName = FoundryUtils.getSystemVariable(variableName);
+      return eval(`object.${currentSystemVariableName}`);
+    }
+
+    static getSystemVariable(variableName)
+    {
       let currentSystem = game.system.id;
       let variableValues;
       if (FoundryUtils.isFoundryVersion10())
@@ -34,13 +40,13 @@ export class FoundryUtils {
         return;
       }
 
-      let currentSystemVariableName = variableValues[currentSystem];
-      if (!currentSystemVariableName)
+      let currentSystemVariableValue = variableValues[currentSystem];
+      if (!currentSystemVariableValue)
       {
         console.error(`Unable to find variable name ${variableName} for system ${currentSystem}`);
         return;
       }
-      return eval(`object.${currentSystemVariableName}`)
+      return currentSystemVariableValue;
     }
 
     static getDataObjectFromObject(obj)

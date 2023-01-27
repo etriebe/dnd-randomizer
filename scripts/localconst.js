@@ -783,6 +783,10 @@ export const SFLOCALCONSTS = {
         "ItemRarity": {
             "dnd5e": "system.rarity",
             "pf2e": "system.traits.rarity"
+        },
+        "LootActorType": {
+            "dnd5e": "npc",
+            "pf2e": "loot"
         }
     },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {

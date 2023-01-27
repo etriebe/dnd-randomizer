@@ -179,11 +179,12 @@ export class Encounter {
       : await Folder.create({ type: "Actor", name: folderName });
 
     let actorData = null;
+    let actorType = FoundryUtils.getSystemVariable("LootActorType");
     if (FoundryUtils.isFoundryVersion10())
     {
       actorData = {
         name: this.name || this.id,
-        type: "npc",
+        type: actorType,
         texture: {
           src: await this.getRandomChestIcon(),
         },
@@ -222,6 +223,24 @@ export class Encounter {
     let items = [];
     for (let item of this.loot) {
       items.push(await item.getData());
+    }
+
+    let currentSystem = game.system.id;
+    if (currentSystem === "pf2e")
+    {
+      const pack = game.packs.get("pf2e.equipment-srd");
+      const cp = (await pack.getDocument(pack.index.find(i => i.name === "Copper Pieces")._id)).toObject();
+      const sp = (await pack.getDocument(pack.index.find(i => i.name === "Silver Pieces")._id)).toObject();
+      const gp = (await pack.getDocument(pack.index.find(i => i.name === "Gold Pieces")._id)).toObject();
+      const pp = (await pack.getDocument(pack.index.find(i => i.name === "Platinum Pieces")._id)).toObject();
+      cp.system.quantity = parseInt(this.currency.cp);
+      sp.system.quantity = parseInt(this.currency.sp);
+      gp.system.quantity = parseInt(this.currency.gp);
+      pp.system.quantity = parseInt(this.currency.pp);
+      items.push(cp);
+      items.push(sp);
+      items.push(gp);
+      items.push(pp);
     }
     await actor.createEmbeddedDocuments("Item", items);
     this.lootActorId = actor.id;
