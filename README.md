@@ -40,10 +40,6 @@ A creature codex to browse the creatures you have in multiple compendiums and so
 
 # License / Credits
 
-## Donjon
-
-Stochastic, Fantastic! can pull it's data from https://donjon.bin.sh/ with permission from the author (Some content used under the Open Gaming License). Support this amazing website here https://ko-fi.com/donjon 
-
 ## Sortable.Js
 
 More info here https://github.com/SortableJS/Sortable
