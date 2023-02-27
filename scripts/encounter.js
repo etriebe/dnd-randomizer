@@ -23,8 +23,17 @@ export class Encounter {
     //Prepare loot data
     for (let loot of this.data.loot.items) {
       const item = new EncItem(loot, "item");
+
+      // Set these to force the use of compendium name and item id to get an exact match quickly
+      item.compendiumname = loot.object.compendiumname;
+      item.id = loot.object.itemid;
+
       const itemData = await item.getData();
-      if (itemData && itemData.type !== "spell") this.loot.push(item);
+      if (itemData && itemData.type !== "spell")
+      {
+        this.loot.push(item);
+        continue;
+      }
     }
 
     //Prepare scroll data
@@ -316,6 +325,16 @@ class EncItem {
     }
   }
 
+  static getCompendiumEntryByCompendiumAndId(compendiumName, id)
+  {
+    const compendium = game.packs.find(p => p.metadata.label === compendiumName);
+    const entry = compendium.index.find((i) => i._id === id);
+    if (entry)
+    {
+      return { entry: entry, compendium: compendium };
+    }
+  }
+
   getRandomLootImg() {
     return SFCONSTS.LOOT_ICONS[
       Math.floor(Math.random() * SFCONSTS.LOOT_ICONS.length)
@@ -339,13 +358,23 @@ class EncItem {
     }
 
     if (!item) {
-      const compData = Encounter.getCompendiumEntryByName(this.name, "Item");
+      let compData = null
+      if (this.compendiumname && this.id)
+      {
+        compData = EncItem.getCompendiumEntryByCompendiumAndId(this.compendiumname, this.id);
+      }
+
+      if (!compData)
+      {
+        compData = Encounter.getCompendiumEntryByName(this.name, "Item");
+      }
+
       if (!compData) {
         return undefined;
       }
       item = await game.packs
-        .get(compData.compendium.collection)
-        .getDocument(compData.entry._id);
+      .get(compData.compendium.collection)
+      .getDocument(compData.entry._id);
       this._itemDocument = this.isScroll
         ? await this.toSpellScroll(item)
         : item.toObject();
