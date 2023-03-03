@@ -185,73 +185,79 @@ export class SFLocalHelpers {
           break;
         }
   
+        let promiseList = [];
         for (let entry of compendium.index) {
           if (!entry)
           {
             break;
           }
 
-          /*
-          Possible item types:
-            action
-            ancestry
-            armor
-            background
-            backpack
-            class
-            condition
-            consumable
-            deity
-            effect
-            equipment
-            feat
-            heritage
-            kit
-            spell
-            treasure
-            weapon
-          */
+          promiseList.push(compendium.getDocument(entry._id));
+        }
 
-          if (entry.type == "spell")
+        Promise.all(promiseList).then(result => {
+          for (let currentObject of result)
           {
-            try
+            if (!currentObject)
             {
-              const currentSpell = await compendium.getDocument(entry._id);
-              let spellName = entry.name;
-              let spellLevel = ActorUtils.getLevelKeyForSpell(currentSpell);
-              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
-              {
-                this.spellsByLevel[spellLevel].push(currentSpell);
+              continue;
+            }
+
+            /*
+            Possible item types:
+              action
+              ancestry
+              armor
+              background
+              backpack
+              class
+              condition
+              consumable
+              deity
+              effect
+              equipment
+              feat
+              heritage
+              kit
+              spell
+              treasure
+              weapon
+            */
+
+            if (currentObject.type == "spell") {
+              try {
+                let spellName = currentObject.name;
+                let spellLevel = ActorUtils.getLevelKeyForSpell(currentObject);
+                if (!this.spellsByLevel[spellLevel].find(s => s.name === currentObject.name))
+                {
+                  this.spellsByLevel[spellLevel].push(currentObject);
+                }
+              }
+              catch (error) {
+                console.log(error);
+                console.log(`Spell id ${currentObject._id} failed to get added.`);
               }
             }
-            catch (error)
-            {
-              console.log(error);
-              console.log(`Spell id ${entry._id} failed to get added.`);
+            else if (currentObject.type == "armor" || currentObject.type == "consumable" || currentObject.type == "equipment" || currentObject.type == "treasure" || currentObject.type == "weapon") {
+              let itemObject = {};
+              let itemRarity = FoundryUtils.getSystemVariableForObject(currentObject, "ItemRarity");
+    
+              if (!itemRarity || itemRarity === "") {
+                itemRarity = "common";
+              }
+    
+              itemObject["itemtype"] = currentObject.type;
+              itemObject["itemcost"] = currentObject.price?.value ?? 0;
+              itemObject["compendiumname"] = currentObject.pack;
+              itemObject["level"] = currentObject.level;
+              itemObject["itemname"] = currentObject.name;
+              itemObject["itemid"] = currentObject.id;
+              itemObject["rarity"] = itemRarity;
+              itemObject["item"] = currentObject;
+              this.allItems.push(itemObject);
             }
           }
-          else if (entry.type == "armor" || entry.type == "consumable" || entry.type == "equipment" || entry.type == "treasure" || entry.type == "weapon")
-          {
-            let itemObject = {};
-            const currentItem = await compendium.getDocument(entry._id);
-            let itemRarity = FoundryUtils.getSystemVariableForObject(currentItem, "ItemRarity");
-
-            if (!itemRarity  || itemRarity === "")
-            {
-              itemRarity = "common";
-            }
-
-            itemObject["itemtype"] = entry.type;
-            itemObject["itemcost"] = currentItem.price?.value ?? 0;
-            itemObject["compendiumname"] = compendium.metadata.label;
-            itemObject["level"] = currentItem.level;
-            itemObject["itemname"] = currentItem.name;
-            itemObject["itemid"] = currentItem.id;
-            itemObject["rarity"] = itemRarity;
-            itemObject["item"] = currentItem;
-            this.allItems.push(itemObject);
-          }
-        }
+        });
       }
     }
 
@@ -271,52 +277,65 @@ export class SFLocalHelpers {
         {
           break;
         }
-  
+      
+        
+        let promiseList = [];
         for (let entry of compendium.index) {
           if (!entry)
           {
             break;
           }
-  
-          if (entry.type != "npc")
-          {
-            continue;
-          }
-  
-          try {
-            let actor = await compendium.getDocument(entry._id);
-            let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
-            let actorName = actor.name;
-            actorName = actorName.replaceAll("\"", "");
-            if (actorName === "#[CF_tempEntity]")
-            {
-              console.log(`Skipping actor ${actorName}`);
-              continue;
-            }
 
-            let actorObject = ActorUtils.getActorObject(actor);
-
-            if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
-            {
-              console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
-              continue;
-            }
-            let monsterObject = {};
-            
-            monsterObject["actor"] = actorObject;
-            monsterObject["actorname"] = actorObject.actorname;
-            monsterObject["actorid"] = actorObject.actorid;
-            monsterObject["compendiumname"] = compendium.metadata.label;
-            monsterObject["environment"] = actorObject.environment;
-            monsterObject["creaturetype"] = actorObject.creaturetype;
-            monsterObject["combatdata"] = actorObject.combatdata;
-            this.allMonsters.push(monsterObject);
-          } 
-          catch (error) {
-            console.warn(error);
-            console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
-          }
+          promiseList.push(compendium.getDocument(entry._id));
         }
+
+        Promise.all(promiseList).then(result => {
+          for (let actor of result)
+          {
+            if (!actor)
+            {
+              continue;
+            }
+
+            if (actor.type != "npc")
+            {
+              continue;
+            }
+
+            try {
+              let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
+              let actorName = actor.name;
+              actorName = actorName.replaceAll("\"", "");
+              if (actorName === "#[CF_tempEntity]")
+              {
+                console.log(`Skipping actor ${actorName}`);
+                continue;
+              }
+  
+              let actorObject = ActorUtils.getActorObject(actor);
+  
+              if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
+              {
+                console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
+                continue;
+              }
+              let monsterObject = {};
+              
+              monsterObject["actor"] = actorObject;
+              monsterObject["actorname"] = actorObject.actorname;
+              monsterObject["actorid"] = actorObject.actorid;
+              monsterObject["compendiumname"] = compendium.metadata.label;
+              monsterObject["environment"] = actorObject.environment;
+              monsterObject["creaturetype"] = actorObject.creaturetype;
+              monsterObject["combatdata"] = actorObject.combatdata;
+              this.allMonsters.push(monsterObject);
+            } 
+            catch (error) {
+              console.warn(error);
+              console.warn(`Actor id ${actor._id}, name ${actor.name} failed to get added.`);
+            }
+          }
+        });
       }
     }
 
