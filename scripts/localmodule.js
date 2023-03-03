@@ -185,72 +185,74 @@ export class SFLocalHelpers {
           break;
         }
   
+        let promiseList = [];
         for (let entry of compendium.index) {
           if (!entry)
           {
             break;
           }
 
-          /*
-          Possible item types:
-            action
-            ancestry
-            armor
-            background
-            backpack
-            class
-            condition
-            consumable
-            deity
-            effect
-            equipment
-            feat
-            heritage
-            kit
-            spell
-            treasure
-            weapon
-          */
+          promiseList.push(getItemObject(entry, compendium));
+        }
 
-          if (entry.type == "spell")
-          {
-            try
-            {
-              const currentSpell = await compendium.getDocument(entry._id);
-              let spellName = entry.name;
-              let spellLevel = ActorUtils.getLevelKeyForSpell(currentSpell);
-              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
-              {
-                this.spellsByLevel[spellLevel].push(currentSpell);
-              }
-            }
-            catch (error)
-            {
-              console.log(error);
-              console.log(`Spell id ${entry._id} failed to get added.`);
+        Promise.all(promiseList).then(result => {
+          console.log(`Done parsing all objects. Result: ${result}`);
+        });
+      }
+
+      async function getItemObject(entry, compendium) {
+        /*
+        Possible item types:
+          action
+          ancestry
+          armor
+          background
+          backpack
+          class
+          condition
+          consumable
+          deity
+          effect
+          equipment
+          feat
+          heritage
+          kit
+          spell
+          treasure
+          weapon
+        */
+        if (entry.type == "spell") {
+          try {
+            const currentSpell = await compendium.getDocument(entry._id);
+            let spellName = entry.name;
+            let spellLevel = ActorUtils.getLevelKeyForSpell(currentSpell);
+            if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name)) {
+              this.spellsByLevel[spellLevel].push(currentSpell);
             }
           }
-          else if (entry.type == "armor" || entry.type == "consumable" || entry.type == "equipment" || entry.type == "treasure" || entry.type == "weapon")
-          {
-            let itemObject = {};
-            const currentItem = await compendium.getDocument(entry._id);
-            let itemRarity = FoundryUtils.getSystemVariableForObject(currentItem, "ItemRarity");
-
-            if (!itemRarity  || itemRarity === "")
-            {
-              itemRarity = "common";
-            }
-
-            itemObject["itemtype"] = entry.type;
-            itemObject["itemcost"] = currentItem.price?.value ?? 0;
-            itemObject["compendiumname"] = compendium.metadata.label;
-            itemObject["level"] = currentItem.level;
-            itemObject["itemname"] = currentItem.name;
-            itemObject["itemid"] = currentItem.id;
-            itemObject["rarity"] = itemRarity;
-            itemObject["item"] = currentItem;
-            this.allItems.push(itemObject);
+          catch (error) {
+            console.log(error);
+            console.log(`Spell id ${entry._id} failed to get added.`);
           }
+        }
+        else if (entry.type == "armor" || entry.type == "consumable" || entry.type == "equipment" || entry.type == "treasure" || entry.type == "weapon") {
+          let itemObject = {};
+          const currentItem = await compendium.getDocument(entry._id);
+          let itemRarity = FoundryUtils.getSystemVariableForObject(currentItem, "ItemRarity");
+
+          if (!itemRarity || itemRarity === "") {
+            itemRarity = "common";
+          }
+
+          itemObject["itemtype"] = entry.type;
+          itemObject["itemcost"] = currentItem.price?.value ?? 0;
+          itemObject["compendiumname"] = compendium.metadata.label;
+          itemObject["level"] = currentItem.level;
+          itemObject["itemname"] = currentItem.name;
+          itemObject["itemid"] = currentItem.id;
+          itemObject["rarity"] = itemRarity;
+          itemObject["item"] = currentItem;
+          this.allItems.push(itemObject);
         }
       }
     }
