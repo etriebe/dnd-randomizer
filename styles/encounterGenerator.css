@@ -289,19 +289,14 @@
 	display: inline-block;
 }
 
-#SFDialog .window-content .form-encounters .filter-controller input + button ,
-#SFDialog .window-content .form-encounters .filter-controller input + button + button,
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button,
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button,
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button,
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
+#SFDialog .window-content .form-encounters .filter-controller .toolbar-button {
 	border: 1px solid rgb(122, 121, 113);
 	border-radius: 0;
 	flex: 0;
 	margin: 0px;
 }
 
-#SFDialog .window-content .form-encounters .filter-controller input + button + button + button + button + button + button {
+#SFDialog .window-content .form-encounters .filter-controller .license-and-credits {
 	border-left-width: 0px;
 	border-bottom-right-radius: 0.25rem;
 	border-top-right-radius: 0.25rem;
