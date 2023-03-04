@@ -327,7 +327,7 @@ class EncItem {
 
   static getCompendiumEntryByCompendiumAndId(compendiumName, id)
   {
-    const compendium = game.packs.find(p => p.metadata.label === compendiumName);
+    const compendium = game.packs.find(p => p.id === compendiumName);
     const entry = compendium.index.find((i) => i._id === id);
     if (entry)
     {

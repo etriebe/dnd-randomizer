@@ -324,7 +324,7 @@ export class SFLocalHelpers {
               monsterObject["actor"] = actorObject;
               monsterObject["actorname"] = actorObject.actorname;
               monsterObject["actorid"] = actorObject.actorid;
-              monsterObject["compendiumname"] = compendium.metadata.label;
+              monsterObject["compendiumname"] = compendium.metadata.id;
               monsterObject["environment"] = actorObject.environment;
               monsterObject["creaturetype"] = actorObject.creaturetype;
               monsterObject["combatdata"] = actorObject.combatdata;
@@ -351,9 +351,17 @@ export class SFLocalHelpers {
         this.spellsByLevel = spellsbyLevelFromCache;
       }
 
-      const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
-      for (let currentCreatureType of creatureTypes) {
-        let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
+      const systemCacheFolder = SFLocalHelpers.getSystemCacheFolder();
+      const filesInCacheFolder = await SFLocalHelpers.getFilesInFolder(systemCacheFolder);
+      for (let i = 0; i < filesInCacheFolder.files.length; i++) {
+        let fileName = filesInCacheFolder.files[i];
+        let currentCreatureTypeMatch = fileName.match(/\/(?<creatureType>[\w_]+)_creature_cache.json/);
+        if (!currentCreatureTypeMatch)
+        {
+          continue;
+        }
+
+        let currentCreatureType = currentCreatureTypeMatch.groups.creatureType;
         let currentCreatureTypeList = await this.loadFile(fileName);
         if (!currentCreatureTypeList)
         {
@@ -403,7 +411,8 @@ export class SFLocalHelpers {
     static calculateCreatureTypeCounts()
     {
       this.creatureTypeCount = {};
-      for (let creatureType of SFLOCALCONSTS.CREATURE_TYPES)
+      const creatureTypeList = Array.from(Object.keys(SFLocalHelpers.creatureTypeCount)).sort();
+      for (let creatureType of creatureTypeList)
       {
         let monsterCount = this.allMonsters.filter(m => m.creaturetype && m.creaturetype.toLowerCase() === creatureType).length;
         this.creatureTypeCount[creatureType] = monsterCount;
@@ -422,7 +431,7 @@ export class SFLocalHelpers {
 
     static getCachePath(fileName)
     {
-      let cacheFolder = this.getSystemCacheFolder();
+      let cacheFolder = SFLocalHelpers.getSystemCacheFolder();
       return `${cacheFolder}/${fileName}`;
     }
 
@@ -440,9 +449,9 @@ export class SFLocalHelpers {
 
     static async loadFile(fileName)
     {
-      await this.ensureFolder(this.getSystemCacheFolder());
+      await this.ensureFolder(SFLocalHelpers.getSystemCacheFolder());
       let fullFilePath = this.getCachePath(fileName);
-      let fileExists = await this.fileExists(this.getSystemCacheFolder(), fileName);
+      let fileExists = await this.fileExists(SFLocalHelpers.getSystemCacheFolder(), fileName);
       if (!fileExists)
       {
         console.warn(`File ${fullFilePath} does not exist`);
@@ -464,7 +473,7 @@ export class SFLocalHelpers {
       await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
       await this.saveObjectToCache(SFLOCALCONSTS.ITEM_CACHE_FILE, this.allItems);
       await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
-      const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
+      const creatureTypes = Array.from(Object.keys(SFLocalHelpers.creatureTypeCount)).sort();
       for (let currentCreatureType of creatureTypes) {
         let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType === m.creaturetype.toLowerCase());
         let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
@@ -481,9 +490,9 @@ export class SFLocalHelpers {
         type: 'text/plain'
       });
 
-      await this.ensureFolder(this.getSystemCacheFolder());
+      await this.ensureFolder(SFLocalHelpers.getSystemCacheFolder());
       let file = new File([blob], fileName, { type: "text" });
-      await FilePicker.upload("data", this.getSystemCacheFolder(), file, {});
+      await FilePicker.upload("data", SFLocalHelpers.getSystemCacheFolder(), file, {});
     }
 
     static async fileExists(fileFolder, fileName)
@@ -516,6 +525,13 @@ export class SFLocalHelpers {
           await FilePicker.createDirectory("data", currentFolderPath, {});
         }
       }
+    }
+
+    static async getFilesInFolder(fileFolder)
+    {
+      await SFLocalHelpers.ensureFolder(fileFolder);
+      let files = await FilePicker.browse("data", fileFolder);
+      return files;
     }
 
     static async cleanUpOldCacheObjects()
@@ -559,7 +575,7 @@ export class SFLocalHelpers {
       for (const itemObject of this.allItems)
       {
         try {
-          if (filteredCompendiums.filter((c) => c.metadata.label === itemObject.compendiumname).length === 0) 
+          if (filteredCompendiums.filter((c) => c.metadata.id === itemObject.compendiumname).length === 0) 
           {
             continue;
           }
@@ -604,7 +620,7 @@ export class SFLocalHelpers {
         return !el || el[p.collection] ? true : false;
       });
 
-      const filteredMonsterTypes = Array.from(SFLOCALCONSTS.CREATURE_TYPES).filter((p) => {
+      const filteredMonsterTypes = Array.from(Object.keys(SFLocalHelpers.creatureTypeCount)).filter((p) => {
         const el = constMonsterTypeFilter.find((i) => Object.keys(i)[0] == p);
         return !el || el[p] ? true : false;
       });
@@ -617,7 +633,7 @@ export class SFLocalHelpers {
       for (const monsterObject of this.allMonsters)
       {
         try {
-          if (filteredCompendiums.filter((c) => c.metadata.label === monsterObject.compendiumname).length === 0) 
+          if (filteredCompendiums.filter((c) => c.metadata.id === monsterObject.compendiumname).length === 0) 
           {
             continue;
           }
