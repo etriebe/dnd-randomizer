@@ -58,9 +58,9 @@ export class SFLocalHelpers {
       if (!this.dictionariesPopulated || forceReload)
       {
         let promises = [];
-        promises.push(this.populateItemsFromCompendiums(constCompFilter));
-        promises.push(this.populateMonstersFromCompendiums(constCompFilter));
-        await Promise.all(promises);
+        //promises.push(this.populateItemsFromCompendiums(constCompFilter));
+        //promises.push(this.populateMonstersFromCompendiums(constCompFilter));
+        await Promise.allSettled([this.populateItemsFromCompendiums(constCompFilter), this.populateMonstersFromCompendiums(constCompFilter)]);
         this.calculateCreatureTypeCounts();
         this.calculateEnvironmentCreatureCounts();
         this.dictionariesPopulated = true;
@@ -195,7 +195,7 @@ export class SFLocalHelpers {
           promiseList.push(compendium.getDocument(entry._id));
         }
 
-        Promise.all(promiseList).then(result => {
+        Promise.allSettled(promiseList).then(result => {
           for (let currentObject of result)
           {
             if (!currentObject)
@@ -289,7 +289,7 @@ export class SFLocalHelpers {
           promiseList.push(compendium.getDocument(entry._id));
         }
 
-        Promise.all(promiseList).then(result => {
+        Promise.allSettled(promiseList).then(result => {
           for (let actor of result)
           {
             if (!actor)
@@ -411,7 +411,7 @@ export class SFLocalHelpers {
     static calculateCreatureTypeCounts()
     {
       this.creatureTypeCount = {};
-      const creatureTypeList = Array.from(Object.keys(SFLocalHelpers.creatureTypeCount)).sort();
+      const creatureTypeList = this.allMonsters.map(i => i.creaturetype).filter(GeneralUtils.onlyUnique).sort();
       for (let creatureType of creatureTypeList)
       {
         let monsterCount = this.allMonsters.filter(m => m.creaturetype && m.creaturetype.toLowerCase() === creatureType).length;
@@ -473,7 +473,7 @@ export class SFLocalHelpers {
       await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
       await this.saveObjectToCache(SFLOCALCONSTS.ITEM_CACHE_FILE, this.allItems);
       await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
-      const creatureTypes = Array.from(Object.keys(SFLocalHelpers.creatureTypeCount)).sort();
+      const creatureTypes = this.allMonsters.map(i => i.creaturetype).filter(GeneralUtils.onlyUnique).sort();
       for (let currentCreatureType of creatureTypes) {
         let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType === m.creaturetype.toLowerCase());
         let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
