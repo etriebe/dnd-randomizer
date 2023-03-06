@@ -259,6 +259,10 @@ export class SFLocalHelpers {
           }
         });
       }
+
+      return new Promise(resolve => {
+        resolve();
+      });
     }
 
     static async populateMonstersFromCompendiums(constCompFilter)
@@ -337,6 +341,10 @@ export class SFLocalHelpers {
           }
         });
       }
+
+      return new Promise(resolve => {
+        resolve();
+      });
     }
 
     static async loadFromCache()
