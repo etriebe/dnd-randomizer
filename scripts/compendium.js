@@ -47,9 +47,9 @@ export class SFCompendiumSorter extends FormApplication {
 		for (let compendium of compendiums) {
 			const el = constCompFilter.find(i => Object.keys(i)[0] == compendium.collection)
 			console.log(compendium);
-			const creatureCount = SFLocalHelpers.allMonsters.filter(m => m.compendiumname === compendium.id).length;
+			const creatureCount = SFLocalHelpers.allMonsters.filter(m => m.compendiumname === compendium.metadata.id).length;
 			const creatureCountDescription = creatureCount > 0 ? ` - ${creatureCount} creatures` : ``;
-			const itemCount = SFLocalHelpers.allItems.filter(m => m.compendiumname === compendium.id).length;
+			const itemCount = SFLocalHelpers.allItems.filter(m => m.compendiumname === compendium.metadata.id).length;
 			const itemCountDescription = itemCount > 0 ? ` - ${itemCount} items` : ``;
 
 			$ul.append(`<li class="compendiumTypeLi">
