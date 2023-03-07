@@ -25,8 +25,8 @@ export class Encounter {
       const item = new EncItem(loot, "item");
 
       // Set these to force the use of compendium name and item id to get an exact match quickly
-      item.compendiumname = loot.object.compendiumname;
-      item.id = loot.object.itemid;
+      item.compendiumname = loot.object?.compendiumname;
+      item.id = loot.object?.itemid;
 
       const itemData = await item.getData();
       if (itemData && itemData.type !== "spell")
@@ -327,7 +327,7 @@ class EncItem {
 
   static getCompendiumEntryByCompendiumAndId(compendiumName, id)
   {
-    const compendium = game.packs.find(p => p.metadata.label === compendiumName);
+    const compendium = game.packs.find(p => p.metadata.id === compendiumName);
     const entry = compendium.index.find((i) => i._id === id);
     if (entry)
     {

@@ -29,7 +29,7 @@ export class SFCreatureTypeChooser extends FormApplication {
 	populateCreatureTypes() {
 		const html = this.element
 		let $ul = html.find('ul#creature_filter').first();
-		const creatureTypes = SFLOCALCONSTS.CREATURE_TYPES.sort();
+		const creatureTypes = Array.from(Object.keys(SFLocalHelpers.creatureTypeCount)).sort();
 		const constMonsterTypeFilter = game.settings.get(
 			SFCONSTS.MODULE_NAME,
 			"filterMonsterTypes"
