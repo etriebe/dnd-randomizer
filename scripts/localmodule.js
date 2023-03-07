@@ -60,16 +60,23 @@ export class SFLocalHelpers {
         let promises = [];
         //promises.push(this.populateItemsFromCompendiums(constCompFilter));
         //promises.push(this.populateMonstersFromCompendiums(constCompFilter));
-        await Promise.allSettled([this.populateItemsFromCompendiums(constCompFilter), this.populateMonstersFromCompendiums(constCompFilter)]);
-        this.calculateCreatureTypeCounts();
-        this.calculateEnvironmentCreatureCounts();
-        this.dictionariesPopulated = true;
-        this._indexCacheDate = GeneralUtils.getCurrentDateTime();
-      }
-
-      if (useSavedIndex && (forceReload || !loadResult))
-      {
-        await this.saveCache();
+        try
+        {
+          Promise.all([this.populateItemsFromCompendiums(constCompFilter), this.populateMonstersFromCompendiums(constCompFilter)]).then(async ([result1, result2]) => {
+            this.calculateCreatureTypeCounts();
+            this.calculateEnvironmentCreatureCounts();
+            this.dictionariesPopulated = true;
+            this._indexCacheDate = GeneralUtils.getCurrentDateTime();
+            if (useSavedIndex && (forceReload || !loadResult))
+            {
+              await this.saveCache();
+            }
+          });
+        }
+        catch (error)
+        {
+          console.log(error);
+        }
       }
     }
 
@@ -184,84 +191,87 @@ export class SFLocalHelpers {
         {
           break;
         }
-  
-        let promiseList = [];
-        for (let entry of compendium.index) {
-          if (!entry)
-          {
-            break;
-          }
 
-          promiseList.push(compendium.getDocument(entry._id));
-        }
-
-        Promise.allSettled(promiseList).then(result => {
-          for (let currentObject of result)
-          {
-            if (!currentObject)
+        let allDocuments = await Promise.all(compendium.index.map((entry) => {
+          return new Promise((resolve) => {
+            if (!entry)
             {
-              continue;
+              resolve(null);
             }
+            else
+            {
+              compendium.getDocument(entry._id).then((entity) => {
+                resolve(entity);
+              });
+            }
+          });
+        }));
 
-            /*
-            Possible item types:
-              action
-              ancestry
-              armor
-              background
-              backpack
-              class
-              condition
-              consumable
-              deity
-              effect
-              equipment
-              feat
-              heritage
-              kit
-              spell
-              treasure
-              weapon
-            */
+        for (let currentObject of allDocuments)
+        {
+          if (!currentObject)
+          {
+            continue;
+          }
 
-            if (currentObject.type == "spell") {
-              try {
-                let spellName = currentObject.name;
-                let spellLevel = ActorUtils.getLevelKeyForSpell(currentObject);
-                if (!this.spellsByLevel[spellLevel].find(s => s.name === currentObject.name))
-                {
-                  this.spellsByLevel[spellLevel].push(currentObject);
-                }
-              }
-              catch (error) {
-                console.log(error);
-                console.log(`Spell id ${currentObject._id} failed to get added.`);
+          /*
+          Possible item types:
+            action
+            ancestry
+            armor
+            background
+            backpack
+            class
+            condition
+            consumable
+            deity
+            effect
+            equipment
+            feat
+            heritage
+            kit
+            spell
+            treasure
+            weapon
+          */
+
+          if (currentObject.type == "spell") {
+            try {
+              let spellName = currentObject.name;
+              let spellLevel = ActorUtils.getLevelKeyForSpell(currentObject);
+              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentObject.name))
+              {
+                this.spellsByLevel[spellLevel].push(currentObject);
               }
             }
-            else if (currentObject.type == "armor" || currentObject.type == "consumable" || currentObject.type == "equipment" || currentObject.type == "treasure" || currentObject.type == "weapon") {
-              let itemObject = {};
-              let itemRarity = FoundryUtils.getSystemVariableForObject(currentObject, "ItemRarity");
-    
-              if (!itemRarity || itemRarity === "") {
-                itemRarity = "common";
-              }
-    
-              itemObject["itemtype"] = currentObject.type;
-              itemObject["itemcost"] = currentObject.price?.value ?? 0;
-              itemObject["compendiumname"] = currentObject.pack;
-              itemObject["level"] = currentObject.level;
-              itemObject["itemname"] = currentObject.name;
-              itemObject["itemid"] = currentObject.id;
-              itemObject["rarity"] = itemRarity;
-              itemObject["item"] = currentObject;
-              this.allItems.push(itemObject);
+            catch (error) {
+              console.log(error);
+              console.log(`Spell id ${currentObject._id} failed to get added.`);
             }
           }
-        });
+          else if (currentObject.type == "armor" || currentObject.type == "consumable" || currentObject.type == "equipment" || currentObject.type == "treasure" || currentObject.type == "weapon") {
+            let itemObject = {};
+            let itemRarity = FoundryUtils.getSystemVariableForObject(currentObject, "ItemRarity");
+  
+            if (!itemRarity || itemRarity === "") {
+              itemRarity = "common";
+            }
+  
+            itemObject["itemtype"] = currentObject.type;
+            itemObject["itemcost"] = currentObject.price?.value ?? 0;
+            itemObject["compendiumname"] = currentObject.pack;
+            itemObject["level"] = currentObject.level;
+            itemObject["itemname"] = currentObject.name;
+            itemObject["itemid"] = currentObject.id;
+            itemObject["rarity"] = itemRarity;
+            itemObject["item"] = currentObject;
+            this.allItems.push(itemObject);
+          }
+        }
       }
 
       return new Promise(resolve => {
-        resolve();
+        resolve(this.allItems);
       });
     }
 
@@ -281,69 +291,72 @@ export class SFLocalHelpers {
         {
           break;
         }
-      
-        
-        let promiseList = [];
-        for (let entry of compendium.index) {
-          if (!entry)
+
+        let allDocuments = await Promise.all(compendium.index.map((entry) => {
+            return new Promise((resolve) => {
+              if (!entry)
+              {
+                resolve(null);
+              }
+              else
+              {
+                compendium.getDocument(entry._id).then((entity) => {
+                  resolve(entity);
+                });
+              }
+            });
+          }
+        ));
+
+        for (let actor of allDocuments)
+        {
+          if (!actor)
           {
-            break;
+            continue;
           }
 
-          promiseList.push(compendium.getDocument(entry._id));
+          if (actor.type != "npc")
+          {
+            continue;
+          }
+
+          try {
+            let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
+            let actorName = actor.name;
+            actorName = actorName.replaceAll("\"", "");
+            if (actorName === "#[CF_tempEntity]")
+            {
+              console.log(`Skipping actor ${actorName}`);
+              continue;
+            }
+
+            let actorObject = ActorUtils.getActorObject(actor);
+
+            if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
+            {
+              console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
+              continue;
+            }
+            let monsterObject = {};
+            
+            monsterObject["actor"] = actorObject;
+            monsterObject["actorname"] = actorObject.actorname;
+            monsterObject["actorid"] = actorObject.actorid;
+            monsterObject["compendiumname"] = compendium.metadata.id;
+            monsterObject["environment"] = actorObject.environment;
+            monsterObject["creaturetype"] = actorObject.creaturetype;
+            monsterObject["combatdata"] = actorObject.combatdata;
+            this.allMonsters.push(monsterObject);
+          } 
+          catch (error) {
+            console.warn(error);
+            console.warn(`Actor id ${actor._id}, name ${actor.name} failed to get added.`);
+          }
         }
-
-        Promise.allSettled(promiseList).then(result => {
-          for (let actor of result)
-          {
-            if (!actor)
-            {
-              continue;
-            }
-
-            if (actor.type != "npc")
-            {
-              continue;
-            }
-
-            try {
-              let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
-              let actorName = actor.name;
-              actorName = actorName.replaceAll("\"", "");
-              if (actorName === "#[CF_tempEntity]")
-              {
-                console.log(`Skipping actor ${actorName}`);
-                continue;
-              }
-  
-              let actorObject = ActorUtils.getActorObject(actor);
-  
-              if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
-              {
-                console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
-                continue;
-              }
-              let monsterObject = {};
-              
-              monsterObject["actor"] = actorObject;
-              monsterObject["actorname"] = actorObject.actorname;
-              monsterObject["actorid"] = actorObject.actorid;
-              monsterObject["compendiumname"] = compendium.metadata.id;
-              monsterObject["environment"] = actorObject.environment;
-              monsterObject["creaturetype"] = actorObject.creaturetype;
-              monsterObject["combatdata"] = actorObject.combatdata;
-              this.allMonsters.push(monsterObject);
-            } 
-            catch (error) {
-              console.warn(error);
-              console.warn(`Actor id ${actor._id}, name ${actor.name} failed to get added.`);
-            }
-          }
-        });
       }
 
       return new Promise(resolve => {
-        resolve();
+        resolve(this.allMonsters);
       });
     }
 
@@ -370,7 +383,7 @@ export class SFLocalHelpers {
         }
 
         let currentCreatureType = currentCreatureTypeMatch.groups.creatureType;
-        let currentCreatureTypeList = await this.loadFile(fileName);
+        let currentCreatureTypeList = await this.loadFile(fileName, true);
         if (!currentCreatureTypeList)
         {
           continue;
@@ -455,11 +468,20 @@ export class SFLocalHelpers {
       return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
     }
 
-    static async loadFile(fileName)
+    static async loadFile(fileName, hasCacheFolderInPath = false)
     {
-      await this.ensureFolder(SFLocalHelpers.getSystemCacheFolder());
+      const cacheFolder = SFLocalHelpers.getSystemCacheFolder();
+      await this.ensureFolder(cacheFolder);
+      if (hasCacheFolderInPath)
+      {
+        fileName = fileName.replace(cacheFolder, "").replace("/","");
+      }
+
       let fullFilePath = this.getCachePath(fileName);
-      let fileExists = await this.fileExists(SFLocalHelpers.getSystemCacheFolder(), fileName);
+      fullFilePath = fullFilePath.replaceAll("//","/");
+      let fileExists = false;
+      fileExists = await this.fileExists(cacheFolder, fileName);
+
       if (!fileExists)
       {
         console.warn(`File ${fullFilePath} does not exist`);
