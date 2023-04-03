@@ -376,7 +376,7 @@ export class SFLocalHelpers {
       const filesInCacheFolder = await SFLocalHelpers.getFilesInFolder(systemCacheFolder);
       for (let i = 0; i < filesInCacheFolder.files.length; i++) {
         let fileName = filesInCacheFolder.files[i];
-        let currentCreatureTypeMatch = fileName.match(/\/(?<creatureType>[\w_]+)_creature_cache.json/);
+        let currentCreatureTypeMatch = decodeURIComponent(fileName).match(/\/(?<creatureType>[\w\d\,\s]+)_creature_cache.json/);
         if (!currentCreatureTypeMatch)
         {
           continue;
@@ -396,7 +396,6 @@ export class SFLocalHelpers {
       if (generalCache)
       {
         this._indexCacheDate = generalCache._indexCacheDate;
-        this.creatureTypeCount = generalCache.creatureTypeCount;
         this.environmentCreatureCount = generalCache.environmentCreatureCount;
       }
       else
@@ -435,7 +434,7 @@ export class SFLocalHelpers {
       const creatureTypeList = this.allMonsters.map(i => i.creaturetype).filter(GeneralUtils.onlyUnique).sort();
       for (let creatureType of creatureTypeList)
       {
-        let monsterCount = this.allMonsters.filter(m => m.creaturetype && m.creaturetype.toLowerCase() === creatureType).length;
+        let monsterCount = this.allMonsters.filter(m => m.creaturetype.toLowerCase() && m.creaturetype.toLowerCase() === creatureType).length;
         this.creatureTypeCount[creatureType] = monsterCount;
       }
     }
@@ -505,7 +504,7 @@ export class SFLocalHelpers {
       await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
       const creatureTypes = this.allMonsters.map(i => i.creaturetype).filter(GeneralUtils.onlyUnique).sort();
       for (let currentCreatureType of creatureTypes) {
-        let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType === m.creaturetype.toLowerCase());
+        let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType.toLowerCase() === m.creaturetype.toLowerCase());
         let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
         await this.saveObjectToCache(fileName, monsterList);
       }
