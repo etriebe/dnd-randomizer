@@ -68,6 +68,7 @@ export class SFCompendiumSorter extends FormApplication {
 		let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
 		if (useSavedIndex && !SFLocalHelpers.dictionariesPopulated)
 		{
+			html.find('button#index-compendiums')[0].innerText = `Loading from cache...`;
 			await SFLocalHelpers.loadFromCache();
 		}
 		this.populateCompendiums(["Actor","Item"]);
