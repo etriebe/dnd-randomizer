@@ -206,4 +206,10 @@ export class FoundryUtils {
         return `<a class="entity-link content-link sf-dialog-content-link" draggable="true" data-type="Item" data-entity="Item" data-id="${itemID}">${itemName}</a>`;
       }
     }
+
+    static getFoundryDataFolder()
+    {
+      let source = (typeof ForgeVTT != "undefined" && ForgeVTT.usingTheForge) ? "forgevtt" : "data";
+      return source;
+    }
 }

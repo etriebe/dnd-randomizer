@@ -34,6 +34,7 @@ export class SFEnvironmentChooser extends FormApplication {
 			"environmentsToCreateEncountersFor"
 		  );
 		
+		let totalCount = 0;
 		for (let environment of this.environments)
 		{
 			const el = savedEnvironmentSettings.find(i => Object.keys(i)[0] === environment);
@@ -42,6 +43,7 @@ export class SFEnvironmentChooser extends FormApplication {
 			if (monsterCount)
 			{
 				monsterCountText = ` - ${monsterCount} creatures`;
+				totalCount += monsterCount;
 			}
 			$ul.append(`
 			<li class="environmentLi">
@@ -49,6 +51,9 @@ export class SFEnvironmentChooser extends FormApplication {
 				<span class="environment-type" data-name="${environment === "Any" ? "Creatures without a environment get grouped into an 'Any' bucket" : ""}">${environment}${monsterCountText}</span>
 			</li>`)
 		}
+
+		let dialogTitle = html.find('h3#environment-title').first();
+		dialogTitle[0].innerText = `Filter Environments (${totalCount} creatures)`;
 
 		sortable('#SFCompendiumSorter .sortable-compendiums', {
 			forcePlaceholderSize: true

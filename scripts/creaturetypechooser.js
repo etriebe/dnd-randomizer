@@ -34,7 +34,8 @@ export class SFCreatureTypeChooser extends FormApplication {
 			SFCONSTS.MODULE_NAME,
 			"filterMonsterTypes"
 		  );
-		
+
+		let totalCount = 0;
 		for (let currentType of creatureTypes) {
 			const el = constMonsterTypeFilter.find(i => Object.keys(i)[0] === currentType);
 			let monsterCount = SFLocalHelpers.creatureTypeCount[currentType];
@@ -42,6 +43,7 @@ export class SFCreatureTypeChooser extends FormApplication {
 			if (monsterCount)
 			{
 				monsterCountText = ` - ${monsterCount} creatures`;
+				totalCount += monsterCount;
 			}
 			let currentTypeCasedCorrect = currentType.charAt(0).toUpperCase() + currentType.slice(1);
 			$ul.append(`<li class="monsterTypeLi">
@@ -49,6 +51,9 @@ export class SFCreatureTypeChooser extends FormApplication {
 				<span class="monster-type">${currentTypeCasedCorrect}${monsterCountText}</span>
 			</li>`)
 		}
+
+		let dialogTitle = html.find('h3#creaturetype-title').first();
+		dialogTitle[0].innerText = `Filter Creature Types (${totalCount} creatures)`;
 
 		sortable('#SFCompendiumSorter .sortable-compendiums', {
 			forcePlaceholderSize: true
