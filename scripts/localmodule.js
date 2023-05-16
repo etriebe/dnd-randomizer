@@ -484,8 +484,9 @@ export class SFLocalHelpers {
     {
       let fullFilePath = `${fileFolder}/${fileName}`;
       await this.ensureFolder(fileFolder);
-      let cacheDir = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
-      if (cacheDir.files.filter(f => f === fullFilePath).length > 0)
+      let source = FoundryUtils.getFoundryDataFolder();
+      let cacheDir = await FilePicker.browse(source, fileFolder);
+      if (cacheDir.files.filter(f => source === "forgevtt" ? f.endsWith(fullFilePath) : f === fullFilePath).length > 0)
       {
         return true;
       }
