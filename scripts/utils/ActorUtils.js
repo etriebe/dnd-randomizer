@@ -12,7 +12,7 @@ export class ActorUtils
       let creatureTypeValue = FoundryUtils.getSystemVariableForObject(actor, "CreatureType");
       if (creatureTypeValue === '')
       {
-        creatureTypeValue = 'any';
+        creatureTypeValue = 'other';
       }
 
       return creatureTypeValue;
