@@ -12,6 +12,7 @@ export class SFLocalHelpers {
     static creatureTypeCount = {};
     static environmentCreatureCount = {};
     static spellsByLevel = {};
+    static folderBrowseCache = {};
     static dictionariesInitialized = false;
     static dictionariesPopulated = false;
     static _indexCacheDate;
@@ -476,14 +477,14 @@ export class SFLocalHelpers {
 
       await this.ensureFolder(SFLocalHelpers.getSystemCacheFolder());
       let file = new File([blob], fileName, { type: "text" });
-      await FilePicker.upload("data", SFLocalHelpers.getSystemCacheFolder(), file, {});
+      await FilePicker.upload(FoundryUtils.getFoundryDataFolder(), SFLocalHelpers.getSystemCacheFolder(), file, {});
     }
 
     static async fileExists(fileFolder, fileName)
     {
       let fullFilePath = `${fileFolder}/${fileName}`;
       await this.ensureFolder(fileFolder);
-      let cacheDir = await FilePicker.browse("data", fileFolder);
+      let cacheDir = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
       if (cacheDir.files.filter(f => f === fullFilePath).length > 0)
       {
         return true;
@@ -501,20 +502,33 @@ export class SFLocalHelpers {
       let currentFolderPath = "";
       for (let folder of folderArray)
       {
-        let currentDir = await FilePicker.browse("data", currentFolderPath);
+        let currentDir = await SFLocalHelpers.browseFolder(currentFolderPath);
         currentFolderArray.push(folder);
         currentFolderPath = currentFolderArray.join("/");
         if (currentDir.dirs.filter(d => d === currentFolderPath).length === 0)
         {
-          await FilePicker.createDirectory("data", currentFolderPath, {});
+          await FilePicker.createDirectory(FoundryUtils.getFoundryDataFolder(), currentFolderPath, {});
         }
       }
+    }
+
+    static async browseFolder(fileFolder)
+    {
+      if (this.folderBrowseCache[fileFolder])
+      {
+        console.log(`Returning browse cache for ${fileFolder}`);
+        return this.folderBrowseCache[fileFolder];
+      }
+
+      let currentDir = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
+      this.folderBrowseCache[fileFolder] = currentDir;
+      return currentDir;
     }
 
     static async getFilesInFolder(fileFolder)
     {
       await SFLocalHelpers.ensureFolder(fileFolder);
-      let files = await FilePicker.browse("data", fileFolder);
+      let files = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
       return files;
     }
 
