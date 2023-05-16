@@ -296,7 +296,7 @@
 	margin: 0px;
 }
 
-#SFDialog .window-content .form-encounters .filter-controller .license-and-credits {
+#SFDialog .window-content .form-encounters .filter-controller #license-and-credits {
 	border-left-width: 0px;
 	border-bottom-right-radius: 0.25rem;
 	border-top-right-radius: 0.25rem;
