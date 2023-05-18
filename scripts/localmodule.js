@@ -425,6 +425,22 @@ export class SFLocalHelpers {
 
     static async loadFile(fileName, hasCacheFolderInPath = false)
     {
+      const isUrlAbsolute = (url) => /^https?:\/\//.test(url);
+      if (isUrlAbsolute(fileName)) {
+        try {
+          // This is an absolute URL. Attempt to fetch first and rely on browser for caching
+          const rsp = await fetch(fileName);
+          if (rsp.ok) {
+            // File exists at absolute path. Attempt to parse as JSON
+            return await rsp.json();
+          }
+          // Fetch unsuccessful. Revert to fallback
+          console.warn(`Unable to fetch file at absolute URL ${ fileName }`);
+        } catch (e) {
+          console.error(`Error fetching file at absolute URL ${ fileName }`, e);
+        }
+      }
+        
       const cacheFolder = SFLocalHelpers.getSystemCacheFolder();
       await this.ensureFolder(cacheFolder);
       if (hasCacheFolderInPath)
