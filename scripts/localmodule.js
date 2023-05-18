@@ -425,7 +425,7 @@ export class SFLocalHelpers {
 
     static async loadFile(fileName, hasCacheFolderInPath = false)
     {
-      const isUrlAbsolute = (url) => url && url.startsWith("https://");
+      const isUrlAbsolute = (url) => /^https?:\/\//.test(url);
       if (isUrlAbsolute(fileName)) {
         try {
           // This is an absolute URL. Attempt to fetch first and rely on browser for caching
