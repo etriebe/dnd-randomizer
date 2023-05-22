@@ -7,17 +7,6 @@
   "author": "theripper93, Mouse0270, etriebe",
   "authors": [
       {
-          "name": "theripper93",
-          "email": "tsplab@gmail.com",
-          "url": "https://www.patreon.com/theripper93"
-      },
-      {
-        "name": "Mouse0270",
-        "email": "",
-        "url": "https://www.patreon.com/mouse0270",
-        "discord": "mouse0270#0270"
-      },
-      {
         "name": "thetreat",
         "email": "eric.triebe@gmail.com",
         "discord": "thetreat#9487"
@@ -43,8 +32,10 @@
   ],
   "packs": [
   ],
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "10",
+  "compatibility": {
+    "minimum": "9.238",
+    "verified": "11.298"
+  },
   "url": "https://github.com/etriebe/dnd-randomizer",
   "changelog": "https://github.com/etriebe/dnd-randomizer/releases/",
   "manifest": "https://github.com/etriebe/dnd-randomizer/releases/latest/download/module.json",
