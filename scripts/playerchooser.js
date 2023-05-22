@@ -69,7 +69,7 @@ export class SFPlayerChooser extends FormApplication {
 			let playerClasses = player.classes;
 			let currentClassNameCasedCorrect = currentClass.charAt(0).toUpperCase() + currentClass.slice(1);
 			let currentClassObject = playerClasses[currentClass];
-			let currentClassLevel = FoundryUtils.getDataObjectFromObject(currentClassObject).levels;
+			let currentClassLevel = FoundryUtils.getSystemVariableForObject(currentClassObject, "ClassLevel");
 			let currentClassSpan = `<span class="player-character-info" data-type="${currentClass}">${currentClassNameCasedCorrect}: Level ${currentClassLevel}</span>`;
 			return currentClassSpan;
 		}

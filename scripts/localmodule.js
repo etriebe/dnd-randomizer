@@ -129,7 +129,7 @@ export class SFLocalHelpers {
         let totalLevelCount = 0;
         for (let i = 0; i < playerClassList.length; i++)
         {
-          let currentClassLevel = FoundryUtils.getDataObjectFromObject(playerClasses[playerClassList[i]]).levels;
+          let currentClassLevel = FoundryUtils.getSystemVariableForObject(playerClasses[playerClassList[i]], "ClassLevel");
           totalLevelCount += currentClassLevel;
         }
         return totalLevelCount;

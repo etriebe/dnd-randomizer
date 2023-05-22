@@ -770,6 +770,9 @@ export const SFLOCALCONSTS = {
         "LootActorType": {
             "dnd5e": "npc",
             "pf2e": "loot"
+        },
+        "ClassLevel": {
+          "dnd5e": "system.levels"
         }
     },
     SYSTEM_VARIABLES_V11: {
@@ -795,6 +798,9 @@ export const SFLOCALCONSTS = {
         "LootActorType": {
             "dnd5e": "npc",
             "pf2e": "loot"
+        },
+        "ClassLevel": {
+          "dnd5e": "system.levels"
         }
     },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {
