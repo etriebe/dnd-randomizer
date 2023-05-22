@@ -772,6 +772,31 @@ export const SFLOCALCONSTS = {
             "pf2e": "loot"
         }
     },
+    SYSTEM_VARIABLES_V11: {
+        // Object is for actor
+        "CreatureType": {
+            "dnd5e": "system.details.type.value",
+            "pf2e": "system.details.creatureType",
+        },
+        // Object is for spell
+        "SpellLevel": {
+            "dnd5e": "labels.level",
+            "pf2e": "level",
+        },
+        // Object is for actor
+        "CreatureXP": {
+            "dnd5e": "details.xp.value",
+            "pf2e": "level",
+        },
+        "ItemRarity": {
+            "dnd5e": "system.rarity",
+            "pf2e": "system.traits.rarity"
+        },
+        "LootActorType": {
+            "dnd5e": "npc",
+            "pf2e": "loot"
+        }
+    },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {
         // Key=Encounter Difficulty : Value=[XP Budget, Character Adjustment]
         "Trivial": [40, 10],
