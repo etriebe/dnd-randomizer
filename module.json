@@ -3,8 +3,21 @@
   "title": "Stochastic, Fantastic! - Random Encounter Generator",
   "description": "desc",
   "version": "0.13",
-  "system": ["dnd5e","pf2e"],
-  "author": "theripper93, Mouse0270, etriebe",
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {}
+      },
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  },
+  "author": "etriebe",
   "authors": [
       {
         "name": "thetreat",
