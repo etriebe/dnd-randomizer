@@ -61,25 +61,8 @@ export class SFEnvironmentChooser extends FormApplication {
 	}
 
 	async activateListeners(html) {
-		let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
-		if (useSavedIndex && !SFLocalHelpers.dictionariesPopulated)
-		{
-			await SFLocalHelpers.loadFromCache();
-		}
+		SFLocalHelpers.populateObjectsFromCompendiums(false);
 		this.populateEnvironments();
-
-		html.find('button#index-compendiums').on('click', async (event) => {
-			event.preventDefault();
-			const $button = $(event.currentTarget);
-			$button.prop('disabled', true).addClass('disabled');
-			let forceReload = true;
-			html.find('button#index-compendiums')[0].innerText = `Currently indexing...`;
-			let doneIndexing = await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-			savedIndexDate = SFLocalHelpers._indexCacheDate;
-			html.find('button#index-compendiums')[0].innerText = `Force reindex - Index Date: ${savedIndexDate}`;
-			$button.prop('disabled', false).removeClass('disabled');
-		});
-
 		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#environment_filter', 'li.environmentLi');
 	}
 

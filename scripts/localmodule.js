@@ -38,7 +38,7 @@ export class SFLocalHelpers {
         SFCONSTS.MODULE_NAME,
         "filterCompendiums"
       );
-      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+
       if (!this.dictionariesInitialized)
       {
         this.initializeDictionaries();
@@ -50,12 +50,6 @@ export class SFLocalHelpers {
         return;
       }
 
-      let loadResult = false;
-      if (useSavedIndex && !forceReload && !this.dictionariesPopulated)
-      {
-        loadResult = await this.loadFromCache();
-      }
-
       if (!this.dictionariesPopulated || forceReload)
       {
         await this.populateItemsFromCompendiums(constCompFilter);
@@ -64,11 +58,6 @@ export class SFLocalHelpers {
         this.calculateEnvironmentCreatureCounts();
         this.dictionariesPopulated = true;
         this._indexCacheDate = GeneralUtils.getCurrentDateTime();
-      }
-
-      if (useSavedIndex && (forceReload || !loadResult))
-      {
-        await this.saveCache();
       }
     }
 
@@ -376,74 +365,6 @@ export class SFLocalHelpers {
       }
     }
 
-    static async loadFromCache()
-    {
-      const constCompFilter = game.settings.get(
-        SFCONSTS.MODULE_NAME,
-        "filterCompendiums"
-      );
-      let spellsbyLevelFromCache = await this.loadFile(SFLOCALCONSTS.SPELL_CACHE_FILE);
-      if (spellsbyLevelFromCache)
-      {
-        this.spellsByLevel = spellsbyLevelFromCache;
-      }
-
-      const systemCacheFolder = SFLocalHelpers.getSystemCacheFolder();
-      const filesInCacheFolder = await SFLocalHelpers.getFilesInFolder(systemCacheFolder);
-      for (let i = 0; i < filesInCacheFolder.files.length; i++) {
-        let fileName = filesInCacheFolder.files[i];
-        let currentCreatureTypeMatch = decodeURIComponent(fileName).match(/\/(?<creatureType>[\w\d\,\s]+)_creature_cache.json/);
-        if (!currentCreatureTypeMatch)
-        {
-          continue;
-        }
-
-        let currentCreatureType = currentCreatureTypeMatch.groups.creatureType;
-        let currentCreatureTypeList = await this.loadFile(fileName, true);
-        if (!currentCreatureTypeList)
-        {
-          continue;
-        }
-        this.creatureTypeCount[currentCreatureType] = currentCreatureTypeList.length;
-        this.allMonsters = this.allMonsters.concat(currentCreatureTypeList);
-      }
-
-      let generalCache = await this.loadFile(SFLOCALCONSTS.GENERAL_CACHE_FILE);
-      if (generalCache)
-      {
-        this._indexCacheDate = generalCache._indexCacheDate;
-        this.environmentCreatureCount = generalCache.environmentCreatureCount;
-      }
-      else
-      {
-        this.calculateEnvironmentCreatureCounts();
-      }
-
-      let itemCache = await this.loadFile(SFLOCALCONSTS.ITEM_CACHE_FILE);
-      if (itemCache)
-      {
-        this.allItems = itemCache;
-      }
-      else
-      {
-        await this.populateItemsFromCompendiums(constCompFilter);
-      }
-
-      console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
-      console.log(`${this.allItems.length} items loaded from cache`);
-
-      if (this.allMonsters.length > 0)
-      {
-        this.dictionariesPopulated = true;
-        this.dictionariesInitialized = true;
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-
     static calculateCreatureTypeCounts()
     {
       this.creatureTypeCount = {};
@@ -463,157 +384,6 @@ export class SFLocalHelpers {
         let monsterCount = this.allMonsters.filter(m => m.environment.filter(e => e === environment).length > 0).length;
         this.environmentCreatureCount[environment] = monsterCount;
       }
-    }
-
-    static getCachePath(fileName)
-    {
-      let cacheFolder = SFLocalHelpers.getSystemCacheFolder();
-      return `${cacheFolder}/${fileName}`;
-    }
-
-    static getSystemCacheFolder()
-    {
-      let systemID = FoundryUtils.getSystemId();
-      return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
-    }
-
-    static getBaseCacheFolder()
-    {
-      let systemID = FoundryUtils.getSystemId();
-      return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
-    }
-
-    static async loadFile(fileName, hasCacheFolderInPath = false)
-    {
-      const isUrlAbsolute = (url) => /^https?:\/\//.test(url);
-      if (isUrlAbsolute(fileName)) {
-        try {
-          // This is an absolute URL. Attempt to fetch first and rely on browser for caching
-          const rsp = await fetch(fileName);
-          if (rsp.ok) {
-            // File exists at absolute path. Attempt to parse as JSON
-            return await rsp.json();
-          }
-          // Fetch unsuccessful. Revert to fallback
-          console.warn(`Unable to fetch file at absolute URL ${ fileName }`);
-        } catch (e) {
-          console.error(`Error fetching file at absolute URL ${ fileName }`, e);
-        }
-      }
-        
-      const cacheFolder = SFLocalHelpers.getSystemCacheFolder();
-      await this.ensureFolder(cacheFolder);
-      if (hasCacheFolderInPath)
-      {
-        fileName = fileName.replace(cacheFolder, "").replace("/","");
-      }
-
-      let fullFilePath = this.getCachePath(fileName);
-      fullFilePath = fullFilePath.replaceAll("//","/");
-      let fileExists = false;
-      fileExists = await this.fileExists(cacheFolder, fileName);
-
-      if (!fileExists)
-      {
-        console.warn(`File ${fullFilePath} does not exist`);
-        return null;
-      }
-
-      let storedCacheResponse = await (await fetch(fullFilePath));
-      if(storedCacheResponse.ok){
-        return JSON.parse(await storedCacheResponse.text());
-      }
-    }
-
-    static async saveCache(){
-      const data = {
-        _indexCacheDate : this._indexCacheDate,
-        creatureTypeCount : this.creatureTypeCount,
-        environmentCreatureCount : this.environmentCreatureCount
-      };
-      await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
-      await this.saveObjectToCache(SFLOCALCONSTS.ITEM_CACHE_FILE, this.allItems);
-      await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
-      const creatureTypes = this.allMonsters.map(i => i.creaturetype).filter(GeneralUtils.onlyUnique).sort();
-      for (let currentCreatureType of creatureTypes) {
-        let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType.toLowerCase() === m.creaturetype.toLowerCase());
-        let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
-        await this.saveObjectToCache(fileName, monsterList);
-      }
-
-      console.log(`Saved ${this.allMonsters.length} monsters to cache`);
-      await this.cleanUpOldCacheObjects();
-    }
-
-    static async saveObjectToCache(fileName, object)
-    {
-      let blob = new Blob([JSON.stringify(object)], {
-        type: 'text/plain'
-      });
-
-      await this.ensureFolder(SFLocalHelpers.getSystemCacheFolder());
-      let file = new File([blob], fileName, { type: "text" });
-      await FilePicker.upload(FoundryUtils.getFoundryDataFolder(), SFLocalHelpers.getSystemCacheFolder(), file, {});
-    }
-
-    static async fileExists(fileFolder, fileName)
-    {
-      let fullFilePath = `${fileFolder}/${fileName}`;
-      await this.ensureFolder(fileFolder);
-      let source = FoundryUtils.getFoundryDataFolder();
-      let cacheDir = await FilePicker.browse(source, fileFolder);
-      if (cacheDir.files.filter(f => source === "forgevtt" ? f.endsWith(fullFilePath) : f === fullFilePath).length > 0)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    static async ensureFolder(fileFolder)
-    {
-      let folderArray = fileFolder.split("/");
-      let currentFolderArray = [];
-      let currentFolderPath = "";
-      for (let folder of folderArray)
-      {
-        let currentDir = await SFLocalHelpers.browseFolder(currentFolderPath);
-        currentFolderArray.push(folder);
-        currentFolderPath = currentFolderArray.join("/");
-        if (currentDir.dirs.filter(d => d === currentFolderPath).length === 0)
-        {
-          await FilePicker.createDirectory(FoundryUtils.getFoundryDataFolder(), currentFolderPath, {});
-        }
-      }
-    }
-
-    static async browseFolder(fileFolder)
-    {
-      if (this.folderBrowseCache[fileFolder])
-      {
-        console.log(`Returning browse cache for ${fileFolder}`);
-        return this.folderBrowseCache[fileFolder];
-      }
-
-      let currentDir = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
-      this.folderBrowseCache[fileFolder] = currentDir;
-      return currentDir;
-    }
-
-    static async getFilesInFolder(fileFolder)
-    {
-      await SFLocalHelpers.ensureFolder(fileFolder);
-      let files = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
-      return files;
-    }
-
-    static async cleanUpOldCacheObjects()
-    {
-      // null out old settings
-      await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', []);
-      await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
     }
 
     static async filterItemsFromCompendiums()

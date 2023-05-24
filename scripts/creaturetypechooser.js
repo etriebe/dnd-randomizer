@@ -61,11 +61,7 @@ export class SFCreatureTypeChooser extends FormApplication {
 	}
 
 	async activateListeners(html) {
-		let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
-		if (useSavedIndex && !SFLocalHelpers.dictionariesPopulated)
-		{
-			await SFLocalHelpers.loadFromCache();
-		}
+		SFLocalHelpers.populateObjectsFromCompendiums(false);
 		this.populateCreatureTypes();
 		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#creature_filter', 'li.monsterTypeLi');
 	}
