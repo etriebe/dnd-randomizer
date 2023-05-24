@@ -6,22 +6,20 @@ export class PCActor5e {
       this.actor = data;
       this.actorname = this.actor.name;
       this.actorid = this.actor._id;
-      this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
-      this.environment = ActorUtils.getActorEnvironments();
+      this.creaturetype = "PC";
+      this.environment = ["Any"];
       this.combatdata = this.getCombatDataPerRound();
       this.classes = this.actor.classes;
-      this.level = this.getPlayerClassLevel();
       this.playerclasslist = this.getPlayerClassList();
+      this.level = this.getPlayerClassLevel();
     }
   
     getPlayerClassLevel()
     {
-      let playerClasses = this.classes;
-      let playerClassList = this.getPlayerClassList(player);
       let totalLevelCount = 0;
-      for (let i = 0; i < playerClassList.length; i++)
+      for (let i = 0; i < this.playerclasslist.length; i++)
       {
-        let currentClassLevel = FoundryUtils.getDataObjectFromObject(playerClasses[playerClassList[i]]).levels;
+        let currentClassLevel = FoundryUtils.getSystemVariableForObject(this.classes[this.playerclasslist[i]], "ClassLevel");
         totalLevelCount += currentClassLevel;
       }
       return totalLevelCount;

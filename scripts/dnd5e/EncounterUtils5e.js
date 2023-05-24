@@ -4,7 +4,7 @@ import { SFLocalHelpers } from "../localmodule.js";
 import { ActorUtils } from "../utils/ActorUtils.js";
 export class EncounterUtils5e
 {
-  static createEncounterDnd5e(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)
+  static async createEncounterDnd5e(targetedDifficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params)
   {
     let currentEncounter = {};
     currentEncounter["difficulty"] = targetedDifficulty;
@@ -89,7 +89,15 @@ export class EncounterUtils5e
           creatureCombatDetails["quantity"] = numberOfMonstersToPutInCombat;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
-          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId).combatdata;
+          let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
+          // If a monster hasn't had their combat data instantiated, analyze the actor (calls compendium.getDocument())
+          // This can be a slower operation.
+          if (!currentMonster.actor.combatdata)
+          {
+            await currentMonster.actor.analyzeActor();
+          }
+
+          creatureCombatDetails["combatdata"] = currentMonster.actor.combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
@@ -157,7 +165,15 @@ export class EncounterUtils5e
           creatureCombatDetails["quantity"] = numberOfCreatures;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
-          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => (randomMonster.actorid != null && randomMonster.actorid != undefined && m.actorid === randomMonster.actorid) || (m.actor.actor.id === randomMonsterActorId)).combatdata;
+
+          let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
+          // If a monster hasn't had their combat data instantiated, analyze the actor (calls compendium.getDocument())
+          // This can be a slower operation.
+          if (!currentMonster.actor.combatdata)
+          {
+            await currentMonster.actor.analyzeActor();
+          }
+          creatureCombatDetails["combatdata"] = currentMonster.actor.combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           break;
         }
@@ -464,9 +480,12 @@ export class EncounterUtils5e
           let spellScrollMatch = magicItemResult.match(/Spell scroll \((?<fullSpellDescription>(?<spellLevel>\d+)(st|nd|rd|th) level|cantrip)\)/);
           if (spellScrollMatch)
           {
-            let spellLevelToGet = spellScrollMatch.groups.fullSpellDescription.toLowerCase();
-            let randomSpellChosen = FoundryUtils.getRandomItemFromRollTable(SFLocalHelpers.spellsByLevel[spellLevelToGet]);
-            magicItemResult = randomSpellChosen;
+            let spellLevel = spellScrollMatch.groups.spellLevel;
+            if (spellScrollMatch.groups.fullSpellDescription === "cantrip")
+            {
+              spellLevel = 0;
+            }
+            magicItemResult = FoundryUtils.getRandomItemFromRollTable(SFLocalHelpers.spellsByLevel[spellLevel]);
           }
         }
 

@@ -23,8 +23,11 @@ export const SFLOCALCONSTS = {
     ENCOUNTER_XP_CHALLENGE_RATING_MAPPING: {
         "0": 10,
         ".125": 25,
+        "0.125": 25,
         ".25": 50,
+        "0.25": 50,
         ".5": 100,
+        "0.5": 100,
         "1": 200,
         "2": 450,
         "3": 700,
@@ -741,11 +744,6 @@ export const SFLOCALCONSTS = {
             "dnd5e": "labels.level",
             "pf2e": "level",
         },
-        // Object is for actor
-        "CreatureXP": {
-            "dnd5e": "data.data.details.xp.value",
-            "pf2e": "level",
-        }
     },
     SYSTEM_VARIABLES_V10: {
         // Object is for actor
@@ -755,21 +753,70 @@ export const SFLOCALCONSTS = {
         },
         // Object is for spell
         "SpellLevel": {
-            "dnd5e": "labels.level",
-            "pf2e": "level",
+            "dnd5e": "system.level",
+            "pf2e": "system.level.value",
         },
         // Object is for actor
-        "CreatureXP": {
-            "dnd5e": "details.xp.value",
+        "CreatureCR": {
+            "dnd5e": "system.details.cr",
+            "pf2e": "system.details.level",
+        },
+        // Object is for actor
+        "CreatureEnvironment": {
+            "dnd5e": "system.details.environment",
             "pf2e": "level",
         },
         "ItemRarity": {
             "dnd5e": "system.rarity",
             "pf2e": "system.traits.rarity"
         },
+        "ItemPrice": {
+            "dnd5e": "system.price",
+            "pf2e": "system.price"
+        },
         "LootActorType": {
             "dnd5e": "npc",
             "pf2e": "loot"
+        },
+        "ClassLevel": {
+          "dnd5e": "system.levels"
+        }
+    },
+    SYSTEM_VARIABLES_V11: {
+        // Object is for actor
+        "CreatureType": {
+            "dnd5e": "system.details.type.value",
+            "pf2e": "system.details.creatureType",
+        },
+        // Object is for spell
+        "SpellLevel": {
+            "dnd5e": "system.level",
+            "pf2e": "system.level.value",
+        },
+        // Object is for actor
+        "CreatureCR": {
+            "dnd5e": "system.details.cr",
+            "pf2e": "system.details.level",
+        },
+        // Object is for actor
+        "CreatureEnvironment": {
+            "dnd5e": "system.details.environment",
+            "pf2e": "level",
+        },
+        "ItemRarity": {
+            "dnd5e": "system.rarity",
+            "pf2e": "system.traits.rarity"
+        },
+        "ItemPrice": {
+            "dnd5e": "system.price",
+            "pf2e": "system.price"
+        },
+        "LootActorType": {
+            "dnd5e": "npc",
+            "pf2e": "loot"
+        },
+        "ClassLevel": {
+          "dnd5e": "system.levels"
         }
     },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {

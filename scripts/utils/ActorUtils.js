@@ -42,17 +42,17 @@ export class ActorUtils
       }
     }
 
-    static getActorObject(actor)
+    static getActorObject(actor, compendiumname)
     {
       let currentSystem = game.system.id;
 
       if (currentSystem === "dnd5e")
       {
-        return new NPCActor5e(actor);
+        return new NPCActor5e(actor, compendiumname);
       }
       else if (currentSystem === "pf2e")
       {
-        return new NPCActorPf2e(actor);
+        return new NPCActorPf2e(actor, compendiumname);
       }
       else
       {
@@ -91,19 +91,20 @@ export class ActorUtils
     }
 
     static getActorEnvironments(actor) {
-        let environment = FoundryUtils.getDataObjectFromObject(actor).details.environment;
-        if (!environment || environment.trim() === "") {
-            environment = "Any";
-        }
+      let dataObject = FoundryUtils.getDataObjectFromObject(actor);
+      let environment = dataObject.details?.environment;
+      if (!environment || environment.trim() === "") {
+          environment = "Any";
+      }
 
-        let environmentArray = environment.split(",");
-        let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[actor.actorname];
-        if (extraEnvironmentMapping)
-        {
-          environmentArray = environmentArray.concat(extraEnvironmentMapping);
-        }
-        environmentArray = environmentArray.map(e => e.trim());
-        return environmentArray;
+      let environmentArray = environment.split(",");
+      let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[actor.actorname];
+      if (extraEnvironmentMapping)
+      {
+        environmentArray = environmentArray.concat(extraEnvironmentMapping);
+      }
+      environmentArray = environmentArray.map(e => e.trim());
+      return environmentArray;
     }
 
     static getActorItemList(actor)
@@ -132,7 +133,7 @@ export class ActorUtils
 
     static async getTokenDocument(actor, data)
     {
-      if (FoundryUtils.isFoundryVersion10())
+      if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
       {
         return await actor.getTokenDocument(data)
       }

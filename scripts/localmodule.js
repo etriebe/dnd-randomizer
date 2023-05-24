@@ -19,17 +19,17 @@ export class SFLocalHelpers {
 
     static initializeDictionaries() {
       this.spellsByLevel = {};
-      this.spellsByLevel["cantrip"] = [];
-      this.spellsByLevel["1st level"] = [];
-      this.spellsByLevel["2nd level"] = [];
-      this.spellsByLevel["3rd level"] = [];
-      this.spellsByLevel["4th level"] = [];
-      this.spellsByLevel["5th level"] = [];
-      this.spellsByLevel["6th level"] = [];
-      this.spellsByLevel["7th level"] = [];
-      this.spellsByLevel["8th level"] = [];
-      this.spellsByLevel["9th level"] = [];
-      this.spellsByLevel["10th level"] = [];
+      this.spellsByLevel[0] = [];
+      this.spellsByLevel[1] = [];
+      this.spellsByLevel[2] = [];
+      this.spellsByLevel[3] = [];
+      this.spellsByLevel[4] = [];
+      this.spellsByLevel[5] = [];
+      this.spellsByLevel[6] = [];
+      this.spellsByLevel[7] = [];
+      this.spellsByLevel[8] = [];
+      this.spellsByLevel[9] = [];
+      this.spellsByLevel[10] = [];
       this.dictionariesInitialized = true;
     }
   
@@ -38,7 +38,7 @@ export class SFLocalHelpers {
         SFCONSTS.MODULE_NAME,
         "filterCompendiums"
       );
-      let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
+
       if (!this.dictionariesInitialized)
       {
         this.initializeDictionaries();
@@ -50,12 +50,6 @@ export class SFLocalHelpers {
         return;
       }
 
-      let loadResult = false;
-      if (useSavedIndex && !forceReload && !this.dictionariesPopulated)
-      {
-        loadResult = await this.loadFromCache();
-      }
-
       if (!this.dictionariesPopulated || forceReload)
       {
         await this.populateItemsFromCompendiums(constCompFilter);
@@ -64,11 +58,6 @@ export class SFLocalHelpers {
         this.calculateEnvironmentCreatureCounts();
         this.dictionariesPopulated = true;
         this._indexCacheDate = GeneralUtils.getCurrentDateTime();
-      }
-
-      if (useSavedIndex && (forceReload || !loadResult))
-      {
-        await this.saveCache();
       }
     }
 
@@ -129,7 +118,7 @@ export class SFLocalHelpers {
         let totalLevelCount = 0;
         for (let i = 0; i < playerClassList.length; i++)
         {
-          let currentClassLevel = FoundryUtils.getDataObjectFromObject(playerClasses[playerClassList[i]]).levels;
+          let currentClassLevel = FoundryUtils.getSystemVariableForObject(playerClasses[playerClassList[i]], "ClassLevel");
           totalLevelCount += currentClassLevel;
         }
         return totalLevelCount;
@@ -177,13 +166,32 @@ export class SFLocalHelpers {
           console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
           continue;
         }
+
         if (!compendium)
         {
           break;
         }
 
-        for (let entry of compendium.index) {
-          if (!entry)
+        let fieldsToIndex = [
+          FoundryUtils.getSystemVariable("ItemRarity"),
+          FoundryUtils.getSystemVariable("ItemPrice"),
+          FoundryUtils.getSystemVariable("SpellLevel")
+        ];
+
+        const index = await compendium.getIndex({ fields: fieldsToIndex });
+
+        if (index.size === 0)
+        {
+          console.log(`Skipping Compendium ${compendium.collection} because it was empty`)
+          continue;
+        }
+        else
+        {
+          console.log(`Indexing compendium ${compendium.collection}`);
+        }
+
+        for (let item of index) {
+          if (!item)
           {
             break;
           }
@@ -209,44 +217,60 @@ export class SFLocalHelpers {
             weapon
           */
 
-          if (entry.type == "spell")
+          if (item.type == "spell")
           {
             try
             {
-              const currentSpell = await compendium.getDocument(entry._id);
-              let spellName = entry.name;
-              let spellLevel = ActorUtils.getLevelKeyForSpell(currentSpell);
-              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
+              // Left for easy debugging purposes
+              // const currentSpell = await compendium.getDocument(item._id);
+              let spellName = item.name;
+              let spellLevel = FoundryUtils.getSystemVariableForObject(item, "SpellLevel");
+              if (!this.spellsByLevel[spellLevel].find(s => s.name === spellName))
               {
-                this.spellsByLevel[spellLevel].push(currentSpell);
+                this.spellsByLevel[spellLevel].push(item);
               }
             }
             catch (error)
             {
               console.log(error);
-              console.log(`Spell id ${entry._id} failed to get added.`);
+              console.log(`Spell id ${item._id}, name ${item.name}, pack ${compendium.collection} failed to get added.`);
             }
           }
-          else if (entry.type == "armor" || entry.type == "consumable" || entry.type == "equipment" || entry.type == "treasure" || entry.type == "weapon")
+          else if (item.type == "armor" || item.type == "consumable" || item.type == "equipment" || item.type == "treasure" || item.type == "weapon")
           {
-            let itemObject = {};
-            const currentItem = await compendium.getDocument(entry._id);
-            let itemRarity = FoundryUtils.getSystemVariableForObject(currentItem, "ItemRarity");
-
-            if (!itemRarity  || itemRarity === "")
+            if (item.name === "#[CF_tempEntity]")
             {
-              itemRarity = "common";
+              continue;
             }
+            try
+            {
+              let itemRarity = FoundryUtils.getSystemVariableForObject(item, "ItemRarity");
 
-            itemObject["itemtype"] = entry.type;
-            itemObject["itemcost"] = currentItem.price?.value ?? 0;
-            itemObject["compendiumname"] = currentItem.pack;
-            itemObject["level"] = currentItem.level;
-            itemObject["itemname"] = currentItem.name;
-            itemObject["itemid"] = currentItem.id;
-            itemObject["rarity"] = itemRarity;
-            itemObject["item"] = currentItem;
-            this.allItems.push(itemObject);
+              if (!itemRarity  || itemRarity === "")
+              {
+                itemRarity = "common";
+              }
+  
+              let itemPrice = FoundryUtils.getSystemVariableForObject(item, "ItemPrice");
+              if (!itemPrice)
+              {
+                itemPrice = 0;
+              }
+              let itemObject = {};
+              itemObject["itemtype"] = item.type;
+              itemObject["itemcost"] = itemPrice;
+              itemObject["compendiumname"] = compendium.collection;
+              itemObject["itemname"] = item.name;
+              itemObject["itemid"] = item._id;
+              itemObject["rarity"] = itemRarity;
+              itemObject["item"] = item;
+              this.allItems.push(itemObject);
+            }
+            catch(error)
+            {
+              console.log(error);
+              console.log(`Item id ${item._id}, name ${item.name}, pack ${compendium.collection} failed to get added.`);
+            }
           }
         }
       }
@@ -263,25 +287,47 @@ export class SFLocalHelpers {
           console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
           continue;
         }
+
         if (!compendium)
         {
           break;
         }
 
-        for (let entry of compendium.index) {
-          if (!entry)
+        let fieldsToIndex = [
+          FoundryUtils.getSystemVariable("CreatureType"),
+          FoundryUtils.getSystemVariable("CreatureCR"),
+        ];
+
+        if (FoundryUtils.getSystemId() === "dnd5e")
+        {
+          fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureEnvironment"));
+          // fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
+        }
+
+        const index = await compendium.getIndex({ fields: fieldsToIndex });
+
+        if (index.size === 0)
+        {
+          console.log(`Skipping Compendium ${compendium.collection} because it was empty`)
+          continue;
+        }
+        else
+        {
+          console.log(`Indexing compendium ${compendium.collection}`);
+        }
+
+        for (let actor of index) {
+          if (!actor)
           {
             break;
           }
 
-          if (entry.type != "npc")
+          if (actor.type != "npc")
           {
             continue;
           }
 
           try {
-            let actor = await compendium.getDocument(entry._id);
-            let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
             let actorName = actor.name;
             actorName = actorName.replaceAll("\"", "");
             if (actorName === "#[CF_tempEntity]")
@@ -290,97 +336,36 @@ export class SFLocalHelpers {
               continue;
             }
 
-            let actorObject = ActorUtils.getActorObject(actor);
+            let actorObject = ActorUtils.getActorObject(actor, compendium.collection);
 
             if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
             {
               console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
               continue;
             }
+
+            let creatureType = actorObject.creaturetype;
+
+            if (!creatureType)
+            {
+              creatureType = "Unknown";
+            }
+
             let monsterObject = {};
 
             monsterObject["actor"] = actorObject;
             monsterObject["actorname"] = actorObject.actorname;
             monsterObject["actorid"] = actorObject.actorid;
-            monsterObject["compendiumname"] = compendium.metadata.id;
+            monsterObject["compendiumname"] = compendium.collection;
             monsterObject["environment"] = actorObject.environment;
-            monsterObject["creaturetype"] = actorObject.creaturetype;
-            monsterObject["combatdata"] = actorObject.combatdata;
+            monsterObject["creaturetype"] = creatureType;
             this.allMonsters.push(monsterObject);
           } 
           catch (error) {
             console.warn(error);
-            console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
+            console.warn(`Actor id ${actor._id}, name ${actor.name}, pack ${compendium.collection} failed to get added.`);
           }
         }
-      }
-    }
-
-    static async loadFromCache()
-    {
-      const constCompFilter = game.settings.get(
-        SFCONSTS.MODULE_NAME,
-        "filterCompendiums"
-      );
-      let spellsbyLevelFromCache = await this.loadFile(SFLOCALCONSTS.SPELL_CACHE_FILE);
-      if (spellsbyLevelFromCache)
-      {
-        this.spellsByLevel = spellsbyLevelFromCache;
-      }
-
-      const systemCacheFolder = SFLocalHelpers.getSystemCacheFolder();
-      const filesInCacheFolder = await SFLocalHelpers.getFilesInFolder(systemCacheFolder);
-      for (let i = 0; i < filesInCacheFolder.files.length; i++) {
-        let fileName = filesInCacheFolder.files[i];
-        let currentCreatureTypeMatch = decodeURIComponent(fileName).match(/\/(?<creatureType>[\w\d\,\s]+)_creature_cache.json/);
-        if (!currentCreatureTypeMatch)
-        {
-          continue;
-        }
-
-        let currentCreatureType = currentCreatureTypeMatch.groups.creatureType;
-        let currentCreatureTypeList = await this.loadFile(fileName, true);
-        if (!currentCreatureTypeList)
-        {
-          continue;
-        }
-        this.creatureTypeCount[currentCreatureType] = currentCreatureTypeList.length;
-        this.allMonsters = this.allMonsters.concat(currentCreatureTypeList);
-      }
-
-      let generalCache = await this.loadFile(SFLOCALCONSTS.GENERAL_CACHE_FILE);
-      if (generalCache)
-      {
-        this._indexCacheDate = generalCache._indexCacheDate;
-        this.environmentCreatureCount = generalCache.environmentCreatureCount;
-      }
-      else
-      {
-        this.calculateEnvironmentCreatureCounts();
-      }
-
-      let itemCache = await this.loadFile(SFLOCALCONSTS.ITEM_CACHE_FILE);
-      if (itemCache)
-      {
-        this.allItems = itemCache;
-      }
-      else
-      {
-        await this.populateItemsFromCompendiums(constCompFilter);
-      }
-
-      console.log(`${this.allMonsters.length} monsters loaded from cache date ${this._indexCacheDate} `);
-      console.log(`${this.allItems.length} items loaded from cache`);
-
-      if (this.allMonsters.length > 0)
-      {
-        this.dictionariesPopulated = true;
-        this.dictionariesInitialized = true;
-        return true;
-      }
-      else
-      {
-        return false;
       }
     }
 
@@ -403,157 +388,6 @@ export class SFLocalHelpers {
         let monsterCount = this.allMonsters.filter(m => m.environment.filter(e => e === environment).length > 0).length;
         this.environmentCreatureCount[environment] = monsterCount;
       }
-    }
-
-    static getCachePath(fileName)
-    {
-      let cacheFolder = SFLocalHelpers.getSystemCacheFolder();
-      return `${cacheFolder}/${fileName}`;
-    }
-
-    static getSystemCacheFolder()
-    {
-      let systemID = FoundryUtils.getSystemId();
-      return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
-    }
-
-    static getBaseCacheFolder()
-    {
-      let systemID = FoundryUtils.getSystemId();
-      return `${SFLOCALCONSTS.CACHE_FOLDER}/${systemID}`;
-    }
-
-    static async loadFile(fileName, hasCacheFolderInPath = false)
-    {
-      const isUrlAbsolute = (url) => /^https?:\/\//.test(url);
-      if (isUrlAbsolute(fileName)) {
-        try {
-          // This is an absolute URL. Attempt to fetch first and rely on browser for caching
-          const rsp = await fetch(fileName);
-          if (rsp.ok) {
-            // File exists at absolute path. Attempt to parse as JSON
-            return await rsp.json();
-          }
-          // Fetch unsuccessful. Revert to fallback
-          console.warn(`Unable to fetch file at absolute URL ${ fileName }`);
-        } catch (e) {
-          console.error(`Error fetching file at absolute URL ${ fileName }`, e);
-        }
-      }
-        
-      const cacheFolder = SFLocalHelpers.getSystemCacheFolder();
-      await this.ensureFolder(cacheFolder);
-      if (hasCacheFolderInPath)
-      {
-        fileName = fileName.replace(cacheFolder, "").replace("/","");
-      }
-
-      let fullFilePath = this.getCachePath(fileName);
-      fullFilePath = fullFilePath.replaceAll("//","/");
-      let fileExists = false;
-      fileExists = await this.fileExists(cacheFolder, fileName);
-
-      if (!fileExists)
-      {
-        console.warn(`File ${fullFilePath} does not exist`);
-        return null;
-      }
-
-      let storedCacheResponse = await (await fetch(fullFilePath));
-      if(storedCacheResponse.ok){
-        return JSON.parse(await storedCacheResponse.text());
-      }
-    }
-
-    static async saveCache(){
-      const data = {
-        _indexCacheDate : this._indexCacheDate,
-        creatureTypeCount : this.creatureTypeCount,
-        environmentCreatureCount : this.environmentCreatureCount
-      };
-      await this.saveObjectToCache(SFLOCALCONSTS.SPELL_CACHE_FILE, this.spellsByLevel);
-      await this.saveObjectToCache(SFLOCALCONSTS.ITEM_CACHE_FILE, this.allItems);
-      await this.saveObjectToCache(SFLOCALCONSTS.GENERAL_CACHE_FILE, data);
-      const creatureTypes = this.allMonsters.map(i => i.creaturetype).filter(GeneralUtils.onlyUnique).sort();
-      for (let currentCreatureType of creatureTypes) {
-        let monsterList = this.allMonsters.filter(m => m.creaturetype && currentCreatureType.toLowerCase() === m.creaturetype.toLowerCase());
-        let fileName = SFLOCALCONSTS.MONSTER_CACHE_FILE_FORMAT.replace("##creaturetype##", currentCreatureType);
-        await this.saveObjectToCache(fileName, monsterList);
-      }
-
-      console.log(`Saved ${this.allMonsters.length} monsters to cache`);
-      await this.cleanUpOldCacheObjects();
-    }
-
-    static async saveObjectToCache(fileName, object)
-    {
-      let blob = new Blob([JSON.stringify(object)], {
-        type: 'text/plain'
-      });
-
-      await this.ensureFolder(SFLocalHelpers.getSystemCacheFolder());
-      let file = new File([blob], fileName, { type: "text" });
-      await FilePicker.upload(FoundryUtils.getFoundryDataFolder(), SFLocalHelpers.getSystemCacheFolder(), file, {});
-    }
-
-    static async fileExists(fileFolder, fileName)
-    {
-      let fullFilePath = `${fileFolder}/${fileName}`;
-      await this.ensureFolder(fileFolder);
-      let source = FoundryUtils.getFoundryDataFolder();
-      let cacheDir = await FilePicker.browse(source, fileFolder);
-      if (cacheDir.files.filter(f => source === "forgevtt" ? f.endsWith(fullFilePath) : f === fullFilePath).length > 0)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    static async ensureFolder(fileFolder)
-    {
-      let folderArray = fileFolder.split("/");
-      let currentFolderArray = [];
-      let currentFolderPath = "";
-      for (let folder of folderArray)
-      {
-        let currentDir = await SFLocalHelpers.browseFolder(currentFolderPath);
-        currentFolderArray.push(folder);
-        currentFolderPath = currentFolderArray.join("/");
-        if (currentDir.dirs.filter(d => d === currentFolderPath).length === 0)
-        {
-          await FilePicker.createDirectory(FoundryUtils.getFoundryDataFolder(), currentFolderPath, {});
-        }
-      }
-    }
-
-    static async browseFolder(fileFolder)
-    {
-      if (this.folderBrowseCache[fileFolder])
-      {
-        console.log(`Returning browse cache for ${fileFolder}`);
-        return this.folderBrowseCache[fileFolder];
-      }
-
-      let currentDir = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
-      this.folderBrowseCache[fileFolder] = currentDir;
-      return currentDir;
-    }
-
-    static async getFilesInFolder(fileFolder)
-    {
-      await SFLocalHelpers.ensureFolder(fileFolder);
-      let files = await FilePicker.browse(FoundryUtils.getFoundryDataFolder(), fileFolder);
-      return files;
-    }
-
-    static async cleanUpOldCacheObjects()
-    {
-      // null out old settings
-      await game.settings.set(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', []);
-      await game.settings.set(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {});
     }
 
     static async filterItemsFromCompendiums()
@@ -692,29 +526,29 @@ export class SFLocalHelpers {
         case "dnd5e":
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("deadly", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("deadly", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("hard", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("hard", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("medium", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("medium", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 12; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("easy", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("easy", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           break;
         case "pf2e":
           for (let i = 0; i < 30; i++)
           {
-            let currentEncounter = EncounterUtilsPf2e.createEncounterPf2e(monsterList, filteredItems, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtilsPf2e.createEncounterPf2e(monsterList, filteredItems, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
       }

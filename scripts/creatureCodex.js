@@ -86,8 +86,7 @@ export class SFCreatureCodex extends FormApplication
 		for (let i = 0; i < filteredMonsters.length; i++)
 		{
 			let currentMonster = filteredMonsters[i];
-			let compendiumName = currentMonster.compendiumname;
-			let creatureLink = FoundryUtils.getActorLink(currentMonster.actorid, currentMonster.actorname, compendiumName);
+			let creatureLink = FoundryUtils.getActorLink(currentMonster);
 			let actorObject = ActorUtils.getActualActorObject(currentMonster);
 			let itemList = ActorUtils.getActorItemList(actorObject);
 			let actorBiography = ActorUtils.getActorBiography(actorObject);

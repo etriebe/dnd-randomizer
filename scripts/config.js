@@ -37,9 +37,17 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: true,
   });
-  game.settings.register(SFCONSTS.MODULE_NAME, "useSavedIndex", {
-    name: "Save a copy of the generated monster index so we don't have to open every compendium.",
-    hint: "If checked, we will save off the monster and spell object index. This will take up extra space!",
+  game.settings.register(SFCONSTS.MODULE_NAME, "loadCombatData", {
+    name: "Generated combats will contain combat summary information.",
+    hint: "Summary information such as damage per round, average target attack bonus, etc. This will slow down combat generation.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+  game.settings.register(SFCONSTS.MODULE_NAME, "useDefaultLinkBehavior", {
+    name: "Use FoundryVTT default link generation for actors and items.",
+    hint: "This will use default link generation behavior, which means modules like Monk's Enhanced Journal will override and open actor pages in those dialogs.",
     scope: "world",
     config: true,
     type: Boolean,
@@ -85,26 +93,6 @@ Hooks.once("init", async function () {
     config: false,
     type: Object,
     default: [],
-  });
-  
-  game.settings.register(SFCONSTS.MODULE_NAME, 'savedMonsterIndex', {
-    scope: "world",
-    config: false,
-    type: Object,
-    default: [],
-  });
-  
-  game.settings.register(SFCONSTS.MODULE_NAME, 'savedSpellIndex', {
-    scope: "world",
-    config: false,
-    type: Object,
-    default: {},
-  });
-  
-  game.settings.register(SFCONSTS.MODULE_NAME, 'savedIndexDate', {
-    scope: "world",
-    config: false,
-    type: String,
   });
 
   game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {

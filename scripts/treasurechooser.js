@@ -57,11 +57,6 @@ export class SFTreasureChooser extends FormApplication {
 	}
 
 	async activateListeners(html) {
-		let useSavedIndex = game.settings.get(SFCONSTS.MODULE_NAME, 'useSavedIndex');
-		if (useSavedIndex && !SFLocalHelpers.dictionariesPopulated)
-		{
-			await SFLocalHelpers.loadFromCache();
-		}
 		this.populateTreasureOptions();
 		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#treasure_filter', 'li.rarityTypeLi');
 	}

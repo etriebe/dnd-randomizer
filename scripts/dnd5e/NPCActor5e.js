@@ -1,41 +1,44 @@
 import { ActorUtils } from "../utils/ActorUtils.js";
 import { GeneralUtils } from "../utils/GeneralUtils.js";
 import { FoundryUtils } from "../utils/FoundryUtils.js";
+import { SFCONSTS } from "../main.js";
+import { SFLOCALCONSTS } from "../localconst.js";
 export class NPCActor5e
 {
     static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;
-    constructor(data)
+    constructor(data, compendiumname)
     {
         this.actor = data;
         this.actorname = this.actor.name;
-        this.actorid = this.actor.id;
-        this.actorxp = NPCActor5e.getXPFromActorObject(this.actor);
+        this.actorid = this.actor._id ?? this.actor.id;
         this.actorcr = NPCActor5e.getCRFromActorObject(this.actor);
+        this.actorxp = this.getXP();
         this.creaturetype = ActorUtils.getCreatureTypeForActor(this.actor);
         this.environment = ActorUtils.getActorEnvironments(this.actor);
-        this.attackdata = this.getCombatDataPerRound();
-        this.spelldata = this.getSpellDataPerRound();
-        this.combatdata = this.getBestCombat();
-        this.compendiumname = this.actor.pack;
+        this.attackdata = null;
+        this.spelldata = null;
+        this.combatdata = null;
+        this.actorObject = null;
+        this.compendiumname = compendiumname;
     }
 
-    getActorEnvironments()
+    async analyzeActor()
     {
-        let environment = FoundryUtils.getDataObjectFromObject(this.actor).details.environment;
-        if (!environment || environment.trim() === "")
+        let loadCombatData = game.settings.get(SFCONSTS.MODULE_NAME, 'loadCombatData');
+        if (loadCombatData)
         {
-            environment = "Any";
+            let compendium = game.packs.find(p => p.collection === this.compendiumname);
+            this.actorObject = await compendium.getDocument(this.actorid);
+            this.attackdata = this.getCombatDataPerRound();
+            this.spelldata = this.getSpellDataPerRound();
+            this.combatdata = this.getBestCombat();
         }
-
-        let environmentArray = environment.split(",");
-        environmentArray = environmentArray.map(e => e.trim());
-        return environmentArray;
     }
 
     getCombatDataPerRound()
     {
         let allAttackResultObjects = [];
-        let actor = this.actor;
+        let actor = this.actorObject;
         try
         {
             let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat")
@@ -200,7 +203,7 @@ export class NPCActor5e
     getSpellDataPerRound()
     {
         let allSpellResultObjects = [];
-        let actor = this.actor;
+        let actor = this.actorObject;
         try
         {
             let spellList = actor.items.filter(i => (i.type.toLowerCase() === "spell"));
@@ -482,7 +485,7 @@ export class NPCActor5e
 
     getCantripMultiplier()
     {
-        let spellLevel = FoundryUtils.getDataObjectFromObject(this.actor).details.spellLevel;
+        let spellLevel = FoundryUtils.getDataObjectFromObject(this.actorObject).details.spellLevel;
 
         if (isNaN(spellLevel) || spellLevel < 5)
         {
@@ -610,13 +613,20 @@ export class NPCActor5e
         return FoundryUtils.getDataObjectFromObject(item).description.value;
     }
 
-    static getXPFromActorObject(actor)
+    getXP()
     {
-        return FoundryUtils.getDataObjectFromObject(actor).details.xp.value;
+        let actorXP = SFLOCALCONSTS.ENCOUNTER_XP_CHALLENGE_RATING_MAPPING[`${this.actorcr}`];
+
+        if (!actorXP)
+        {
+            return 0;
+        }
+
+        return actorXP;
     }
 
     static getCRFromActorObject(actor)
     {
-        return FoundryUtils.getDataObjectFromObject(actor).details.cr;
+        return FoundryUtils.getSystemVariableForObject(actor, "CreatureCR");
     }
 }

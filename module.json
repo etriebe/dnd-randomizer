@@ -3,20 +3,22 @@
   "title": "Stochastic, Fantastic! - Random Encounter Generator",
   "description": "desc",
   "version": "0.13",
-  "system": ["dnd5e","pf2e"],
-  "author": "theripper93, Mouse0270, etriebe",
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {}
+      },
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  },
+  "author": "etriebe",
   "authors": [
-      {
-          "name": "theripper93",
-          "email": "tsplab@gmail.com",
-          "url": "https://www.patreon.com/theripper93"
-      },
-      {
-        "name": "Mouse0270",
-        "email": "",
-        "url": "https://www.patreon.com/mouse0270",
-        "discord": "mouse0270#0270"
-      },
       {
         "name": "thetreat",
         "email": "eric.triebe@gmail.com",
@@ -43,8 +45,10 @@
   ],
   "packs": [
   ],
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "10",
+  "compatibility": {
+    "minimum": "9.238",
+    "verified": "11.298"
+  },
   "url": "https://github.com/etriebe/dnd-randomizer",
   "changelog": "https://github.com/etriebe/dnd-randomizer/releases/",
   "manifest": "https://github.com/etriebe/dnd-randomizer/releases/latest/download/module.json",
