@@ -99,7 +99,7 @@ export class FoundryUtils
 
   static getTemplateDataObject(obj)
   {
-    if (FoundryUtils.isFoundryVersion10())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
     {
       return obj;
     }

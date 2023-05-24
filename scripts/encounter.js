@@ -189,7 +189,7 @@ export class Encounter {
 
     let actorData = null;
     let actorType = FoundryUtils.getSystemVariable("LootActorType");
-    if (FoundryUtils.isFoundryVersion10())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
     {
       actorData = {
         name: this.name || this.id,
