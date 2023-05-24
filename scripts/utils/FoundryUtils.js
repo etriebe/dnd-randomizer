@@ -197,12 +197,12 @@ export class FoundryUtils
     }
 
     let actorID = actor.actorid;
-    let actorName = actor.actorname;
+    let actorName = actor.name;
     let compendiumName = actor.compendiumname;
 
     if (FoundryUtils.isFoundryVersion10())
     {
-      if (compendiumName != "")
+      if (compendiumName)
       {
         const dataUUID = `Compendium.${compendiumName}.${actorID}`;
         return `<a class="content-link sf-dialog-content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
@@ -211,7 +211,6 @@ export class FoundryUtils
       {
         return `<a class="content-link sf-dialog-content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
       }
-      return `<a class="content-link sf-dialog-content-link" draggable="true" data-pack="${compendiumName}" data-uuid="${dataUUID}" data-id="${actorID}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
     }
     else
     {

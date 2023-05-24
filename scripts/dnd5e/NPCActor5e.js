@@ -5,7 +5,7 @@ import { SFLOCALCONSTS } from "../localconst.js";
 export class NPCActor5e
 {
     static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;
-    constructor(data)
+    constructor(data, compendiumname)
     {
         this.actor = data;
         this.actorname = this.actor.name;
@@ -18,7 +18,7 @@ export class NPCActor5e
         this.spelldata = null;
         this.combatdata = null;
         this.actorObject = null;
-        this.compendiumname = this.actor.pack;
+        this.compendiumname = compendiumname;
     }
 
     async analyzeActor()

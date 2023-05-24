@@ -42,17 +42,17 @@ export class ActorUtils
       }
     }
 
-    static getActorObject(actor)
+    static getActorObject(actor, compendiumname)
     {
       let currentSystem = game.system.id;
 
       if (currentSystem === "dnd5e")
       {
-        return new NPCActor5e(actor);
+        return new NPCActor5e(actor, compendiumname);
       }
       else if (currentSystem === "pf2e")
       {
-        return new NPCActorPf2e(actor);
+        return new NPCActorPf2e(actor, compendiumname);
       }
       else
       {

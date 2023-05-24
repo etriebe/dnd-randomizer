@@ -90,15 +90,14 @@ export class EncounterUtils5e
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
           let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
-          
           // If a monster hasn't had their combat data instantiated, analyze the actor (calls compendium.getDocument())
           // This can be a slower operation.
-          if (currentMonster.combatdata === null)
+          if (!currentMonster.actor.combatdata)
           {
-            await currentMonster.analyzeActor();
+            await currentMonster.actor.analyzeActor();
           }
 
-          creatureCombatDetails["combatdata"] = currentMonster.combatdata;
+          creatureCombatDetails["combatdata"] = currentMonster.actor.combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
@@ -166,7 +165,15 @@ export class EncounterUtils5e
           creatureCombatDetails["quantity"] = numberOfCreatures;
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
-          creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => (randomMonster.actorid != null && randomMonster.actorid != undefined && m.actorid === randomMonster.actorid) || (m.actor.actor.id === randomMonsterActorId)).combatdata;
+
+          let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
+          // If a monster hasn't had their combat data instantiated, analyze the actor (calls compendium.getDocument())
+          // This can be a slower operation.
+          if (!currentMonster.actor.combatdata)
+          {
+            await currentMonster.actor.analyzeActor();
+          }
+          creatureCombatDetails["combatdata"] = currentMonster.actor.combatdata;
           currentEncounter["creatures"].push(creatureCombatDetails);
           break;
         }

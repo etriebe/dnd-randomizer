@@ -3,7 +3,7 @@ import { SFLOCALCONSTS } from "../localconst.js";
 import { SFLocalHelpers } from "../localmodule.js";
 export class EncounterUtilsPf2e
 {
-    static createEncounterPf2e(monsterList, itemList, averageLevelOfPlayers, numberOfPlayers, params)
+    static async createEncounterPf2e(monsterList, itemList, averageLevelOfPlayers, numberOfPlayers, params)
     {
       let currentEncounter = {};
       currentEncounter["creatures"] = [];

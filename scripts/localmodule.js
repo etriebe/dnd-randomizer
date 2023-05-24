@@ -336,7 +336,7 @@ export class SFLocalHelpers {
               continue;
             }
 
-            let actorObject = ActorUtils.getActorObject(actor);
+            let actorObject = ActorUtils.getActorObject(actor, compendium.collection);
 
             if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
             {
@@ -548,7 +548,7 @@ export class SFLocalHelpers {
         case "pf2e":
           for (let i = 0; i < 30; i++)
           {
-            let currentEncounter = EncounterUtilsPf2e.createEncounterPf2e(monsterList, filteredItems, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtilsPf2e.createEncounterPf2e(monsterList, filteredItems, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
       }
