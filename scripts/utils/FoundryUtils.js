@@ -23,7 +23,8 @@ export class FoundryUtils
   static getSystemVariableForObject(object, variableName)
   {
     let currentSystemVariableName = FoundryUtils.getSystemVariable(variableName);
-    return eval(`object.${currentSystemVariableName}`);
+    return getProperty(object, currentSystemVariableName);
+    // return eval(`object.${currentSystemVariableName}`);
   }
 
   static getSystemVariable(variableName)
@@ -60,6 +61,17 @@ export class FoundryUtils
 
   static getDataObjectFromObject(obj)
   {
+    if (FoundryUtils.isFoundryVersion11())
+    {
+      if (obj.system)
+      {
+        return obj.system;
+      }
+      else
+      {
+        return obj;
+      }
+    }
     if (FoundryUtils.isFoundryVersion10())
     {
       if (obj.system)

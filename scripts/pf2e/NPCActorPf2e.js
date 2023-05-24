@@ -11,19 +11,6 @@ export class NPCActorPf2e {
       this.combatdata = this.getCombatDataPerRound();
     }
 
-    getActorEnvironments()
-    {
-      let environment = FoundryUtils.getDataObjectFromObject(this.actor).details.environment;
-      if (!environment || environment.trim() === "")
-      {
-        environment = "Any";
-      }
-
-      let environmentArray = environment.split(",");
-      environmentArray = environmentArray.map(e => e.trim());
-      return environmentArray;
-    }
-
     getCombatDataPerRound()
     {
       return [];

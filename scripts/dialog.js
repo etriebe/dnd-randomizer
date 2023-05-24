@@ -6,6 +6,7 @@ import { FuzzySet } from "./fuzzyset.js";
 import { SFLOCALCONSTS } from "./localconst.js";
 import { SFCONSTS } from "./main.js";
 import { EncounterUtilsPf2e } from "./pf2e/EncounterUtilsPf2e.js";
+import { ActorUtils } from "./utils/ActorUtils.js";
 
 export class SFDialog extends FormApplication
 {
@@ -54,11 +55,15 @@ export class SFDialog extends FormApplication
 
 	getDefaultsFromScene()
 	{
-		const characters = canvas.tokens.placeables.filter(t => t.actor?.data.type === "character" && t.actor?.hasPlayerOwner);
+		const characters = canvas.tokens.placeables.filter(t => t.actor?.type === "character" && t.actor?.hasPlayerOwner);
 		let level = 0;
 		if (characters)
 		{
-			characters.forEach((c) => level += FoundryUtils.getDataObjectFromObject(c.actor).details.level);
+			characters.forEach((c) => 
+			{
+				const actorObject = ActorUtils.getPCActorObject(c.actor);
+				level += actorObject.level;
+			});
 			level = Math.round(level / characters.length);
 			return { chars: characters.length || 4, level: level || 5 };
 		}

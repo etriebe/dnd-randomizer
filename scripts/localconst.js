@@ -23,8 +23,11 @@ export const SFLOCALCONSTS = {
     ENCOUNTER_XP_CHALLENGE_RATING_MAPPING: {
         "0": 10,
         ".125": 25,
+        "0.125": 25,
         ".25": 50,
+        "0.25": 50,
         ".5": 100,
+        "0.5": 100,
         "1": 200,
         "2": 450,
         "3": 700,
@@ -760,12 +763,24 @@ export const SFLOCALCONSTS = {
         },
         // Object is for actor
         "CreatureXP": {
-            "dnd5e": "details.xp.value",
+            "dnd5e": "system.details.xp",
+            "pf2e": "level",
+        },
+        // Object is for actor
+        "CreatureCR": {
+            "dnd5e": "system.details.cr",
+        },
+        // Object is for actor
+        "CreatureEnvironment": {
+            "dnd5e": "system.details.environment",
             "pf2e": "level",
         },
         "ItemRarity": {
             "dnd5e": "system.rarity",
             "pf2e": "system.traits.rarity"
+        },
+        "ItemPrice": {
+            "dnd5e": "system.price"
         },
         "LootActorType": {
             "dnd5e": "npc",
@@ -783,17 +798,29 @@ export const SFLOCALCONSTS = {
         },
         // Object is for spell
         "SpellLevel": {
-            "dnd5e": "labels.level",
+            "dnd5e": "system.level",
             "pf2e": "level",
         },
         // Object is for actor
         "CreatureXP": {
-            "dnd5e": "details.xp.value",
+            "dnd5e": "system.details.xp",
+            "pf2e": "level",
+        },
+        // Object is for actor
+        "CreatureCR": {
+            "dnd5e": "system.details.cr",
+        },
+        // Object is for actor
+        "CreatureEnvironment": {
+            "dnd5e": "system.details.environment",
             "pf2e": "level",
         },
         "ItemRarity": {
             "dnd5e": "system.rarity",
             "pf2e": "system.traits.rarity"
+        },
+        "ItemPrice": {
+            "dnd5e": "system.price"
         },
         "LootActorType": {
             "dnd5e": "npc",

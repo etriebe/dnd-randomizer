@@ -19,17 +19,17 @@ export class SFLocalHelpers {
 
     static initializeDictionaries() {
       this.spellsByLevel = {};
-      this.spellsByLevel["cantrip"] = [];
-      this.spellsByLevel["1st level"] = [];
-      this.spellsByLevel["2nd level"] = [];
-      this.spellsByLevel["3rd level"] = [];
-      this.spellsByLevel["4th level"] = [];
-      this.spellsByLevel["5th level"] = [];
-      this.spellsByLevel["6th level"] = [];
-      this.spellsByLevel["7th level"] = [];
-      this.spellsByLevel["8th level"] = [];
-      this.spellsByLevel["9th level"] = [];
-      this.spellsByLevel["10th level"] = [];
+      this.spellsByLevel[0] = [];
+      this.spellsByLevel[1] = [];
+      this.spellsByLevel[2] = [];
+      this.spellsByLevel[3] = [];
+      this.spellsByLevel[4] = [];
+      this.spellsByLevel[5] = [];
+      this.spellsByLevel[6] = [];
+      this.spellsByLevel[7] = [];
+      this.spellsByLevel[8] = [];
+      this.spellsByLevel[9] = [];
+      this.spellsByLevel[10] = [];
       this.dictionariesInitialized = true;
     }
   
@@ -177,13 +177,37 @@ export class SFLocalHelpers {
           console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
           continue;
         }
+
         if (!compendium)
         {
           break;
         }
 
-        for (let entry of compendium.index) {
-          if (!entry)
+        let fieldsToIndex = [
+          FoundryUtils.getSystemVariable("ItemRarity"),
+          FoundryUtils.getSystemVariable("ItemPrice"),
+          FoundryUtils.getSystemVariable("SpellLevel")
+        ];
+
+        if (FoundryUtils.getSystemId() === "dnd5e")
+        {
+          fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
+        }
+
+        const index = await compendium.getIndex({ fields: fieldsToIndex });
+
+        if (index.size === 0)
+        {
+          console.log(`Skipping Compendium ${compendium.collection} because it was empty`)
+          continue;
+        }
+        else
+        {
+          console.log(`Indexing compendium ${compendium.collection}`);
+        }
+
+        for (let item of index) {
+          if (!item)
           {
             break;
           }
@@ -209,44 +233,60 @@ export class SFLocalHelpers {
             weapon
           */
 
-          if (entry.type == "spell")
+          if (item.type == "spell")
           {
             try
             {
-              const currentSpell = await compendium.getDocument(entry._id);
-              let spellName = entry.name;
-              let spellLevel = ActorUtils.getLevelKeyForSpell(currentSpell);
-              if (!this.spellsByLevel[spellLevel].find(s => s.name === currentSpell.name))
+              const currentSpell = await compendium.getDocument(item._id);
+              let spellName = item.name;
+              let spellLevel = FoundryUtils.getSystemVariableForObject(item, "SpellLevel");
+              // let spellLevel = ActorUtils.getLevelKeyForSpell(unparsedSpellLevel);
+              if (!this.spellsByLevel[spellLevel].find(s => s.name === spellName))
               {
-                this.spellsByLevel[spellLevel].push(currentSpell);
+                this.spellsByLevel[spellLevel].push(item);
               }
             }
             catch (error)
             {
               console.log(error);
-              console.log(`Spell id ${entry._id} failed to get added.`);
+              console.log(`Spell id ${item._id} failed to get added.`);
             }
           }
-          else if (entry.type == "armor" || entry.type == "consumable" || entry.type == "equipment" || entry.type == "treasure" || entry.type == "weapon")
+          else if (item.type == "armor" || item.type == "consumable" || item.type == "equipment" || item.type == "treasure" || item.type == "weapon")
           {
-            let itemObject = {};
-            const currentItem = await compendium.getDocument(entry._id);
-            let itemRarity = FoundryUtils.getSystemVariableForObject(currentItem, "ItemRarity");
-
-            if (!itemRarity  || itemRarity === "")
+            if (item.name === "#[CF_tempEntity]")
             {
-              itemRarity = "common";
+              continue;
             }
+            try
+            {
+              let itemRarity = FoundryUtils.getSystemVariableForObject(item, "ItemRarity");
 
-            itemObject["itemtype"] = entry.type;
-            itemObject["itemcost"] = currentItem.price?.value ?? 0;
-            itemObject["compendiumname"] = currentItem.pack;
-            itemObject["level"] = currentItem.level;
-            itemObject["itemname"] = currentItem.name;
-            itemObject["itemid"] = currentItem.id;
-            itemObject["rarity"] = itemRarity;
-            itemObject["item"] = currentItem;
-            this.allItems.push(itemObject);
+              if (!itemRarity  || itemRarity === "")
+              {
+                itemRarity = "common";
+              }
+  
+              let itemPrice = FoundryUtils.getSystemVariableForObject(item, "ItemPrice");
+              if (!itemPrice)
+              {
+                itemPrice = 0;
+              }
+              let itemObject = {};
+              itemObject["itemtype"] = item.type;
+              itemObject["itemcost"] = itemPrice;
+              itemObject["compendiumname"] = compendium.collection;
+              itemObject["itemname"] = item.name;
+              itemObject["itemid"] = item._id;
+              itemObject["rarity"] = itemRarity;
+              itemObject["item"] = item;
+              this.allItems.push(itemObject);
+            }
+            catch(error)
+            {
+              // console.log(error);
+              console.log(`Item id ${item._id} (${item.name}) failed to get added.`)
+            }
           }
         }
       }
@@ -263,25 +303,46 @@ export class SFLocalHelpers {
           console.log(`Skipping indexing compendium ${compendium.collection} because it wasn't selected`);
           continue;
         }
+
         if (!compendium)
         {
           break;
         }
 
-        for (let entry of compendium.index) {
-          if (!entry)
+        let fieldsToIndex = [
+          FoundryUtils.getSystemVariable("CreatureType"),
+        ];
+
+        if (FoundryUtils.getSystemId() === "dnd5e")
+        {
+          fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureEnvironment"));
+          fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
+        }
+
+        const index = await compendium.getIndex({ fields: fieldsToIndex });
+
+        if (index.size === 0)
+        {
+          console.log(`Skipping Compendium ${compendium.collection} because it was empty`)
+          continue;
+        }
+        else
+        {
+          console.log(`Indexing compendium ${compendium.collection}`);
+        }
+
+        for (let actor of index) {
+          if (!actor)
           {
             break;
           }
 
-          if (entry.type != "npc")
+          if (actor.type != "npc")
           {
             continue;
           }
 
           try {
-            let actor = await compendium.getDocument(entry._id);
-            let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
             let actorName = actor.name;
             actorName = actorName.replaceAll("\"", "");
             if (actorName === "#[CF_tempEntity]")
@@ -302,15 +363,14 @@ export class SFLocalHelpers {
             monsterObject["actor"] = actorObject;
             monsterObject["actorname"] = actorObject.actorname;
             monsterObject["actorid"] = actorObject.actorid;
-            monsterObject["compendiumname"] = compendium.metadata.id;
+            monsterObject["compendiumname"] = compendium.collection;
             monsterObject["environment"] = actorObject.environment;
             monsterObject["creaturetype"] = actorObject.creaturetype;
-            monsterObject["combatdata"] = actorObject.combatdata;
             this.allMonsters.push(monsterObject);
           } 
           catch (error) {
             console.warn(error);
-            console.warn(`Actor id ${entry._id}, name ${entry.name} failed to get added.`);
+            console.warn(`Actor id ${actor._id}, name ${actor.name} failed to get added.`);
           }
         }
       }
@@ -692,22 +752,22 @@ export class SFLocalHelpers {
         case "dnd5e":
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("deadly", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("deadly", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("hard", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("hard", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 6; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("medium", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("medium", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           for (let i = 0; i < 12; i++)
           {
-            let currentEncounter = EncounterUtils5e.createEncounterDnd5e("easy", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e("easy", monsterList, averageLevelOfPlayers, numberOfPlayers, params);
             encounterList.push(currentEncounter);
           }
           break;
