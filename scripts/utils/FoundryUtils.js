@@ -1,3 +1,4 @@
+import { SFCONSTS } from "../main.js";
 import { SFLOCALCONSTS } from "../localconst.js";
 export class FoundryUtils
 {
@@ -184,8 +185,21 @@ export class FoundryUtils
     return totalDiceResult;
   }
 
-  static getActorLink(actorID, actorName, compendiumName)
+  // This function is replicating the functionality of enrichHTML
+  // let actorLink = TextEditor.enrichHTML(actorObject.actor.link);
+
+  static getActorLink(actor)
   {
+    let useDefaultFoundryLinks = game.settings.get(SFCONSTS.MODULE_NAME, 'useDefaultLinkBehavior');
+    if (useDefaultFoundryLinks)
+    {
+      return TextEditor.enrichHTML(actor.dynamicLink, { async: false });
+    }
+
+    let actorID = actor.actorid;
+    let actorName = actor.actorname;
+    let compendiumName = actor.compendiumname;
+
     if (FoundryUtils.isFoundryVersion10())
     {
       if (compendiumName != "")
@@ -207,6 +221,12 @@ export class FoundryUtils
 
   static getItemLink(item)
   {
+    let useDefaultFoundryLinks = game.settings.get(SFCONSTS.MODULE_NAME, 'useDefaultLinkBehavior');
+    if (useDefaultFoundryLinks)
+    {
+      return TextEditor.enrichHTML(item.dynamicLink, { async: false });
+    }
+
     let itemID = item.id;
     let itemName = item.name;
     let compendiumName = item.compendiumname;

@@ -224,7 +224,7 @@ export class SFDialog extends FormApplication
 			let $details = $ul.find('li:last-child .encounter-details');
 			for (const creature of encounter.creatures)
 			{
-				const actorLink = FoundryUtils.getActorLink(creature.actorid, creature.name, creature.compendiumname);
+				const actorLink = FoundryUtils.getActorLink(creature);
 				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}</span>`);
 			}
 

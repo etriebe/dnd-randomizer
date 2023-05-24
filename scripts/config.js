@@ -37,6 +37,14 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: true,
   });
+  game.settings.register(SFCONSTS.MODULE_NAME, "useDefaultLinkBehavior", {
+    name: "Use FoundryVTT default link generation for actors and items.",
+    hint: "This will use default link generation behavior, which means modules like Monk's Enhanced Journal will override and open actor pages in those dialogs.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
   game.settings.register(SFCONSTS.MODULE_NAME, 'favoritedEncounters', {
     scope: "world",
     config: false,
