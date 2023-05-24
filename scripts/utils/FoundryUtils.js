@@ -200,7 +200,7 @@ export class FoundryUtils
     let actorName = actor.name;
     let compendiumName = actor.compendiumname;
 
-    if (FoundryUtils.isFoundryVersion10())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
     {
       if (compendiumName)
       {
@@ -229,7 +229,7 @@ export class FoundryUtils
     let itemID = item.id;
     let itemName = item.name;
     let compendiumName = item.compendiumname;
-    if (FoundryUtils.isFoundryVersion10())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
     {
       if (compendiumName)
       {
