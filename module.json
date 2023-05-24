@@ -49,6 +49,8 @@
     "minimum": "9.238",
     "verified": "11.298"
   },
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "11",
   "url": "https://github.com/etriebe/dnd-randomizer",
   "changelog": "https://github.com/etriebe/dnd-randomizer/releases/",
   "manifest": "https://github.com/etriebe/dnd-randomizer/releases/latest/download/module.json",
