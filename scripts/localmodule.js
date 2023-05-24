@@ -178,11 +178,6 @@ export class SFLocalHelpers {
           FoundryUtils.getSystemVariable("SpellLevel")
         ];
 
-        if (FoundryUtils.getSystemId() === "dnd5e")
-        {
-          fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
-        }
-
         const index = await compendium.getIndex({ fields: fieldsToIndex });
 
         if (index.size === 0)
@@ -226,10 +221,10 @@ export class SFLocalHelpers {
           {
             try
             {
-              const currentSpell = await compendium.getDocument(item._id);
+              // Left for easy debugging purposes
+              // const currentSpell = await compendium.getDocument(item._id);
               let spellName = item.name;
               let spellLevel = FoundryUtils.getSystemVariableForObject(item, "SpellLevel");
-              // let spellLevel = ActorUtils.getLevelKeyForSpell(unparsedSpellLevel);
               if (!this.spellsByLevel[spellLevel].find(s => s.name === spellName))
               {
                 this.spellsByLevel[spellLevel].push(item);
@@ -238,7 +233,7 @@ export class SFLocalHelpers {
             catch (error)
             {
               console.log(error);
-              console.log(`Spell id ${item._id} failed to get added.`);
+              console.log(`Spell id ${item._id}, name ${item.name}, pack ${compendium.collection} failed to get added.`);
             }
           }
           else if (item.type == "armor" || item.type == "consumable" || item.type == "equipment" || item.type == "treasure" || item.type == "weapon")
@@ -273,8 +268,8 @@ export class SFLocalHelpers {
             }
             catch(error)
             {
-              // console.log(error);
-              console.log(`Item id ${item._id} (${item.name}) failed to get added.`)
+              console.log(error);
+              console.log(`Item id ${item._id}, name ${item.name}, pack ${compendium.collection} failed to get added.`);
             }
           }
         }
@@ -300,12 +295,13 @@ export class SFLocalHelpers {
 
         let fieldsToIndex = [
           FoundryUtils.getSystemVariable("CreatureType"),
+          FoundryUtils.getSystemVariable("CreatureCR"),
         ];
 
         if (FoundryUtils.getSystemId() === "dnd5e")
         {
           fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureEnvironment"));
-          fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
+          // fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
         }
 
         const index = await compendium.getIndex({ fields: fieldsToIndex });
@@ -347,6 +343,14 @@ export class SFLocalHelpers {
               console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
               continue;
             }
+
+            let creatureType = actorObject.creaturetype;
+
+            if (!creatureType)
+            {
+              creatureType = "Unknown";
+            }
+
             let monsterObject = {};
 
             monsterObject["actor"] = actorObject;
@@ -354,12 +358,12 @@ export class SFLocalHelpers {
             monsterObject["actorid"] = actorObject.actorid;
             monsterObject["compendiumname"] = compendium.collection;
             monsterObject["environment"] = actorObject.environment;
-            monsterObject["creaturetype"] = actorObject.creaturetype;
+            monsterObject["creaturetype"] = creatureType;
             this.allMonsters.push(monsterObject);
           } 
           catch (error) {
             console.warn(error);
-            console.warn(`Actor id ${actor._id}, name ${actor.name} failed to get added.`);
+            console.warn(`Actor id ${actor._id}, name ${actor.name}, pack ${compendium.collection} failed to get added.`);
           }
         }
       }

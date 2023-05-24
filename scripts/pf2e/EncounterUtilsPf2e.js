@@ -167,7 +167,7 @@ export class EncounterUtilsPf2e
           let itemName = randomItemObject.itemname;
           let item = randomItemObject.item;
 
-          let totalGoldCost = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(itemCost);
+          let totalGoldCost = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(itemCost.value);
 
           if (totalGoldCost === 0)
           {
@@ -199,10 +199,10 @@ export class EncounterUtilsPf2e
     static getTotalGoldCostFromCostObject(costObject)
     {
       let totalGoldCost = 0;
-      totalGoldCost += parseInt(costObject.pp) * 10;
-      totalGoldCost += parseInt(costObject.gp);
-      totalGoldCost += parseInt(costObject.sp) * 0.1;
-      totalGoldCost += parseInt(costObject.cp) * 0.01;
+      totalGoldCost += parseInt(costObject.pp ?? 0) * 10;
+      totalGoldCost += parseInt(costObject.gp ?? 0);
+      totalGoldCost += parseInt(costObject.sp ?? 0) * 0.1;
+      totalGoldCost += parseInt(costObject.cp ?? 0) * 0.01;
       return totalGoldCost;
     }
 

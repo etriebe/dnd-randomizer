@@ -91,19 +91,20 @@ export class ActorUtils
     }
 
     static getActorEnvironments(actor) {
-        let environment = FoundryUtils.getDataObjectFromObject(actor).details.environment;
-        if (!environment || environment.trim() === "") {
-            environment = "Any";
-        }
+      let dataObject = FoundryUtils.getDataObjectFromObject(actor);
+      let environment = dataObject.details?.environment;
+      if (!environment || environment.trim() === "") {
+          environment = "Any";
+      }
 
-        let environmentArray = environment.split(",");
-        let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[actor.actorname];
-        if (extraEnvironmentMapping)
-        {
-          environmentArray = environmentArray.concat(extraEnvironmentMapping);
-        }
-        environmentArray = environmentArray.map(e => e.trim());
-        return environmentArray;
+      let environmentArray = environment.split(",");
+      let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[actor.actorname];
+      if (extraEnvironmentMapping)
+      {
+        environmentArray = environmentArray.concat(extraEnvironmentMapping);
+      }
+      environmentArray = environmentArray.map(e => e.trim());
+      return environmentArray;
     }
 
     static getActorItemList(actor)

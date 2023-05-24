@@ -744,11 +744,6 @@ export const SFLOCALCONSTS = {
             "dnd5e": "labels.level",
             "pf2e": "level",
         },
-        // Object is for actor
-        "CreatureXP": {
-            "dnd5e": "data.data.details.xp.value",
-            "pf2e": "level",
-        }
     },
     SYSTEM_VARIABLES_V10: {
         // Object is for actor
@@ -758,17 +753,13 @@ export const SFLOCALCONSTS = {
         },
         // Object is for spell
         "SpellLevel": {
-            "dnd5e": "labels.level",
-            "pf2e": "level",
-        },
-        // Object is for actor
-        "CreatureXP": {
-            "dnd5e": "system.details.xp",
-            "pf2e": "level",
+            "dnd5e": "system.level",
+            "pf2e": "system.level.value",
         },
         // Object is for actor
         "CreatureCR": {
             "dnd5e": "system.details.cr",
+            "pf2e": "system.details.level",
         },
         // Object is for actor
         "CreatureEnvironment": {
@@ -780,7 +771,8 @@ export const SFLOCALCONSTS = {
             "pf2e": "system.traits.rarity"
         },
         "ItemPrice": {
-            "dnd5e": "system.price"
+            "dnd5e": "system.price",
+            "pf2e": "system.price"
         },
         "LootActorType": {
             "dnd5e": "npc",
@@ -799,16 +791,12 @@ export const SFLOCALCONSTS = {
         // Object is for spell
         "SpellLevel": {
             "dnd5e": "system.level",
-            "pf2e": "level",
-        },
-        // Object is for actor
-        "CreatureXP": {
-            "dnd5e": "system.details.xp",
-            "pf2e": "level",
+            "pf2e": "system.level.value",
         },
         // Object is for actor
         "CreatureCR": {
             "dnd5e": "system.details.cr",
+            "pf2e": "system.details.level",
         },
         // Object is for actor
         "CreatureEnvironment": {
@@ -820,7 +808,8 @@ export const SFLOCALCONSTS = {
             "pf2e": "system.traits.rarity"
         },
         "ItemPrice": {
-            "dnd5e": "system.price"
+            "dnd5e": "system.price",
+            "pf2e": "system.price"
         },
         "LootActorType": {
             "dnd5e": "npc",
