@@ -1,6 +1,7 @@
 import { ActorUtils } from "../utils/ActorUtils.js";
 import { GeneralUtils } from "../utils/GeneralUtils.js";
 import { FoundryUtils } from "../utils/FoundryUtils.js";
+import { SFCONSTS } from "../main.js";
 import { SFLOCALCONSTS } from "../localconst.js";
 export class NPCActor5e
 {
@@ -23,11 +24,15 @@ export class NPCActor5e
 
     async analyzeActor()
     {
-        let compendium = game.packs.find(p => p.collection === this.compendiumname);
-        this.actorObject = await compendium.getDocument(this.actorid);
-        this.attackdata = this.getCombatDataPerRound();
-        this.spelldata = this.getSpellDataPerRound();
-        this.combatdata = this.getBestCombat();
+        let loadCombatData = game.settings.get(SFCONSTS.MODULE_NAME, 'loadCombatData');
+        if (loadCombatData)
+        {
+            let compendium = game.packs.find(p => p.collection === this.compendiumname);
+            this.actorObject = await compendium.getDocument(this.actorid);
+            this.attackdata = this.getCombatDataPerRound();
+            this.spelldata = this.getSpellDataPerRound();
+            this.combatdata = this.getBestCombat();
+        }
     }
 
     getCombatDataPerRound()
