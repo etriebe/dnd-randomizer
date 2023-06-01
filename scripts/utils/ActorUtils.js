@@ -918,9 +918,9 @@ export class ActorUtils
         continue;
       }
 
-      damageDescription = Roll.replaceFormulaData(damageDescription, actorObject.actor.getRollData());
+      damageDescription = Roll.replaceFormulaData(damageDescription, actorObject.actorObject.getRollData());
 
-      let totalAverageRollResult = ActorUtils.getAverageDamageFromDescription(damageDescription, abilityModValue, actorObject.actor);
+      let totalAverageRollResult = ActorUtils.getAverageDamageFromDescription(damageDescription, abilityModValue, actorObject.actorObject);
 
       if (enemyTargetObject)
       {
@@ -1105,7 +1105,7 @@ export class ActorUtils
       let damageDescription = attackDataObject.formula;
       damageDescription = damageDescription.toLowerCase().replaceAll(/\[.+\]/gm, "");
 
-      let totalAverageRollResult = ActorUtils.getAverageDamageFromDescription(damageDescription, abilityModValue, actorObject.actor);
+      let totalAverageRollResult = ActorUtils.getAverageDamageFromDescription(damageDescription, abilityModValue, actorObject.actorObject);
       if (!isNaN(totalAverageRollResult))
       {
         totalDamageForAttack += totalAverageRollResult;
@@ -1121,7 +1121,7 @@ export class ActorUtils
         damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
         try
         {
-          damageDescription = Roll.replaceFormulaData(damageDescription, actorObject.actor.getRollData());
+          damageDescription = Roll.replaceFormulaData(damageDescription, actorObject.actorObject.getRollData());
         }
         catch (error)
         {
@@ -1129,7 +1129,7 @@ export class ActorUtils
           console.warn(error);
         }
 
-        let totalAverageRollResult = ActorUtils.getAverageDamageFromDescription(damageDescription, abilityModValue, actorObject.actor);
+        let totalAverageRollResult = ActorUtils.getAverageDamageFromDescription(damageDescription, abilityModValue, actorObject.actorObject);
         if (isNaN(totalAverageRollResult))
         {
           if (damageType != "healing")
@@ -1202,7 +1202,7 @@ export class ActorUtils
 
   static getCantripMultiplier(actorObject)
   {
-    let spellLevel = FoundryUtils.getDataObjectFromObject(actorObject.actor).details.spellLevel;
+    let spellLevel = FoundryUtils.getDataObjectFromObject(actorObject.actorObject).details.spellLevel;
 
     if (isNaN(spellLevel) || spellLevel < 5)
     {
