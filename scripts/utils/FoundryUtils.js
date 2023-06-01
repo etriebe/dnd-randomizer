@@ -21,6 +21,18 @@ export class FoundryUtils
     return game.packs.filter((p) => !p.metadata.system || p.metadata.system === game.system.id);
   }
 
+  static getCombatantDisposition(obj)
+  {
+    if (FoundryUtils.isFoundryVersion10())
+    {
+      return obj.token.disposition;
+    }
+    else
+    {
+      return obj.token.data.disposition;
+    }
+  }
+
   static getSystemVariableForObject(object, variableName)
   {
     let currentSystemVariableName = FoundryUtils.getSystemVariable(variableName);
