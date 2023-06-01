@@ -22,17 +22,21 @@ export class NPCActor5e
         this.compendiumname = compendiumname;
     }
 
-    async analyzeActor(forceLoad)
+    async analyzeActor()
     {
-        // let loadCombatData = game.settings.get(SFCONSTS.MODULE_NAME, 'loadCombatData');
-        if (forceLoad)
+        let compendium = game.packs.find(p => p.collection === this.compendiumname);
+        if (compendium)
         {
-            let compendium = game.packs.find(p => p.collection === this.compendiumname);
             this.actorObject = await compendium.getDocument(this.actorid);
-            this.attackdata = this.getCombatDataPerRound();
-            this.spelldata = this.getSpellDataPerRound();
-            this.combatdata = this.getBestCombat();
         }
+        else
+        {
+            this.actorObject = game.actors.find(a => a.id === this.actorid);
+        }
+
+        this.attackdata = this.getCombatDataPerRound();
+        this.spelldata = this.getSpellDataPerRound();
+        this.combatdata = this.getBestCombat();
     }
 
     getCombatDataPerRound()

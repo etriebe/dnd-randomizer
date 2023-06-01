@@ -51,10 +51,10 @@ export class CombatEstimateDialog extends FormApplication
 	{
 		super.activateListeners(html);
 		const _this = this;
-		this.populateCombatants();
+		await this.populateCombatants();
 	}
 
-	populateCombatants()
+	async populateCombatants()
 	{
 		this.friendlyExpectedDamages = [];
 		this.hostileExpectedDamages = [];
@@ -98,6 +98,7 @@ export class CombatEstimateDialog extends FormApplication
 					case CONST.TOKEN_DISPOSITIONS.HOSTILE:
 						console.log(`Combatant ${combatant.name} is hostile`);
 						actorObject = ActorUtils.getActorObject(combatant.actor);
+						await actorObject.analyzeActor();
 						this.hostileCombatants.push(actorObject);
 						break;
 					default:
@@ -309,5 +310,5 @@ export class CombatEstimateDialog extends FormApplication
 
 Hooks.once('ready', async () =>
 {
-	canvas.CombatEstimateDialog = new CombatEstimateDialog();
+	// canvas.CombatEstimateDialog = new CombatEstimateDialog();
 });

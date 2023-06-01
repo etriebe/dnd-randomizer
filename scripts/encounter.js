@@ -63,7 +63,7 @@ export class Encounter {
     let allAttackBonuses = [];
     for (let creature of this.creatures)
     {
-      await creature.npcactor.analyzeActor(true);
+      await creature.npcactor.analyzeActor();
       let creatureCombatData = creature.npcactor.combatdata;
       for (var i = 0; i < creature.quantity; i++)
       {
@@ -169,7 +169,7 @@ export class Encounter {
 
   async analyzeActors() {
     for (let creature of this.creatures) {
-      await creature.npcactor.analyzeActor(true);
+      await creature.npcactor.analyzeActor();
     }
   }
 
