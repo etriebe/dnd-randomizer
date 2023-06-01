@@ -148,15 +148,15 @@ export class SFDialog extends FormApplication
 						${encounter.currency.cp > 0 ? `<span class="loot-button">cp ${encounter.currency.cp}</span>` : ''}
 						<span class="encounter-difficulty ${encounter.data.difficulty}">${encounter.data.difficulty}</span>
 						${encounter.currency.xp > 0 ? `<span class="encounter-xp">${encounter.data.xp}</span>` : ''}
-						${encounter.amountToAdjustEncounter != null && encounter.amountToAdjustEncounter != 0 ?
-					`<span class="encounter-xpadjustment">${EncounterUtilsPf2e.getAdjustedXPString(encounter.amountToAdjustEncounter)}</span>` :
-					''}
+						${encounter.amountToAdjustEncounter != null && encounter.amountToAdjustEncounter != 0 ?	`<span class="encounter-xpadjustment">
+							${EncounterUtilsPf2e.getAdjustedXPString(encounter.amountToAdjustEncounter)}</span>` : ''}
 					</div>
 					${combatSummaryHTML}
 				</div>
 				<div class="create-encounter">
 					<i class="fas ${game.settings.get(SFCONSTS.MODULE_NAME, 'secretEncounterIcon') ? 'fa-pastafarianism' : 'fa-angle-double-right'}" data-trigger="spawn" title="Spawn Encounter"></i>
 					<i class="fas fa-briefcase" data-trigger="loot" title="Generate Loot"></i>
+					<i class="fal fa-swords" data-trigger="combat" title="Encounter Combat Estimate"></i>
 				</div>
 			</li>`);
 

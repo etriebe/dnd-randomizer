@@ -1,4 +1,5 @@
 import { SFCONSTS } from "./main.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { SFDialog } from "./dialog.js";
 import { SFCreatureCodex } from "./creatureCodex.js";
 
@@ -97,7 +98,7 @@ Hooks.once("init", async function () {
 
   game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {
     scope: "world",
-    config: false,
+    config: true,
     type: Boolean,
     default: false,
   });
