@@ -221,6 +221,11 @@ export class SFDialog extends FormApplication
 				encounter.createLootSheet();
 			});
 
+			$ul.find('li:last-child .create-encounter i.fal[data-trigger="combat"]').on('click', function (event)
+			{
+				encounter.combatEstimate();
+			});
+
 			let $details = $ul.find('li:last-child .encounter-details');
 			for (const creature of encounter.creatures)
 			{

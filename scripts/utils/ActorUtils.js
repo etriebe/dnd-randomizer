@@ -4,6 +4,7 @@ import { NPCActorPf2e } from "../pf2e/NPCActorPf2e.js";
 import { NPCActor5e } from "../dnd5e/NPCActor5e.js";
 import { PCActor5e } from "../dnd5e/PCActor5e.js";
 import { SFLOCALCONSTS } from "../localconst.js";
+import { GeneralUtils } from "./GeneralUtils.js";
 
 export class ActorUtils
 {
@@ -979,7 +980,7 @@ export class ActorUtils
   static getDamageWithResistance(enemyTargetObject, attackObject, damageType, damageDescription, totalAverageRollResult, isSpell)
   {
     let attackDataObject = FoundryUtils.getDataObjectFromObject(attackObject);
-    let enemyTraitsObject = FoundryUtils.getDataObjectFromObject(enemyTargetObject.actor).traits;
+    let enemyTraitsObject = FoundryUtils.getDataObjectFromObject(enemyTargetObject.actorObject).traits;
 
     let immunityApplied = false;
     let resistanceApplied = false;
@@ -1118,7 +1119,15 @@ export class ActorUtils
         let damageDescription = damageArray[0];
         let damageType = damageArray[1];
         damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
-        damageDescription = Roll.replaceFormulaData(damageDescription, actorObject.actor.getRollData());
+        try
+        {
+          damageDescription = Roll.replaceFormulaData(damageDescription, actorObject.actor.getRollData());
+        }
+        catch (error)
+        {
+          console.warn(`${actorObject.actorname}, ${actorObject.actorid}, attack ${attackObject.name} failed to get damage description.`);
+          console.warn(error);
+        }
 
         let totalAverageRollResult = ActorUtils.getAverageDamageFromDescription(damageDescription, abilityModValue, actorObject.actor);
         if (isNaN(totalAverageRollResult))
@@ -1217,7 +1226,16 @@ export class ActorUtils
   {
     let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
     damageDescription = damageDescription.replaceAll("@mod", abilityModValue);
-    damageDescription = Roll.replaceFormulaData(damageDescription, actor.getRollData());
+    
+    try
+    {
+      damageDescription = Roll.replaceFormulaData(damageDescription, actor.getRollData());
+    }
+    catch (error)
+    {
+      console.warn(`${actor.name}, ${damageDescription} failed to get damage description.`);
+      console.warn(error);
+    }
 
     let spellDamageQualifierMatches = [...damageDescription.matchAll(/\[.+\]/gm)];
 

@@ -53,4 +53,19 @@ export class GeneralUtils {
     static onlyUnique(value, index, self) {
       return self.indexOf(value) === index;
     }
+
+    static safeArrayAppend(originalArray, arrayToAppend)
+    {
+      if (arrayToAppend && arrayToAppend.length > 0)
+      {
+        originalArray = originalArray.concat(arrayToAppend);
+      }
+      return originalArray;
+    }
+  
+    static getArrayAverage(arrayToAverage)
+    {
+      let average = arrayToAverage.reduce((a, b) => a + b) / arrayToAverage.length;
+      return average;
+    }
 }

@@ -1,14 +1,34 @@
 import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { GeneralUtils } from "./utils/GeneralUtils.js";
 import { ActorUtils } from "./utils/ActorUtils.js";
+import { SFLocalHelpers } from "./localmodule.js";
 
 export class CombatEstimateDialog extends FormApplication
 {
-	constructor()
+	constructor(hostileCombatants)
 	{
 		super();
 		this.friendlyCombatants = [];
 		this.hostileCombatants = [];
+		this.dataPassedIn = false;
+
+		// if hostileCombatants are being passed in, we assume this is being called from SFDialog
+		if (hostileCombatants)
+		{
+			this.dataPassedIn = true;
+			for (let actorObject of hostileCombatants)
+			{
+				this.hostileCombatants.push(actorObject.npcactor);
+			}
+
+			const playerCharacters = SFLocalHelpers.getActivePlayersWithFilterDialogApplied();
+
+			for (let actorObject of playerCharacters)
+			{
+				const pcObject = ActorUtils.getPCActorObject(actorObject);
+				this.friendlyCombatants.push(pcObject);
+			}
+		}
 		this.friendlyExpectedDamages = [];
 		this.hostileExpectedDamages = [];
 	}
@@ -48,38 +68,42 @@ export class CombatEstimateDialog extends FormApplication
 		}
 
 		let combatants = game.combat.combatants;
-		this.friendlyCombatants = [];
-		this.hostileCombatants = [];
 
-		for (let combatant of combatants)
+		if (!this.dataPassedIn)
 		{
-			if (!combatant.token)
+			this.friendlyCombatants = [];
+			this.hostileCombatants = [];
+	
+			for (let combatant of combatants)
 			{
-				continue;
-			}
-
-			let combatantDisposition = FoundryUtils.getCombatantDisposition(combatant);
-
-			let actorObject = null;
-			// Disposition is 1 for friendly, 0 for neutral, -1 for hostile
-			switch (combatantDisposition)
-			{
-				case CONST.TOKEN_DISPOSITIONS.FRIENDLY:
-					console.log(`Combatant ${combatant.name} is friendly`);
-					actorObject = ActorUtils.getPCActorObject(combatant.actor);
-					this.friendlyCombatants.push(actorObject);
-					break;
-				case CONST.TOKEN_DISPOSITIONS.NEUTRAL:
-					console.log(`Combatant ${combatant.name} is neutral`);
-					break;
-				case CONST.TOKEN_DISPOSITIONS.HOSTILE:
-					console.log(`Combatant ${combatant.name} is hostile`);
-					actorObject = ActorUtils.getActorObject(combatant.actor);
-					this.hostileCombatants.push(actorObject);
-					break;
-				default:
-					console.log(`Combatant ${combatant.name} has unexpected state.`);
-					break;
+				if (!combatant.token)
+				{
+					continue;
+				}
+	
+				let combatantDisposition = FoundryUtils.getCombatantDisposition(combatant);
+	
+				let actorObject = null;
+				// Disposition is 1 for friendly, 0 for neutral, -1 for hostile
+				switch (combatantDisposition)
+				{
+					case CONST.TOKEN_DISPOSITIONS.FRIENDLY:
+						console.log(`Combatant ${combatant.name} is friendly`);
+						actorObject = ActorUtils.getPCActorObject(combatant.actor);
+						this.friendlyCombatants.push(actorObject);
+						break;
+					case CONST.TOKEN_DISPOSITIONS.NEUTRAL:
+						console.log(`Combatant ${combatant.name} is neutral`);
+						break;
+					case CONST.TOKEN_DISPOSITIONS.HOSTILE:
+						console.log(`Combatant ${combatant.name} is hostile`);
+						actorObject = ActorUtils.getActorObject(combatant.actor);
+						this.hostileCombatants.push(actorObject);
+						break;
+					default:
+						console.log(`Combatant ${combatant.name} has unexpected state.`);
+						break;
+				}
 			}
 		}
 
@@ -227,7 +251,7 @@ export class CombatEstimateDialog extends FormApplication
 			for (let i = 0; i < enemyCombatants.length; i++)
 			{
 				let currentEnemy = enemyCombatants[i];
-				let enemyArmorClass = ActorUtils.getActorArmorClass(currentEnemy.actor);
+				let enemyArmorClass = ActorUtils.getActorArmorClass(currentEnemy.actorObject);
 				let totalAvailableRollsToHit = Math.min(20 - (enemyArmorClass - 1) + attackBonus, 19); // a natural 1 always misses so there should only be 19 possible rolls that could hit
 				let chanceToHit = totalAvailableRollsToHit / 20.0;
 				attackChanceTotal += chanceToHit;
@@ -245,7 +269,7 @@ export class CombatEstimateDialog extends FormApplication
 			for (let i = 0; i < enemyCombatants.length; i++)
 			{
 				let currentEnemy = enemyCombatants[i];
-				let enemySavingThrowBonus = ActorUtils.getActorSavingThrowModifier(currentEnemy.actor, savingThrowType);
+				let enemySavingThrowBonus = ActorUtils.getActorSavingThrowModifier(currentEnemy.actorObject, savingThrowType);
 				let totalAvailableRollsToHit = savingThrowDC - 1 - enemySavingThrowBonus;
 				let chanceToHit = totalAvailableRollsToHit / 20.0;
 				attackChances.push(chanceToHit);
@@ -276,7 +300,7 @@ export class CombatEstimateDialog extends FormApplication
 		for (let i = 0; i < enemyCombatants.length; i++)
 		{
 			let currentEnemy = enemyCombatants[i];
-			let currentEnemyHitPoints = ActorUtils.getActorCurrentHP(currentEnemy.actor); // currentEnemy.actor.data.data.attributes.hp.value
+			let currentEnemyHitPoints = ActorUtils.getActorCurrentHP(currentEnemy.actorObject); // currentEnemy.actor.data.data.attributes.hp.value
 			totalHP += currentEnemyHitPoints;
 		}
 		return totalHP;

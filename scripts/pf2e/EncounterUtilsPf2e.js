@@ -51,7 +51,6 @@ export class EncounterUtilsPf2e
         creatureCombatDetails["compendiumname"] = randomMonster.compendiumname;
         creatureCombatDetails["quantity"] = numberOfCreatures;
         creatureCombatDetails["level"] = randomMonsterLevel;
-        creatureCombatDetails["combatdata"] = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorObj.id || m.actorid === randomMonsterActorObj._id).combatdata;
         currentEncounter["creatures"].push(creatureCombatDetails);
       }
 
