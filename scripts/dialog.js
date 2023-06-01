@@ -499,8 +499,8 @@ export class SFDialog extends FormApplication
 
 Hooks.once('ready', async () =>
 {
-	canvas.sfDialog = new SFDialog();
-	//canvas.sfDialog.render(true);
+	canvas.SFDialog = new SFDialog();
+	//canvas.SFDialog.render(true);
 
 	game.modules.get(SFCONSTS.MODULE_NAME).crab = () =>
 	{

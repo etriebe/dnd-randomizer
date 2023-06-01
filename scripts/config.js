@@ -122,22 +122,50 @@ Hooks.on("renderSidebarTab",(settings) => {
     html.find(`.header-actions`).first().append(button)
     html.find("#sfButton").on("click",async (e) => {
       e.preventDefault();
-      if (!canvas.sfDialog?.rendered) await canvas.sfDialog.render(true);
+      if (!canvas.SFDialog?.rendered) await canvas.SFDialog.render(true);
     })
   }
 
   if (settings.id === "compendium") {
     const html = settings.element
-    if(html.find("#sfCreatureCodexButton").length !== 0) return
-    const button = `<button id="sfCreatureCodexButton" style="flex-basis: auto;">
+    if(html.find("#SFCreatureCodexButton").length !== 0) return
+    const button = `<button id="SFCreatureCodexButton" style="flex-basis: auto;">
     <i class="fas fa-dice"></i> Creature Codex
   </button>`
     html.find(`.header-actions`).first().append(button)
-    html.find("#sfCreatureCodexButton").on("click",async (e) => {
+    html.find("#SFCreatureCodexButton").on("click",async (e) => {
       e.preventDefault();
-      if (!canvas.sfCreatureCodex?.rendered) await canvas.sfCreatureCodex.render(true);
+      if (!canvas.SFCreatureCodex?.rendered) await canvas.SFCreatureCodex.render(true);
     })
   }
+
+  if (settings.id === "combat"){
+		const html = settings.element;
+		if (html.find("#combatEstimateButton").length !== 0)
+		{
+			return;
+		}
+	
+		const button = `<button id="combatEstimateButton" style="flex-basis: auto;">
+		<i class="fas fa-calculator"></i> Combat Estimate
+		</button>`;
+		
+		let elementToAppendTo = ``;
+		if (FoundryUtils.isFoundryVersion10())
+		{
+			elementToAppendTo = `.combat-tracker-header`;
+		}
+		else
+		{
+			elementToAppendTo = `#combat-round`;
+		}
+		html.find(elementToAppendTo).first().append(button);
+		html.find("#combatEstimateButton").on("click", async (e) =>
+		{
+			e.preventDefault();
+			if (!canvas.CombatEstimateDialog?.rendered) await canvas.CombatEstimateDialog.render(true);
+		});
+	}
 });
 
 Hooks.once("ready", async function () {});

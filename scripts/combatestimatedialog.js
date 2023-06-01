@@ -15,7 +15,7 @@ export class CombatEstimateDialog extends FormApplication
 
 	static get defaultOptions()
 	{
-		let dialogTemplate = `modules/combat-estimate/templates/CombatEstimateDialog.hbs`;
+		let dialogTemplate = `modules/dnd-randomizer/templates/CombatEstimateDialog.hbs`;
 		return {
 			...super.defaultOptions,
 			title: game.i18n.localize('CE.dialog.title'),

@@ -1,0 +1,98 @@
+.comparison,
+.summary {
+	display: flex;
+}
+#friendly-combatants,
+#friendly-summary {
+	/* 
+	border: 1px solid var(--palette-dialog-background-dark, #782e22);
+	*/
+	float:left;
+	width:46%;
+}
+
+#hostile-combatants,
+#hostile-summary {
+	/* 
+	border: 1px solid var(--palette-dialog-background-dark, #782e22);
+	*/
+	float:right;
+	width:46%;
+}
+
+.player-details {
+	border: 1px solid var(--palette-dialog-background-dark, #782e22);
+	padding: 0.75rem 0.75rem;
+}
+
+#CombatEstimateDialog form ul {
+	display: flex;
+	flex-direction: column;
+	list-style: none;
+	margin: 5px;
+	padding: 0px;
+}
+
+#CombatEstimateDialog .window-content div.comparison span.creature-button {
+	background-color: var(--palette-secondary, #116b86);
+	border: 1px solid var(--palette-secondary-dark, #0d4557);
+	border-radius: 0.25rem;
+	bottom: 0px;
+	color: var(--palette-secondary-contrast-text, #f0f0e0);
+	display: inline-block;
+	margin-right: 0.5rem;
+	flex: 0 0;
+	z-index: 100;
+}
+
+#CombatEstimateDialog a.entity-link,
+#CombatEstimateDialog a.content-link {
+	background-color: transparent;
+	border-color: transparent;
+	background-color: var(--palette-secondary, #116b86);
+	color: var(--palette-secondary-contrast-text, #f0f0e0);
+	border-radius: 0px;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 0.8rem;
+	padding: 0.25rem 0.5rem;
+}
+
+#CombatEstimateDialog .encounter-attacknumber,
+#CombatEstimateDialog .encounter-attackdescription,
+#CombatEstimateDialog .encounter-attackbonustohit,
+#CombatEstimateDialog .encounter-averagedamage,
+#CombatEstimateDialog .encounter-hasareaofeffect,
+#CombatEstimateDialog .encounter-numberofattacks,
+#CombatEstimateDialog .encounter-percentchance,
+#CombatEstimateDialog .encounter-expecteddamage,
+#CombatEstimateDialog .encounter-enemyhp,
+#CombatEstimateDialog .encounter-chancetouse,
+#CombatEstimateDialog .encounter-roundstodown,
+#CombatEstimateDialog .legend-item {
+	border-top-width: 0px;
+	border-right: 1px solid var(--palette-app-background-dark, #f0f0e0);
+	border-left: 1px solid var(--palette-app-background-dark, #f0f0e0);
+	/* display:*/
+	display: inline-flex; 
+	padding: 0.25rem;
+	top: 20px;
+	font-size: 0.75rem;
+	background-color: var(--palette-app-background-dark, #191813);
+	color: var(--palette-app-background-dark-contrast-text, #f0f0e0);
+}
+
+#CombatEstimateDialog a.entity-link i.fas,
+#CombatEstimateDialog a.content-link i.fas {
+	color: inherit;
+}
+
+#CombatEstimateDialog .legend-item {
+	display: list-item;
+}
+/*
+#CombatEstimateDialog .legend {
+	position: relative;
+	bottom: 20px;
+}
+*/

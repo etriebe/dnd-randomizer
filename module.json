@@ -41,6 +41,7 @@
   "styles": [
     "./styles/encounterGenerator.css",
     "./styles/creatureCodex.css",
+    "./styles/combatEstimate.css",
     "./styles/mermaid.min.css"
   ],
   "packs": [
