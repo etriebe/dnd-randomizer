@@ -54,6 +54,14 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: true,
   });
+
+  game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {
+    name: "Use Pastafarian icon for dialog",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
   game.settings.register(SFCONSTS.MODULE_NAME, 'favoritedEncounters', {
     scope: "world",
     config: false,
@@ -94,13 +102,6 @@ Hooks.once("init", async function () {
     config: false,
     type: Object,
     default: [],
-  });
-
-  game.settings.register(SFCONSTS.MODULE_NAME, 'secretEncounterIcon', {
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
   });
 });
 
