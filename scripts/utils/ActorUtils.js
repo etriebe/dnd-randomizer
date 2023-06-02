@@ -215,7 +215,7 @@ export class ActorUtils
     try
     {
       let attackList = actor.items.filter(i => (i.type.toLowerCase() === "weapon" || i.type.toLowerCase() === "feat") &&
-        (!activationType || i.data.data.activation.type === activationType) &&
+        (!activationType || FoundryUtils.getDataObjectFromObject(i).activation.type === activationType) &&
         (i.hasAttack || i.hasSave) &&
         // i.hasLimitedUses &&
         i.hasDamage &&
@@ -534,7 +534,7 @@ export class ActorUtils
     legedaryActionsDescription = legedaryActionsDescription.replaceAll("<p>", "").replaceAll("</p>", "");
     let legendaryActionsToChooseFrom = actor.items.filter(i =>
       (i.type != "spell" ||
-        (i.type === "spell" && i.data.data.level === 0))
+        (i.type === "spell" && FoundryUtils.getDataObjectFromObject(i).level === 0))
       && i.type != "legendary"
       && i.name.toLowerCase() != "legendary actions");
 
@@ -734,7 +734,7 @@ export class ActorUtils
     let actor = actorObject.actor;
     try
     {
-      let spellList = actor.items.filter(i => (i.type.toLowerCase() === "spell") && (!activationType || (i.data.data.activation.type === activationType)));
+      let spellList = actor.items.filter(i => (i.type.toLowerCase() === "spell") && (!activationType || (FoundryUtils.getDataObjectFromObject(i).activation.type === activationType)));
       if (spellLevelLimit != null)
       {
         spellList = spellList.filter(s => FoundryUtils.getDataObjectFromObject(s).level <= spellLevelLimit);
