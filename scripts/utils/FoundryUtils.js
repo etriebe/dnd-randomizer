@@ -205,7 +205,19 @@ export class FoundryUtils
     let useDefaultFoundryLinks = game.settings.get(SFCONSTS.MODULE_NAME, 'useDefaultLinkBehavior');
     if (useDefaultFoundryLinks)
     {
-      return TextEditor.enrichHTML(actor.dynamicLink, { async: false });
+      if (actor.token?.actor?.link)
+      {
+        return actor.token.actor.toAnchor({classes: ["content-link"]}).outerHTML;
+      }
+      else
+      {
+        return actor.actorObject.toAnchor({classes: ["content-link"]}).outerHTML;
+        /*
+        return TextEditor.enrichHTML(
+          actor.dynamicLink === null || actor.dynamicLink === undefined ? actor.actor.link : actor.dynamicLink,
+          { async: false });
+          */
+      }
     }
 
     let actorID = actor.actorid;

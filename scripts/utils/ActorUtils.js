@@ -19,6 +19,28 @@ export class ActorUtils
     return creatureTypeValue;
   }
 
+  static async getActorObjectFromActorIdCompendiumName(actorId, compendiumName)
+  {
+    let actor = await ActorUtils.getActorFromActorIdCompendiumName(actorId, compendiumName);
+    return ActorUtils.getActorObject(actor, compendiumName);
+  }
+
+  static async getActorFromActorIdCompendiumName(actorId, compendiumName)
+  {
+    let compendium = game.packs.find(p => p.collection === compendiumName);
+    let actor = null;
+    if (compendium)
+    {
+      actor = await compendium.getDocument(actorId);
+    }
+
+    else
+    {
+      actor = game.actors.find(a => a.id === actorId);
+    }
+    return actor;
+  }
+
   static getLevelKeyForSpell(spell)
   {
     let spellLevel = FoundryUtils.getSystemVariableForObject(spell, "SpellLevel").toString().toLowerCase();
@@ -54,6 +76,28 @@ export class ActorUtils
     else if (currentSystem === "pf2e")
     {
       return new NPCActorPf2e(actor, compendiumname);
+    }
+    else
+    {
+      throw new Error("Not yet implemented!");
+    }
+  }
+
+  static getTokenObject(token)
+  {
+    let currentSystem = game.system.id;
+
+    if (currentSystem === "dnd5e")
+    {
+      let npcActor = new NPCActor5e(token.actor);
+      npcActor.token = token;
+      return npcActor;
+    }
+    else if (currentSystem === "pf2e")
+    {
+      let npcActor = new NPCActorPf2e(token.actor);
+      npcActor.token = token;
+      return npcActor;
     }
     else
     {
@@ -1226,7 +1270,7 @@ export class ActorUtils
   {
     let actorDataObject = FoundryUtils.getDataObjectFromObject(actor);
     damageDescription = damageDescription.replaceAll("@mod", abilityModValue);
-    
+
     try
     {
       damageDescription = Roll.replaceFormulaData(damageDescription, actor.getRollData());

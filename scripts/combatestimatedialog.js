@@ -38,7 +38,7 @@ export class CombatEstimateDialog extends FormApplication
 		let dialogTemplate = `modules/dnd-randomizer/templates/CombatEstimateDialog.hbs`;
 		return {
 			...super.defaultOptions,
-			title: game.i18n.localize('CE.dialog.title'),
+			title: game.i18n.localize('Combat Estimate'),
 			id: "CombatEstimateDialog",
 			template: dialogTemplate,
 			resizable: true,
@@ -97,7 +97,7 @@ export class CombatEstimateDialog extends FormApplication
 						break;
 					case CONST.TOKEN_DISPOSITIONS.HOSTILE:
 						console.log(`Combatant ${combatant.name} is hostile`);
-						actorObject = ActorUtils.getActorObject(combatant.actor);
+						actorObject = ActorUtils.getTokenObject(combatant.token);
 						await actorObject.analyzeActor();
 						this.hostileCombatants.push(actorObject);
 						break;
@@ -111,7 +111,7 @@ export class CombatEstimateDialog extends FormApplication
 		for (let actorObject of this.friendlyCombatants)
 		{
 			let combatSummaryHTML = this.getActorCombatSummary(actorObject, this.hostileCombatants, this.friendlyExpectedDamages);
-			let actorLink = FoundryUtils.getActorLink(actorObject.actor);
+			let actorLink = FoundryUtils.getActorLink(actorObject);
 			// let actorLink = TextEditor.enrichHTML(actorObject.actor.link);
 			$friendsList.append(`
 				<li class="combatant-friendly">
@@ -128,7 +128,7 @@ export class CombatEstimateDialog extends FormApplication
 		for (let actorObject of this.hostileCombatants)
 		{
 			let combatSummaryHTML = this.getActorCombatSummary(actorObject, this.friendlyCombatants, this.hostileExpectedDamages);
-			let actorLink = FoundryUtils.getActorLink(actorObject.actor);
+			let actorLink = FoundryUtils.getActorLink(actorObject);
 			$hostilesList.append(`
 				<li class="combatant-hostile">
 					<div class="player-details">

@@ -14,7 +14,7 @@ export class SFTreasureChooser extends FormApplication {
 	static get defaultOptions() {
 		return { 
 			...super.defaultOptions,
-			title: `Stochastic, Fantastic! Choose Treasuer Types`,
+			title: `Stochastic, Fantastic! Choose Treasure Types`,
 			id: "SFChooser",
 			template: `modules/dnd-randomizer/templates/treasure.hbs`,
 			resizable: true,

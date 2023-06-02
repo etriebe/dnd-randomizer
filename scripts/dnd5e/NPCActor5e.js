@@ -24,16 +24,7 @@ export class NPCActor5e
 
     async analyzeActor()
     {
-        let compendium = game.packs.find(p => p.collection === this.compendiumname);
-        if (compendium)
-        {
-            this.actorObject = await compendium.getDocument(this.actorid);
-        }
-        else
-        {
-            this.actorObject = game.actors.find(a => a.id === this.actorid);
-        }
-
+        this.actorObject = await ActorUtils.getActorFromActorIdCompendiumName(this.actorid, this.compendiumname);
         this.attackdata = this.getCombatDataPerRound();
         this.spelldata = this.getSpellDataPerRound();
         this.combatdata = this.getBestCombat();

@@ -4,6 +4,8 @@ import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { FuzzySet } from "./fuzzyset.js";
 import { SFCONSTS } from "./main.js";
 import { CombatEstimateDialog } from "./combatestimatedialog.js";
+import { ActorUtils } from "./utils/ActorUtils.js";
+import { SFLocalHelpers } from "./localmodule.js";
 
 
 export class Encounter {
@@ -169,6 +171,10 @@ export class Encounter {
 
   async analyzeActors() {
     for (let creature of this.creatures) {
+      if (creature.npcactor.analyzeActor === undefined)
+      {
+        creature.npcactor = await ActorUtils.getActorObjectFromActorIdCompendiumName(creature.actorid, creature.compendiumname);
+      }
       await creature.npcactor.analyzeActor();
     }
   }
