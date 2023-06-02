@@ -40,14 +40,6 @@ Hooks.once("init", async function ()
     type: Boolean,
     default: true,
   });
-  game.settings.register(SFCONSTS.MODULE_NAME, "loadCombatData", {
-    name: "Generated combats will contain combat summary information.",
-    hint: "Summary information such as damage per round, average target attack bonus, etc. This will slow down combat generation.",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
   game.settings.register(SFCONSTS.MODULE_NAME, "useDefaultLinkBehavior", {
     name: "Use FoundryVTT default link generation for actors and items.",
     hint: "This will use default link generation behavior, which means modules like Monk's Enhanced Journal will override and open actor pages in those dialogs.",
@@ -148,8 +140,7 @@ Hooks.on("renderSidebarTab", (settings) =>
       if (!canvas.SFCreatureCodex?.rendered) await canvas.SFCreatureCodex.render(true);
     });
   }
-
-  if (settings.id === "combat")
+  if (settings.id === "combat" && FoundryUtils.getSystemId() === "dnd5e")
   {
     const html = settings.element;
     if (html.find("#combatEstimateButton").length !== 0)

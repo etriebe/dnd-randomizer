@@ -130,6 +130,12 @@ export class SFDialog extends FormApplication
 					<span class="combat-averageattackbonus"> | ${encounter.combatsummary.averageattackbonus.toFixed(0)} average attack bonus</span>
 				</div>`;
 			}
+			let combatEstimateButtonHTML = ``;
+			if (FoundryUtils.getSystemId() === "dnd5e")
+			{
+				combatEstimateButtonHTML = `<i class="fal fa-swords" data-trigger="combat" title="Encounter Combat Estimate"></i>`;
+			}
+
 			$ul.append(`<li class="is-favorited-${encounter.data?.id ?? false ? 'true' : 'false'}" data-id="${encounter.id}">
 				<div class="favorite-encounter ${encounter.data?.id ?? false ? 'favorited' : ''}"><i class="far fa-star"></i></div>
 				<div class="encounter-details">
@@ -156,7 +162,7 @@ export class SFDialog extends FormApplication
 				<div class="create-encounter">
 					<i class="fas ${game.settings.get(SFCONSTS.MODULE_NAME, 'secretEncounterIcon') ? 'fa-pastafarianism' : 'fa-angle-double-right'}" data-trigger="spawn" title="Spawn Encounter"></i>
 					<i class="fas fa-briefcase" data-trigger="loot" title="Generate Loot"></i>
-					<i class="fal fa-swords" data-trigger="combat" title="Encounter Combat Estimate"></i>
+					${combatEstimateButtonHTML}
 				</div>
 			</li>`);
 
