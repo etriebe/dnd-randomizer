@@ -61,7 +61,6 @@ export class SFCreatureTypeChooser extends FormApplication {
 	}
 
 	async activateListeners(html) {
-		SFLocalHelpers.populateObjectsFromCompendiums(false);
 		this.populateCreatureTypes();
 		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#creature_filter', 'li.monsterTypeLi');
 	}

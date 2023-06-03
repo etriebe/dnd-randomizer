@@ -65,7 +65,6 @@ export class SFCompendiumSorter extends FormApplication {
 	}
 
 	async activateListeners(html) {
-		SFLocalHelpers.populateObjectsFromCompendiums(false);
 		this.populateCompendiums(["Actor","Item"]);
 
 		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#compendium_filter', 'li.compendiumTypeLi');

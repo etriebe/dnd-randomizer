@@ -61,7 +61,6 @@ export class SFEnvironmentChooser extends FormApplication {
 	}
 
 	async activateListeners(html) {
-		SFLocalHelpers.populateObjectsFromCompendiums(false);
 		this.populateEnvironments();
 		DialogUtils.activateCheckAllListeners(html, this.element, 'ul#environment_filter', 'li.environmentLi');
 	}

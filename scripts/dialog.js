@@ -255,6 +255,7 @@ export class SFDialog extends FormApplication
 	async activateListeners(html)
 	{
 		super.activateListeners(html);
+		await SFLocalHelpers.populateObjectsFromCompendiums(false);
 		const _this = this;
 		const charData = this.getDefaultsFromScene();
 		let getFavoritedEncounters = game.settings.get(SFCONSTS.MODULE_NAME, 'favoritedEncounters');
