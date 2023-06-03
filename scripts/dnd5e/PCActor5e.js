@@ -4,11 +4,16 @@ export class PCActor5e {
     static numberRegex = /\b(?<numberOfAttacks>one|two|three|four|five|six|seven|eight|nine|ten|once|twice|thrice|1|2|3|4|5|6|7|8|9)\b/gm;
     constructor(data) {
       this.actor = data;
+      this.actorObject = this.actor;
       this.actorname = this.actor.name;
       this.actorid = this.actor._id;
       this.creaturetype = "PC";
       this.environment = ["Any"];
-      this.combatdata = this.getCombatDataPerRound();
+      this.attackdata = ActorUtils.getCombatDataPerRound(this, "action");
+      this.bonusattackdata = ActorUtils.getCombatDataPerRound(this, "bonus");
+      this.spelldata = ActorUtils.getSpellDataPerRound(this, "action");
+      this.specialfeatures = ActorUtils.getSpecialFeatures(this);
+      this.combatdata = ActorUtils.getBestCombat(this);
       this.classes = this.actor.classes;
       this.playerclasslist = this.getPlayerClassList();
       this.level = this.getPlayerClassLevel();

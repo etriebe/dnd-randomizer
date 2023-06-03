@@ -71,23 +71,11 @@ export class SFLocalHelpers {
       return playerCharacters;
     }
 
-    static getActivePlayersCountAndLevels() {
-      let playerCharacters = this.getListOfActivePlayers();
-
-      const savedPlayerSettings = game.settings.get(
-        SFCONSTS.MODULE_NAME,
-        "playerCharactersToCreateEncountersFor"
-        );
+    static getActivePlayersCountAndLevels()
+    {
+      const playerList = SFLocalHelpers.getActivePlayersWithFilterDialogApplied();
       let levelList = [];
-
-      for (let player of playerCharacters) {
-        let playerName = player.name;
-        const el = savedPlayerSettings.find(i => Object.keys(i)[0] === playerName);
-        if (el && el[playerName] === false)
-        {
-          continue;
-        }
-
+      for (let player of playerList) {
         let totalLevelCount = this.getPlayerClassLevel(player);
         if (totalLevelCount === 0)
         {
@@ -106,6 +94,30 @@ export class SFLocalHelpers {
       resultObject["numberofplayers"] = levelList.length;
       resultObject["averageplayerlevel"] = avg;
       return resultObject;
+    }
+
+    static getActivePlayersWithFilterDialogApplied()
+    {
+      let playerCharacters = this.getListOfActivePlayers();
+
+      const savedPlayerSettings = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "playerCharactersToCreateEncountersFor"
+        );
+      let playerList = [];
+
+      for (let player of playerCharacters) {
+        let playerName = player.name;
+        const el = savedPlayerSettings.find(i => Object.keys(i)[0] === playerName);
+        if (el && el[playerName] === false)
+        {
+          continue;
+        }
+
+        playerList.push(player);
+      }
+
+      return playerList;
     }
 
     static getPlayerClassLevel(player)

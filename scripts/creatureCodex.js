@@ -108,6 +108,6 @@ export class SFCreatureCodex extends FormApplication
 
 Hooks.once('ready', async () =>
 {
-	canvas.sfCreatureCodex = new SFCreatureCodex();
+	canvas.SFCreatureCodex = new SFCreatureCodex();
 });
 

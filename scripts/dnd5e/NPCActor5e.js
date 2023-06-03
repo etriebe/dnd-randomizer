@@ -24,15 +24,10 @@ export class NPCActor5e
 
     async analyzeActor()
     {
-        let loadCombatData = game.settings.get(SFCONSTS.MODULE_NAME, 'loadCombatData');
-        if (loadCombatData)
-        {
-            let compendium = game.packs.find(p => p.collection === this.compendiumname);
-            this.actorObject = await compendium.getDocument(this.actorid);
-            this.attackdata = this.getCombatDataPerRound();
-            this.spelldata = this.getSpellDataPerRound();
-            this.combatdata = this.getBestCombat();
-        }
+        this.actorObject = await ActorUtils.getActorFromActorIdCompendiumName(this.actorid, this.compendiumname);
+        this.attackdata = this.getCombatDataPerRound();
+        this.spelldata = this.getSpellDataPerRound();
+        this.combatdata = this.getBestCombat();
     }
 
     getCombatDataPerRound()
@@ -363,6 +358,7 @@ export class NPCActor5e
 
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
+        currentAttackResult["attackobject"] = spellObject;
         let isProficient = spellDataObject.prof.hasProficiency;
         let attackBonus = 0;
         if (isProficient)
@@ -452,6 +448,7 @@ export class NPCActor5e
         }
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
+        currentAttackResult["attackobject"] = attackObject;
         let isProficient = attackDataObject.proficient;
         let attackBonus = 0;
         if (isProficient)

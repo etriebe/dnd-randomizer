@@ -3,6 +3,9 @@ import { CreatureSpawner } from "./spawner.js";
 import { FoundryUtils } from "./utils/FoundryUtils.js";
 import { FuzzySet } from "./fuzzyset.js";
 import { SFCONSTS } from "./main.js";
+import { CombatEstimateDialog } from "./combatestimatedialog.js";
+import { ActorUtils } from "./utils/ActorUtils.js";
+import { SFLocalHelpers } from "./localmodule.js";
 
 
 export class Encounter {
@@ -54,13 +57,16 @@ export class Encounter {
       this.creatures.push(new EncCreature(creature));
     }
 
+    /*
+    Removing for now while we let combat estimate do all the analyzing
     let totalAttacks = 0;
     let totalDamage = 0;
     let totalAOEDamage = 0;
     let allAttackBonuses = [];
     for (let creature of this.creatures)
     {
-      let creatureCombatData = creature.combatdata;
+      await creature.npcactor.analyzeActor();
+      let creatureCombatData = creature.npcactor.combatdata;
       for (var i = 0; i < creature.quantity; i++)
       {
         for (let attack of creatureCombatData)
@@ -101,6 +107,7 @@ export class Encounter {
     this.combatsummary["totaldamage"] = totalDamage;
     this.combatsummary["totalaoedamage"] = totalAOEDamage;
     this.combatsummary["averageattackbonus"] = allAttackBonusAverage;
+    */
     return this;
   }
 
@@ -159,6 +166,16 @@ export class Encounter {
   async loadActors() {
     for (let creature of this.creatures) {
       await creature.getActor();
+    }
+  }
+
+  async analyzeActors() {
+    for (let creature of this.creatures) {
+      if (creature.npcactor.analyzeActor === undefined)
+      {
+        creature.npcactor = await ActorUtils.getActorObjectFromActorIdCompendiumName(creature.actorid, creature.compendiumname);
+      }
+      await creature.npcactor.analyzeActor();
     }
   }
 
@@ -254,15 +271,22 @@ export class Encounter {
     await actor.createEmbeddedDocuments("Item", items);
     this.lootActorId = actor.id;
   }
+
+  async combatEstimate() {
+    await this.analyzeActors();
+    canvas.CombatEstimateDialog = new CombatEstimateDialog(this.creatures);
+    await canvas.CombatEstimateDialog.render(true);
+    // canvas.CombatEstimateDialog.activateListeners();
+  }
 }
 
 class EncCreature {
   constructor(creature) {
     this.name = creature.name;
+    this.npcactor = creature.npcactor;
     this.actorid = creature.actorid;
     this.compendiumname = creature.compendiumname;
     this.quantity = creature.quantity;
-    this.combatdata = creature.combatdata ?? [];
     this.compendium = null;
     this.dynamicLink = this.getDLink();
     this._actor = null;

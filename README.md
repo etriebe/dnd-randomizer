@@ -2,11 +2,7 @@
 
 Support this project [here](https://ko-fi.com/thetreat).
 
-### UI\UX Design Mouse0270
-
 ![Latest Release Download Count](https://img.shields.io/github/downloads/theripper93/dnd-randomizer/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fdnd-randomizer&colorB=03ff1c&style=for-the-badge)](https://forge-vtt.com/bazaar#package=dnd-randomizer) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2Fetriebe%2Fdnd-randomizer%2Fmaster%2Fmodule.json&label=Foundry%20Version&query=$.compatibleCoreVersion&colorB=orange&style=for-the-badge)
-
-**Note on localization: due to how encounters are generated the module will not work if the names of your creatures\items are not in english, for that reason the module is also no set up for localization.**
 
 How to use:
 

@@ -130,6 +130,12 @@ export class SFDialog extends FormApplication
 					<span class="combat-averageattackbonus"> | ${encounter.combatsummary.averageattackbonus.toFixed(0)} average attack bonus</span>
 				</div>`;
 			}
+			let combatEstimateButtonHTML = ``;
+			if (FoundryUtils.getSystemId() === "dnd5e")
+			{
+				combatEstimateButtonHTML = `<i class="fal fa-swords" data-trigger="combat" title="Encounter Combat Estimate"></i>`;
+			}
+
 			$ul.append(`<li class="is-favorited-${encounter.data?.id ?? false ? 'true' : 'false'}" data-id="${encounter.id}">
 				<div class="favorite-encounter ${encounter.data?.id ?? false ? 'favorited' : ''}"><i class="far fa-star"></i></div>
 				<div class="encounter-details">
@@ -148,15 +154,15 @@ export class SFDialog extends FormApplication
 						${encounter.currency.cp > 0 ? `<span class="loot-button">cp ${encounter.currency.cp}</span>` : ''}
 						<span class="encounter-difficulty ${encounter.data.difficulty}">${encounter.data.difficulty}</span>
 						${encounter.currency.xp > 0 ? `<span class="encounter-xp">${encounter.data.xp}</span>` : ''}
-						${encounter.amountToAdjustEncounter != null && encounter.amountToAdjustEncounter != 0 ?
-					`<span class="encounter-xpadjustment">${EncounterUtilsPf2e.getAdjustedXPString(encounter.amountToAdjustEncounter)}</span>` :
-					''}
+						${encounter.amountToAdjustEncounter != null && encounter.amountToAdjustEncounter != 0 ?	`<span class="encounter-xpadjustment">
+							${EncounterUtilsPf2e.getAdjustedXPString(encounter.amountToAdjustEncounter)}</span>` : ''}
 					</div>
 					${combatSummaryHTML}
 				</div>
 				<div class="create-encounter">
 					<i class="fas ${game.settings.get(SFCONSTS.MODULE_NAME, 'secretEncounterIcon') ? 'fa-pastafarianism' : 'fa-angle-double-right'}" data-trigger="spawn" title="Spawn Encounter"></i>
 					<i class="fas fa-briefcase" data-trigger="loot" title="Generate Loot"></i>
+					${combatEstimateButtonHTML}
 				</div>
 			</li>`);
 
@@ -221,10 +227,17 @@ export class SFDialog extends FormApplication
 				encounter.createLootSheet();
 			});
 
+			$ul.find('li:last-child .create-encounter i.fal[data-trigger="combat"]').on('click', function (event)
+			{
+				encounter.combatEstimate();
+			});
+
 			let $details = $ul.find('li:last-child .encounter-details');
 			for (const creature of encounter.creatures)
 			{
-				const actorLink = FoundryUtils.getActorLink(creature);
+				const npcActorObject = await ActorUtils.getActorObjectFromActorIdCompendiumName(creature.actorid, creature.compendiumname);
+				await npcActorObject.analyzeActor();
+				const actorLink = FoundryUtils.getActorLink(npcActorObject);
 				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}</span>`);
 			}
 
@@ -499,8 +512,8 @@ export class SFDialog extends FormApplication
 
 Hooks.once('ready', async () =>
 {
-	canvas.sfDialog = new SFDialog();
-	//canvas.sfDialog.render(true);
+	canvas.SFDialog = new SFDialog();
+	//canvas.SFDialog.render(true);
 
 	game.modules.get(SFCONSTS.MODULE_NAME).crab = () =>
 	{

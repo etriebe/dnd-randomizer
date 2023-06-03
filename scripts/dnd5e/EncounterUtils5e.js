@@ -90,14 +90,7 @@ export class EncounterUtils5e
           creatureCombatDetails["cr"] = monsterCR;
           creatureCombatDetails["xp"] = randomMonsterXP;
           let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
-          // If a monster hasn't had their combat data instantiated, analyze the actor (calls compendium.getDocument())
-          // This can be a slower operation.
-          if (!currentMonster.actor.combatdata)
-          {
-            await currentMonster.actor.analyzeActor();
-          }
-
-          creatureCombatDetails["combatdata"] = currentMonster.actor.combatdata;
+          creatureCombatDetails["npcactor"] = currentMonster.actor;
           currentEncounter["creatures"].push(creatureCombatDetails);
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
@@ -167,13 +160,7 @@ export class EncounterUtils5e
           creatureCombatDetails["xp"] = randomMonsterXP;
 
           let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
-          // If a monster hasn't had their combat data instantiated, analyze the actor (calls compendium.getDocument())
-          // This can be a slower operation.
-          if (!currentMonster.actor.combatdata)
-          {
-            await currentMonster.actor.analyzeActor();
-          }
-          creatureCombatDetails["combatdata"] = currentMonster.actor.combatdata;
+          creatureCombatDetails["npcactor"] = currentMonster.actor;
           currentEncounter["creatures"].push(creatureCombatDetails);
           break;
         }
