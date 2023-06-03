@@ -18,7 +18,10 @@ export class CombatEstimateDialog extends FormApplication
 			this.dataPassedIn = true;
 			for (let actorObject of hostileCombatants)
 			{
-				this.hostileCombatants.push(actorObject.npcactor);
+				for (let i = 0; i < actorObject.quantity; i++)
+				{
+					this.hostileCombatants.push(actorObject.npcactor);
+				}
 			}
 
 			const playerCharacters = SFLocalHelpers.getActivePlayersWithFilterDialogApplied();
