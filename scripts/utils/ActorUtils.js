@@ -83,6 +83,28 @@ export class ActorUtils
     }
   }
 
+  static getPCTokenObject(token)
+  {
+    let currentSystem = game.system.id;
+
+    if (currentSystem === "dnd5e")
+    {
+      let pcActor = new PCActor5e(token.actor);
+      pcActor.token = token;
+      return pcActor;
+    }
+    else if (currentSystem === "pf2e")
+    {
+      let pcActor = new PCActorPf2e(token.actor);
+      pcActor.token = token;
+      return pcActor;
+    }
+    else
+    {
+      throw new Error("Not yet implemented!");
+    }
+  }
+
   static getTokenObject(token)
   {
     let currentSystem = game.system.id;

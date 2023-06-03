@@ -92,7 +92,7 @@ export class CombatEstimateDialog extends FormApplication
 				{
 					case CONST.TOKEN_DISPOSITIONS.FRIENDLY:
 						console.log(`Combatant ${combatant.name} is friendly`);
-						actorObject = ActorUtils.getPCActorObject(combatant.actor);
+						actorObject = ActorUtils.getPCTokenObject(combatant.token);
 						this.friendlyCombatants.push(actorObject);
 						break;
 					case CONST.TOKEN_DISPOSITIONS.NEUTRAL:
@@ -304,7 +304,7 @@ export class CombatEstimateDialog extends FormApplication
 		for (let i = 0; i < enemyCombatants.length; i++)
 		{
 			let currentEnemy = enemyCombatants[i];
-			let currentEnemyHitPoints = ActorUtils.getActorCurrentHP(currentEnemy.actorObject); // currentEnemy.actor.data.data.attributes.hp.value
+			let currentEnemyHitPoints = ActorUtils.getActorCurrentHP(currentEnemy.token.actor); // currentEnemy.actor.data.data.attributes.hp.value
 			totalHP += currentEnemyHitPoints;
 		}
 		return totalHP;
