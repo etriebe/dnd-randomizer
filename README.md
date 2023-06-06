@@ -4,12 +4,12 @@ Support this project [here](https://ko-fi.com/thetreat).
 
 ![Latest Release Download Count](https://img.shields.io/github/downloads/theripper93/dnd-randomizer/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fdnd-randomizer&colorB=03ff1c&style=for-the-badge)](https://forge-vtt.com/bazaar#package=dnd-randomizer) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2Fetriebe%2Fdnd-randomizer%2Fmaster%2Fmodule.json&label=Foundry%20Version&query=$.compatibleCoreVersion&colorB=orange&style=for-the-badge)
 
-How to use:
+### **How to use:**
 
 Click the Generate Encounter in the actor sidebar to bring up the window
 ![image](images/create-encounter.gif)
 
-What do the buttons do?
+### **What do the buttons do?**
 
 1. Encounter Type: This will choose from a number of formulaeic encounter types, based on monster challenge rating/XP. For example:
    1. Single BBEG: One Big Bad Evil Guy/Gal using the *entire* encounter budget
