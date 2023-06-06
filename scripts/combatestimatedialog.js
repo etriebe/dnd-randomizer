@@ -304,7 +304,7 @@ export class CombatEstimateDialog extends FormApplication
 		for (let i = 0; i < enemyCombatants.length; i++)
 		{
 			let currentEnemy = enemyCombatants[i];
-			let currentEnemyHitPoints = ActorUtils.getActorCurrentHP(currentEnemy.token.actor); // currentEnemy.actor.data.data.attributes.hp.value
+			let currentEnemyHitPoints = ActorUtils.getActorCurrentHP(currentEnemy.token?.actor ?? currentEnemy.actorObject); // currentEnemy.actor.data.data.attributes.hp.value
 			totalHP += currentEnemyHitPoints;
 		}
 		return totalHP;
