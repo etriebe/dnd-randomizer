@@ -7,26 +7,47 @@ Support this project [here](https://ko-fi.com/thetreat).
 How to use:
 
 Click the Generate Encounter in the actor sidebar to bring up the window
-![image](https://user-images.githubusercontent.com/1346839/130234518-b80b3c00-7901-40bf-ba31-5a803b04bb01.png)
-
-You will be prompted with the Stochastic, Fantastic! Window:
-![image](https://user-images.githubusercontent.com/1346839/130234596-4b035d15-db63-4465-9f44-c66e3c6987bc.png)
+![image](images/create-encounter.gif)
 
 What do the buttons do?
 
-1. Select your encounter parameters in the description in the top of the window, you can click on all the fields underlined with dots (the module will default to the data of the characters you have on the scene)
-2. Click generate encounters and wait for the module to do it's thing
+1. Encounter Type: This will choose from a number of formulaeic encounter types, based on monster challenge rating/XP. For example:
+   1. Single BBEG: One Big Bad Evil Guy/Gal using the *entire* encounter budget
+   2. BBEG + 2 Minions: One BBEG and two of the same minions 1/3rd of their CR
+   3. 2 Semi-BBEG: Two of the same type of BBEG
+   4. BBEG + Monster horde: One BBEG and 5 of the same monsters ~1/10th of the BBEG's CR
+   5. BBEG + Random monster horde: One BBEG and 5 different monsters ~1/10th of the BBEG's CR
+   6. Monster horde: 6 of the same monster
+   7. Random monster horde: 6 equal CR monsters
+   8. Random: Completely random algorithm which does the following
+      1. Choose a monster that is within some range of acceptable CR for this encounter
+      2. Choose a quantity of this monster that is within our encounter budget
+      3. Add this monster
+      4. Repeat steps 1-3 until we get close enough to our encounter budget
+   9. Note: If you have other encounter formula types to add, let me know! They are super cheap and easy to add (One line of code!)
+2. Generate Encounters: Does what it says! This will index your local compendiums you have selected and use them to create encounters! This should run in ~5-20 seconds, depending on the speed of your computer and size of your compendiums.
 3. You encounters will appear, from here you can do the following:
+   1. Use the star icon to save the encounter for later
+   2. Use the Double Arrow icon (on the right) to spawn the encounter
+   3. Use the Toolbox icon (under the Double Arrow icon) to generate a loot sheet (Item Piles is highly raccomanded for this to look better)
+   4. Drag n Drop any monster to the scene to spawn them or drag n drop any item to an actor to add it to them
+   5. Click the two swords icon to get a combat estimate for this encounter
+4. Filter Buttons: These buttons will all have similar functionality for allowing you to filter the types of these items for use in encounter generation.
+   1. Treasure Type: Types of loot rarity do we include in the treasure listed? (Note: Only PF2e for the moment)
+   2. Creature Type: Types of creatures we include in our list of encounters to generate
+   3. Environment: Types of environments to choose creatures from. If Any is chosen, this means monsters that either had "Any" listed in their environment list or monsters that had *no* environment selected.
+   4. Players: The players to choose for identifying encounter CR/XP budgets.
+   5. Compendium: The compendiums to choose monsters/items from for all of the above. 
+![image](images/filter.gif)
 
-- Use the star icon to save the encounter for later
-- Use the Double Arrow icon (on the right) to spawn the encounter
-- Use the Toolbox icon (under the Double Arrow icon) to generate a loot sheet (lootsheet 5e is highly raccomanded for this to look better)
-- Drag n Drop any monster to the scene to spawn them or drag n drop any item to an actor to add it to them
+Additionally you can use the searchbar on top to search for encounter name\creatures\items on the left of the searchbox you will find the filter for favorite only and on the right of the searchbox the funnel icon will bring up the compendium configuration window: in this window you can sort and enable\disable compendiums the module will pull from. (Note: This may not work as expected currently. [Issue #52](https://github.com/etriebe/dnd-randomizer/issues/52))
 
-Additionally you can use the searchbar on top to search for encounter name\creatures\items
-on the left of the searchbox you will find the filter for favorite only and on the right of the searchbox the funnel icon will bring up the compendium configuration window: in this window you can sort and enable\disable compendiums the module will pull from.
+# Combat Estimate
 
-![image](https://user-images.githubusercontent.com/1346839/130235849-357b71f5-6859-4c1e-8710-61376eaa57f4.png)
+We will either take the monsters and players listed in the combat dialog *or* the monsters in the encounter selected and the players from the player filter dialog and attempt to choose the optimal actions for damage in their list of possible actions. We will use AC, Saving Throw modifiers of the enemies of the current combatant to identify *how* likely an attack is to hit, in addition to calculating the average and expected damage. This can be especially useful for determining difficulty in campaigns with magical items. 
+
+![image](images/combat-estimate.gif)
+
 
 # Creature Codex
 
