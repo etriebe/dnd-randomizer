@@ -44,7 +44,7 @@ Additionally you can use the searchbar on top to search for encounter name\creat
 
 # Combat Estimate
 
-We will either take the monsters and players listed in the combat dialog *or* the monsters in the encounter selected and the players from the player filter dialog and attempt to choose the optimal actions for damage in their list of possible actions. We will use AC, Saving Throw modifiers of the enemies of the current combatant to identify *how* likely an attack is to hit, in addition to calculating the average and expected damage. This can be especially useful for determining difficulty in campaigns with magical items. 
+We will either take the monsters and players listed in the combat dialog *or* the monsters in the encounter selected and the players from the player filter dialog and attempt to choose the optimal actions for damage in their list of possible actions. We will use AC, Saving Throw modifiers of the enemies of the current combatant to identify *how* likely an attack is to hit, in addition to calculating the average and expected damage. This can be especially useful for determining difficulty in campaigns with magical items. Please let me know if some player features aren't identified correctly (e.g. Great Weapon Master) or if a Monster's best action/spell or multiattack wasn't parsed correctly.
 
 ![image](images/combat-estimate.gif)
 
