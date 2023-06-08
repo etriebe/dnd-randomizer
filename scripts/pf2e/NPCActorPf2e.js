@@ -11,6 +11,11 @@ export class NPCActorPf2e {
       this.combatdata = this.getCombatDataPerRound();
     }
 
+    async analyzeActor()
+    {
+      this.actorObject = await ActorUtils.getActorFromActorIdCompendiumName(this.actorid, this.compendiumname);
+    }
+
     getCombatDataPerRound()
     {
       return [];
