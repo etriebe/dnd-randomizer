@@ -59,13 +59,22 @@ export class SFDialog extends FormApplication
 		let level = 0;
 		if (characters)
 		{
-			characters.forEach((c) => 
+			try
+			{				
+				characters.forEach((c) => 
+				{
+					const actorObject = ActorUtils.getPCActorObject(c.actor);
+					level += actorObject.level;
+				});
+				level = Math.round(level / characters.length);
+				return { chars: characters.length || 4, level: level || 5 };
+			}
+			catch (error)
 			{
-				const actorObject = ActorUtils.getPCActorObject(c.actor);
-				level += actorObject.level;
-			});
-			level = Math.round(level / characters.length);
-			return { chars: characters.length || 4, level: level || 5 };
+				console.warn(`Unable to grab defaults for scene from all character levels in the scene`);
+				console.warn(error);
+				return { chars: 4, level: 5 }; 
+			}
 		}
 		else
 		{
