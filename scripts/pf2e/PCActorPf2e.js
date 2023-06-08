@@ -18,8 +18,7 @@ export class PCActorPf2e {
     }
 
     getPlayerClassList() {
-        let playerClassList = Object.keys(this.class.name);
-        return playerClassList;
+        return [this.classes.name];
     }
 
     getCombatDataPerRound() {
