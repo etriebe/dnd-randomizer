@@ -812,7 +812,7 @@ export class ActorUtils
 
     if (gwmAttack)
     {
-      let bestAttack = ActorUtils.getBestAttackObjectWithProperty(actorObject, "hvy");
+      let bestAttack = ActorUtils.getBestAttackObjectWithProperty(actorObject, "mwak", "hvy");
       let existingAttackObject = actorObject.attackdata.find(a => a.attackdescription === bestAttack.attackdescription);
       if (existingAttackObject)
       {
@@ -822,6 +822,27 @@ export class ActorUtils
         gwmAttackResult["numberofattacks"] = existingAttackObject.numberofattacks;
         gwmAttackResult["hasareaofeffect"] = existingAttackObject.hasareaofeffect;
         gwmAttackResult["attackdescription"] = `${existingAttackObject.attackdescription} (Great Weapon Master)`;
+        gwmAttackResult["attackobject"] = existingAttackObject.attackobject;
+        gwmAttackResult["isspell"] = existingAttackObject.isspell;
+        gwmAttackResult["isspecial"] = true;
+        specialAttackList.push(gwmAttackResult);
+      }
+    }
+
+    let sharpShooterAttack = ActorUtils.getActorFeature(actorObject, "sharpshooter");
+
+    if (sharpShooterAttack)
+    {
+      let bestAttack = ActorUtils.getBestAttackObjectWithProperty(actorObject, "rwak");
+      let existingAttackObject = actorObject.attackdata.find(a => a.attackdescription === bestAttack.attackdescription);
+      if (existingAttackObject)
+      {
+        let gwmAttackResult = {};
+        gwmAttackResult["averagedamage"] = existingAttackObject.averagedamage + 10;
+        gwmAttackResult["attackbonustohit"] = existingAttackObject.attackbonustohit - 5;
+        gwmAttackResult["numberofattacks"] = existingAttackObject.numberofattacks;
+        gwmAttackResult["hasareaofeffect"] = existingAttackObject.hasareaofeffect;
+        gwmAttackResult["attackdescription"] = `${existingAttackObject.attackdescription} (Sharpshooter)`;
         gwmAttackResult["attackobject"] = existingAttackObject.attackobject;
         gwmAttackResult["isspell"] = existingAttackObject.isspell;
         gwmAttackResult["isspecial"] = true;
@@ -919,17 +940,23 @@ export class ActorUtils
     return bestChance;
   }
 
-  static getBestAttackObjectWithProperty(actorObject, property)
+  static getBestAttackObjectWithProperty(actorObject, attackType, property)
   {
     let bestChance = 0;
     let bestAttackObject = null;
     for (let i = 0; i < actorObject.attackdata.length; i++)
     {
       let currentAttack = actorObject.attackdata[i];
+
+      if (attackType && attackType != currentAttack.attackobject.system.actionType)
+      {
+        continue;
+      }
+
       if (property)
       {
         // if the attack doesn't has the property requested set to true, we'll skip the attack
-        let attackProperties = currentAttack.properties;
+        let attackProperties = currentAttack.attackobject.system.properties;
         if (!eval(`attackProperties.${property}`))
         {
           continue;
@@ -948,7 +975,7 @@ export class ActorUtils
   static getActorFeature(actorObject, featureName)
   {
     let actor = actorObject.actor;
-    let specialFeatures = actor.items.find(i => i.name.toLowerCase() === featureName);
+    let specialFeatures = actor.items.find(i => i.name.toLowerCase() === featureName.toLowerCase());
     return specialFeatures;
   }
 
@@ -1327,8 +1354,6 @@ export class ActorUtils
     {
       currentAttackResult["attackbonustohit"] = attackBonus;
     }
-
-    currentAttackResult["properties"] = attackObject.system.properties;
 
     currentAttackResult["numberofattacks"] = numberOfAttacks;
     currentAttackResult["hasareaofeffect"] = attackObject.hasAreaTarget;
