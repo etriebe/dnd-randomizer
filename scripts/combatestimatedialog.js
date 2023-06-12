@@ -247,7 +247,7 @@ export class CombatEstimateDialog extends FormApplication
 
 	getAttackChanceToHit(currentAttack, enemyCombatants)
 	{
-		if (currentAttack.attackbonustohit)
+		if (!isNaN(currentAttack.attackbonustohit))
 		{
 			let attackBonus = currentAttack.attackbonustohit;
 			let attackChances = [];
