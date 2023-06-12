@@ -805,6 +805,32 @@ export class ActorUtils
     return allSpellResultObjects;
   }
 
+  static getSpecialAttacks(actorObject)
+  {
+    let specialAttackList = [];
+    let gwmAttack = ActorUtils.getActorFeature(actorObject, "great weapon master");
+
+    if (gwmAttack)
+    {
+      let bestAttack = ActorUtils.getBestAttackObjectWithProperty(actorObject, "hvy");
+      let existingAttackObject = actorObject.attackdata.find(a => a.attackdescription === bestAttack.attackdescription);
+      if (existingAttackObject)
+      {
+        let gwmAttackResult = {};
+        gwmAttackResult["averagedamage"] = existingAttackObject.averagedamage + 10;
+        gwmAttackResult["attackbonustohit"] = existingAttackObject.attackbonustohit - 5;
+        gwmAttackResult["numberofattacks"] = existingAttackObject.numberofattacks;
+        gwmAttackResult["hasareaofeffect"] = existingAttackObject.hasareaofeffect;
+        gwmAttackResult["attackdescription"] = `${existingAttackObject.attackdescription} (Great Weapon Master)`;
+        gwmAttackResult["attackobject"] = existingAttackObject.attackobject;
+        gwmAttackResult["isspell"] = existingAttackObject.isspell;
+        gwmAttackResult["isspecial"] = true;
+        specialAttackList.push(gwmAttackResult);
+      }
+    }
+    return specialAttackList;
+  }
+
   static getSpecialFeatures(actorObject)
   {
     let specialFeatureList = [];
@@ -828,7 +854,7 @@ export class ActorUtils
       }
 
       let bestAttackBonus = ActorUtils.getBestChanceAttack(actorObject);
-
+ 
       let currentAttackResult = {};
       currentAttackResult["averagedamage"] = sneakAttackDamage;
       currentAttackResult["attackbonustohit"] = bestAttackBonus;
@@ -869,12 +895,21 @@ export class ActorUtils
     return evaluatedRollDescription;
   }
 
-  static getBestChanceAttack(actorObject)
+  static getBestChanceAttack(actorObject, property)
   {
     let bestChance = 0;
     for (let i = 0; i < actorObject.attackdata.length; i++)
     {
       let currentAttack = actorObject.attackdata[i];
+      if (property)
+      {
+        // if the attack doesn't has the property requested set to true, we'll skip the attack
+        let attackProperties = currentAttack.properties;
+        if (!eval(`attackProperties.${property}`))
+        {
+          continue;
+        }
+      }
       let currentAttackBonusToHit = currentAttack.attackbonustohit;
       if (currentAttackBonusToHit > bestChance)
       {
@@ -882,6 +917,32 @@ export class ActorUtils
       }
     }
     return bestChance;
+  }
+
+  static getBestAttackObjectWithProperty(actorObject, property)
+  {
+    let bestChance = 0;
+    let bestAttackObject = null;
+    for (let i = 0; i < actorObject.attackdata.length; i++)
+    {
+      let currentAttack = actorObject.attackdata[i];
+      if (property)
+      {
+        // if the attack doesn't has the property requested set to true, we'll skip the attack
+        let attackProperties = currentAttack.properties;
+        if (!eval(`attackProperties.${property}`))
+        {
+          continue;
+        }
+      }
+      let currentAttackBonusToHit = currentAttack.attackbonustohit;
+      if (currentAttackBonusToHit > bestChance)
+      {
+        bestChance = currentAttackBonusToHit;
+        bestAttackObject = currentAttack;
+      }
+    }
+    return bestAttackObject;
   }
 
   static getActorFeature(actorObject, featureName)
@@ -895,6 +956,7 @@ export class ActorUtils
   {
     let totalAttackDamage = 0;
     let totalSpellDamage = 0;
+    let totalSpecialAttackDamage = 0;
 
     let bestCombatRound = [];
 
@@ -909,6 +971,26 @@ export class ActorUtils
         for (var j = 0; j < numberOfAttacks; j++)
         {
           totalAttackDamage += averageDamage;
+        }
+      }
+      catch (error)
+      {
+        console.warn(`Failed to add combat summary for creature ${actorObject.actorname}`);
+        console.warn(error.stack);
+      }
+    }
+
+    for (let attack of actorObject.specialattackdata)
+    {
+      try
+      {
+        let attackBonus = attack.attackbonustohit;
+        let averageDamage = attack.averagedamage;
+        let numberOfAttacks = attack.numberofattacks;
+
+        for (var j = 0; j < numberOfAttacks; j++)
+        {
+          totalSpecialAttackDamage += averageDamage;
         }
       }
       catch (error)
@@ -938,13 +1020,17 @@ export class ActorUtils
       }
     }
 
-    if (totalAttackDamage > totalSpellDamage)
+    if (totalAttackDamage > totalSpellDamage && totalAttackDamage > totalSpecialAttackDamage)
     {
       bestCombatRound = actorObject.attackdata;
     }
-    else
+    else if (totalSpellDamage > totalSpecialAttackDamage)
     {
       bestCombatRound = actorObject.spelldata;
+    }
+    else
+    {
+      bestCombatRound = actorObject.specialattackdata;
     }
 
     bestCombatRound = GeneralUtils.safeArrayAppend(bestCombatRound, actorObject.bonusattackdata);
@@ -1241,6 +1327,8 @@ export class ActorUtils
     {
       currentAttackResult["attackbonustohit"] = attackBonus;
     }
+
+    currentAttackResult["properties"] = attackObject.system.properties;
 
     currentAttackResult["numberofattacks"] = numberOfAttacks;
     currentAttackResult["hasareaofeffect"] = attackObject.hasAreaTarget;

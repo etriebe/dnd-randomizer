@@ -221,7 +221,7 @@ export class FoundryUtils
     }
 
     let actorID = actor.actorid;
-    let actorName = actor.name;
+    let actorName = actor.actorname;
     let compendiumName = actor.compendiumname;
 
     if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())

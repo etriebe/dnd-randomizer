@@ -10,6 +10,7 @@ export class PCActor5e {
       this.creaturetype = "PC";
       this.environment = ["Any"];
       this.attackdata = ActorUtils.getCombatDataPerRound(this, "action");
+      this.specialattackdata = ActorUtils.getSpecialAttacks(this);
       this.bonusattackdata = ActorUtils.getCombatDataPerRound(this, "bonus");
       this.spelldata = ActorUtils.getSpellDataPerRound(this, "action");
       this.specialfeatures = ActorUtils.getSpecialFeatures(this);
