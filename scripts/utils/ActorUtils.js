@@ -828,7 +828,7 @@ export class ActorUtils
       }
 
       let bestAttackBonus = ActorUtils.getBestChanceAttack(actorObject);
-
+ 
       let currentAttackResult = {};
       currentAttackResult["averagedamage"] = sneakAttackDamage;
       currentAttackResult["attackbonustohit"] = bestAttackBonus;
@@ -839,6 +839,27 @@ export class ActorUtils
       currentAttackResult["isspell"] = false;
       currentAttackResult["isspecial"] = true;
       specialFeatureList.push(currentAttackResult);
+    }
+
+    let gwmAttack = ActorUtils.getActorFeature(actorObject, "great weapon master");
+
+    if (gwmAttack)
+    {
+      let bestAttack = ActorUtils.getBestAttackObjectWithProperty(actorObject, "hvy");
+      let existingAttackObject = actorObject.attackdata.find(a => a.attackdescription === bestAttack.name);
+      if (existingAttackObject)
+      {
+        let gwmAttackResult = {};
+        gwmAttackResult["averagedamage"] = existingAttackObject.averagedamage + 10;
+        gwmAttackResult["attackbonustohit"] = existingAttackObject.attackbonustohit - 5;
+        gwmAttackResult["numberofattacks"] = existingAttackObject.numberofattacks;
+        gwmAttackResult["hasareaofeffect"] = existingAttackObject.hasareaofeffect;
+        gwmAttackResult["attackdescription"] = existingAttackObject.attackdescription;
+        gwmAttackResult["attackobject"] = existingAttackObject.attackobject;
+        gwmAttackResult["isspell"] = existingAttackObject.isspell;
+        gwmAttackResult["isspecial"] = existingAttackObject.isspecial;
+        actorObject.attackdata.push(gwmAttackResult);
+      }
     }
     return specialFeatureList;
   }
@@ -869,12 +890,21 @@ export class ActorUtils
     return evaluatedRollDescription;
   }
 
-  static getBestChanceAttack(actorObject)
+  static getBestChanceAttack(actorObject, property)
   {
     let bestChance = 0;
     for (let i = 0; i < actorObject.attackdata.length; i++)
     {
       let currentAttack = actorObject.attackdata[i];
+      if (property)
+      {
+        // if the attack doesn't has the property requested set to true, we'll skip the attack
+        let attackProperties = currentAttack.properties;
+        if (!eval(`attackProperties.${property}`))
+        {
+          continue;
+        }
+      }
       let currentAttackBonusToHit = currentAttack.attackbonustohit;
       if (currentAttackBonusToHit > bestChance)
       {
@@ -882,6 +912,32 @@ export class ActorUtils
       }
     }
     return bestChance;
+  }
+
+  static getBestAttackObjectWithProperty(actorObject, property)
+  {
+    let bestChance = 0;
+    let bestAttackObject = null;
+    for (let i = 0; i < actorObject.attackdata.length; i++)
+    {
+      let currentAttack = actorObject.attackdata[i];
+      if (property)
+      {
+        // if the attack doesn't has the property requested set to true, we'll skip the attack
+        let attackProperties = currentAttack.properties;
+        if (!eval(`attackProperties.${property}`))
+        {
+          continue;
+        }
+      }
+      let currentAttackBonusToHit = currentAttack.attackbonustohit;
+      if (currentAttackBonusToHit > bestChance)
+      {
+        bestChance = currentAttackBonusToHit;
+        bestAttackObject = currentAttack;
+      }
+    }
+    return currentAttack;
   }
 
   static getActorFeature(actorObject, featureName)
@@ -1241,6 +1297,8 @@ export class ActorUtils
     {
       currentAttackResult["attackbonustohit"] = attackBonus;
     }
+
+    currentAttackResult["properties"] = attackObject.system.properties;
 
     currentAttackResult["numberofattacks"] = numberOfAttacks;
     currentAttackResult["hasareaofeffect"] = attackObject.hasAreaTarget;
