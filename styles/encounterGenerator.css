@@ -481,13 +481,13 @@
 }
 #SFDialog .creature-cr {
 	font-size: 0.8rem;
-	border-left: 1px solid var(--palette-secondary-dark, #203a42);
 }
 /* Unstyle Foundry Styles */
 #SFDialog a.content-link {
 	background-color: transparent;
 	border-color: transparent;
 	border-left: 1px solid var(--palette-secondary-dark, #203a42);
+	border-right: 1px solid var(--palette-secondary-dark, #203a42);
 	border-radius: 0px;
 	color: inherit;
 	cursor: pointer;
