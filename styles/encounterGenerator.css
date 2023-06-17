@@ -471,18 +471,23 @@
 	bottom: 0px;
 	color: var(--palette-secondary-contrast-text, #f0f0e0);
 	display: inline-block;
-	margin-right: 0.5rem;
+	margin-right: 0.5rem;	
 	flex: 0 0;
 	z-index: 100;
 }
-#SFDialog .creature-count {
+#SFDialog .creature-count,
+#SFDialog .creature-cr {
 	padding: 0rem 0.5rem;
+}
+#SFDialog .creature-cr {
+	font-size: 0.8rem;
 }
 /* Unstyle Foundry Styles */
 #SFDialog a.content-link {
 	background-color: transparent;
 	border-color: transparent;
 	border-left: 1px solid var(--palette-secondary-dark, #203a42);
+	border-right: 1px solid var(--palette-secondary-dark, #203a42);
 	border-radius: 0px;
 	color: inherit;
 	cursor: pointer;
