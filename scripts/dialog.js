@@ -247,7 +247,8 @@ export class SFDialog extends FormApplication
 				const npcActorObject = await ActorUtils.getActorObjectFromActorIdCompendiumName(creature.actorid, creature.compendiumname);
 				await npcActorObject.analyzeActor();
 				const actorLink = FoundryUtils.getActorLink(npcActorObject);
-				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}</span>`);
+				const actorCRSpan = creature.cr === null ? `` : `<span class="creature-cr">CR ${creature.cr}</span>`;
+				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}${actorCRSpan}</span>`);
 			}
 
 
@@ -319,6 +320,7 @@ export class SFDialog extends FormApplication
 			const params = {
 				loot_type: html.find('#lootType select[name="lootType"]').val(),
 				encounterType: html.find('#encounterTypeSpan select[id="encounterTypeSelect"]').val(),
+				creatureTypeVariety: html.find('#creatureTypeVariationSpan select[id="creatureTypeVariationSelect"]').val(),
 				numberOfPlayers: numberOfPlayers,
 				averageLevelOfPlayers: averageLevelOfPlayers
 			};

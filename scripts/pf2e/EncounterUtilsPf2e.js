@@ -10,6 +10,8 @@ export class EncounterUtilsPf2e
       let currentEncounterXP = 0;
       let numberOfMonstersInCombat = 0;
       let encounterType = params.encounterType;
+      let isSingleCreatureTypeVariety = params.creatureTypeVariety.toLowerCase() === "single";
+      let singleCreatureType = null;
       let encounterTypeInformation = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
       let currentEncounterDifficulty = encounterTypeInformation.EncounterDifficulty;
       currentEncounter["difficulty"] = currentEncounterDifficulty;
@@ -44,6 +46,12 @@ export class EncounterUtilsPf2e
         let randomMonster = filteredMonsterList[randomMonsterIndex];
         let randomMonsterActorObj = randomMonster.actor;
         let monsterName = randomMonster.actorname;
+
+        if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype)
+        {
+          console.log(`Skipping creature ${monsterName}, id ${randomMonster.actorid} b/c not same creature type ${singleCreatureType} as previous monster.`);
+          continue;
+        }
         let randomMonsterLevel = FoundryUtils.getDataObjectFromObject(randomMonsterActorObj).details.level.value;
         let creatureCombatDetails = {};
         creatureCombatDetails["name"] = monsterName;
@@ -51,6 +59,13 @@ export class EncounterUtilsPf2e
         creatureCombatDetails["compendiumname"] = randomMonster.compendiumname;
         creatureCombatDetails["quantity"] = numberOfCreatures;
         creatureCombatDetails["level"] = randomMonsterLevel;
+
+        // Lock in the current creature type value
+        if (isSingleCreatureTypeVariety && singleCreatureType === null)
+        {
+          singleCreatureType = randomMonster.creaturetype;
+        }
+
         currentEncounter["creatures"].push(creatureCombatDetails);
       }
 

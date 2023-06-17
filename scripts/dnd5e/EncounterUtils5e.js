@@ -13,6 +13,8 @@ export class EncounterUtils5e
     let currentEncounterXP = 0;
     let numberOfMonstersInCombat = 0;
     let encounterType = params.encounterType;
+    let isSingleCreatureTypeVariety = params.creatureTypeVariety.toLowerCase() === "single";
+    let singleCreatureType = null;
     let encounterTypeInformation = SFLOCALCONSTS.DND5E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
     if (encounterType === "Random")
     {
@@ -30,6 +32,12 @@ export class EncounterUtils5e
         try
         {
           monsterName = randomMonster.name;
+          if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype)
+          {
+            console.log(`Skipping creature ${monsterName}, id ${randomMonsterActorId} b/c not same creature type ${singleCreatureType} as previous monster.`);
+            continue;
+          }
+
           if (!randomMonsterData)
           {
             console.warn(`Monster chosen ${randomMonster.name} didn't have a valid data property.`);
@@ -92,6 +100,13 @@ export class EncounterUtils5e
           let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
           creatureCombatDetails["npcactor"] = currentMonster.actor;
           currentEncounter["creatures"].push(creatureCombatDetails);
+
+          // Lock in the current creature type value
+          if (isSingleCreatureTypeVariety && singleCreatureType === null)
+          {
+            singleCreatureType = currentMonster.creaturetype;
+          }
+
           numberOfMonstersInCombat += numberOfMonstersToPutInCombat;
           currentEncounterXP += randomMonsterXP * numberOfMonstersToPutInCombat;
         }
@@ -151,6 +166,13 @@ export class EncounterUtils5e
           let monsterName = randomMonster.actorname;
           let randomMonsterXP = randomMonster.actorxp;
           let monsterCR = randomMonster.actorcr;
+
+          if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype)
+          {
+            console.log(`Skipping creature ${monsterName}, id ${randomMonsterActorId} b/c not same creature type ${singleCreatureType} as previous monster.`);
+            continue;
+          }
+
           let creatureCombatDetails = {};
           creatureCombatDetails["name"] = monsterName;
           creatureCombatDetails["actorid"] = randomMonsterActorId;
@@ -161,6 +183,13 @@ export class EncounterUtils5e
 
           let currentMonster = SFLocalHelpers.allMonsters.find(m => m.actorid === randomMonsterActorId);
           creatureCombatDetails["npcactor"] = currentMonster.actor;
+
+          // Lock in the current creature type value
+          if (isSingleCreatureTypeVariety && singleCreatureType === null)
+          {
+            singleCreatureType = currentMonster.creaturetype;
+          }
+
           currentEncounter["creatures"].push(creatureCombatDetails);
           break;
         }

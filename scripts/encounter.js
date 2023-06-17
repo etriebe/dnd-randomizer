@@ -287,6 +287,7 @@ class EncCreature {
     this.actorid = creature.actorid;
     this.compendiumname = creature.compendiumname;
     this.quantity = creature.quantity;
+    this.cr = creature.cr;
     this.compendium = null;
     this.dynamicLink = this.getDLink();
     this._actor = null;
