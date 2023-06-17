@@ -247,8 +247,9 @@ export class SFDialog extends FormApplication
 				const npcActorObject = await ActorUtils.getActorObjectFromActorIdCompendiumName(creature.actorid, creature.compendiumname);
 				await npcActorObject.analyzeActor();
 				const actorLink = FoundryUtils.getActorLink(npcActorObject);
-				const actorCRSpan = creature.cr === null ? `` : `<span class="creature-cr">CR ${creature.cr}</span>`;
-				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}${actorCRSpan}</span>`);
+				const actorCRSpan = creature.cr === null || creature.cr === undefined ? `` : `<span class="creature-cr">CR ${creature.cr}</span>`;
+				const actorLevelSpan = creature.level === null || creature.level === undefined? `` : `<span class="creature-cr">Lvl ${creature.level}</span>`;
+				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}${actorCRSpan}${actorLevelSpan}</span>`);
 			}
 
 
