@@ -36,9 +36,11 @@ export class EncounterUtilsPf2e
         let numberOfCreatures = creatureDescriptionParts[0];
         let levelInRelationToParty = creatureDescriptionParts[1];
 
-        let filteredMonsterList = monsterList.filter(m => FoundryUtils.getDataObjectFromObject(m.actor).details.level.value === parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty));
+        const expectedMonsterLevel = parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty);
+        let filteredMonsterList = monsterList.filter(m => FoundryUtils.getDataObjectFromObject(m.actor).details.level.value === expectedMonsterLevel);
         if (filteredMonsterList.length === 0)
         {
+          console.warn(`Unable to find monsters for the current requested level configuration: ${expectedMonsterLevel}`);
           continue;
         }
 
