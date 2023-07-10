@@ -30,9 +30,18 @@ export const SFCONSTS = {
         ],
       },
     LOOT_ICONS: [
-        "systems/dnd5e/icons/items/inventory/pouch-sealed.jpg",
-        "systems/dnd5e/icons/items/inventory/satchel.jpg",
-        "systems/dnd5e/icons/items/inventory/briefcase.jpg"
+        "icons/containers/bags/pack-simple-leather.webp",
+        "icons/containers/bags/case-leather-tan.webp",
+        "icons/containers/bags/pouch-leather-green.webp",
+        "icons/containers/bags/sack-simple-green.webp",
+        "icons/containers/bags/pouch-gold-green.webp",
+        "icons/containers/bags/coinpouch-simple-tan.webp",
+        "icons/containers/bags/pouch-leather-pink.webp",
+        "icons/containers/bags/coinpouch-simple-leather-tan.webp",
+        "icons/containers/bags/sack-twisted-leather-red.webp",
+        "icons/containers/bags/sack-simple-leather-tan.webp",
+        "icons/containers/bags/case-leather-tan.webp",
+        "icons/containers/bags/pack-simple-leather-tan.webp"
     ],
     DIFFICULTY:
     {
