@@ -501,7 +501,14 @@ export class EncounterUtils5e
             {
               spellLevel = 0;
             }
-            magicItemResult = FoundryUtils.getRandomItemFromRollTable(SFLocalHelpers.spellsByLevel[spellLevel]);
+            if (SFLocalHelpers.spellsByLevel[spellLevel].length === 0)
+            {
+              console.warn(`No spells indexed of level ${spellLevel}`);
+            }
+            else
+            {
+              magicItemResult = FoundryUtils.getRandomItemFromRollTable(SFLocalHelpers.spellsByLevel[spellLevel]);
+            }
           }
         }
 
