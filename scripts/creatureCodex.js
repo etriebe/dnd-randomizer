@@ -57,15 +57,7 @@ export class SFCreatureCodex extends FormApplication
 					width: "100px"
 				},
 				{
-					name: "Item List",
-					width: "200px"
-				},
-				{
 					name: "Biography",
-					hidden: true
-				},
-				{
-					name: "Item Description",
 					hidden: true
 				}
 			],
@@ -88,18 +80,16 @@ export class SFCreatureCodex extends FormApplication
 			let currentMonster = filteredMonsters[i];
 			let creatureLink = FoundryUtils.getActorLink(currentMonster);
 			let actorObject = ActorUtils.getActualActorObject(currentMonster);
-			let itemList = ActorUtils.getActorItemList(actorObject);
+			// let itemList = ActorUtils.getActorItemList(actorObject);
 			let actorBiography = ActorUtils.getActorBiography(actorObject);
-			let itemDescriptionList = ActorUtils.getActorItemDescriptionList(actorObject);
+			// let itemDescriptionList = ActorUtils.getActorItemDescriptionList(actorObject);
 			creatureGrid.config.data.push([
 				gridjs.html(creatureLink),
 				currentMonster.creaturetype, 
 				currentMonster.actorcr,
 				currentMonster.actorxp,
 				currentMonster.environment.join(", "),
-				itemList.join(", "),
 				actorBiography,
-				gridjs.html(itemDescriptionList.join(", "))
 			]);
 		}
 		creatureGrid.render(document.getElementById("creatureCodex"));

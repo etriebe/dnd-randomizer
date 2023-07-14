@@ -780,7 +780,11 @@ export const SFLOCALCONSTS = {
         },
         "ClassLevel": {
           "dnd5e": "system.levels"
-        }
+        },
+        // Object is for actor
+        "CreatureBiography": {
+            "dnd5e": "system.details.biography.value",
+        },
     },
     SYSTEM_VARIABLES_V11: {
         // Object is for actor
@@ -817,7 +821,11 @@ export const SFLOCALCONSTS = {
         },
         "ClassLevel": {
           "dnd5e": "system.levels"
-        }
+        },
+        // Object is for actor
+        "CreatureBiography": {
+            "dnd5e": "system.details.biography.value",
+        },
     },
     PATHFINDER_2E_ENCOUNTER_BUDGET: {
         // Key=Encounter Difficulty : Value=[XP Budget, Character Adjustment]

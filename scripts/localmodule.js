@@ -313,6 +313,7 @@ export class SFLocalHelpers {
         if (FoundryUtils.getSystemId() === "dnd5e")
         {
           fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureEnvironment"));
+          fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureBiography"));
           // fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
         }
 
