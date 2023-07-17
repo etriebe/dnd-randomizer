@@ -209,7 +209,7 @@ export class FoundryUtils
       {
         return actor.token.actor.toAnchor({classes: ["content-link"]}).outerHTML;
       }
-      else
+      else if (actor.actorObject)
       {
         return actor.actorObject.toAnchor({classes: ["content-link"]}).outerHTML;
         /*
