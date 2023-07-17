@@ -9,6 +9,7 @@ export class EncounterUtils5e
     let currentEncounter = {};
     currentEncounter["difficulty"] = targetedDifficulty;
     currentEncounter["creatures"] = [];
+    currentEncounter["unfilledformula"] = [];
     let targetEncounterXP = SFLOCALCONSTS.ENCOUNTER_DIFFICULTY_XP_TABLES[targetedDifficulty][averageLevelOfPlayers - 1] * numberOfPlayers;
     let currentEncounterXP = 0;
     let numberOfMonstersInCombat = 0;
@@ -147,16 +148,20 @@ export class EncounterUtils5e
         }
 
         // Have ever exanding wiggle roomsto find more nad more monsters. 
-        let wiggleRoomAmounts = [0.1, 0.2, 0.3];
+        let wiggleRoomAmounts = [0.1, 0.2, 0.3, 0.4, 0.5];
+
+        let creatureFilled = false;
+        let targetXP = multiplierAmount * targetEncounterXP;
 
         for (var j = 0; j < wiggleRoomAmounts.length; j++)
         {
           let wiggleRoom = wiggleRoomAmounts[j];
-          let lowerBound = multiplierAmount * targetEncounterXP * (1 - wiggleRoom);
-          let upperBound = multiplierAmount * targetEncounterXP * (1 + wiggleRoom);
+          let lowerBound = targetXP * (1 - wiggleRoom);
+          let upperBound = targetXP * (1 + wiggleRoom);
           let filteredMonsterList = monsterList.filter(m => m.actorxp >= lowerBound && m.actorxp <= upperBound);
           if (filteredMonsterList.length === 0)
           {
+            console.warn(`Could not find any creatures within wiggle room ${wiggleRoom} of target XP ${targetXP}`);
             continue;
           }
 
@@ -191,7 +196,18 @@ export class EncounterUtils5e
           }
 
           currentEncounter["creatures"].push(creatureCombatDetails);
+          creatureFilled = true;
           break;
+        }
+
+        if (!creatureFilled)
+        {
+          console.warn(`Unable to fill creature formula. Try expanding to have more creature types or environments.`);
+          let unfilledFormula = {};
+          unfilledFormula["formula"] = formula;
+          unfilledFormula["targetxp"] = targetXP;
+          unfilledFormula["numberofcreatures"] = numberOfCreatures;
+          currentEncounter["unfilledformula"].push(unfilledFormula);
         }
       }
     }
@@ -645,4 +661,6 @@ export class EncounterUtils5e
       }
     }
   }
+
+  static getCRFromXP
 }

@@ -464,6 +464,8 @@
 	border-bottom: 0px solid var(--palette-dialog-background-light, #191813CC);
 	padding: 0.5rem 0.75rem;
 }
+
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.unfilled-formula,
 #SFDialog .window-content .form-encounters ul li div.encounter-details span.creature-button {
 	background-color: var(--palette-secondary, #116b86);
 	border: 1px solid var(--palette-secondary-dark, #0d4557);
@@ -471,16 +473,29 @@
 	bottom: 0px;
 	color: var(--palette-secondary-contrast-text, #f0f0e0);
 	display: inline-block;
-	margin-right: 0.5rem;	
+	margin-right: 0.5rem;
 	flex: 0 0;
 	z-index: 100;
 }
-#SFDialog .creature-count,
-#SFDialog .creature-cr {
+
+#SFDialog .window-content .form-encounters ul li div.encounter-details span.unfilled-formula {
+	background-color: var(--palette-secondary, #863811);
+	border: 1px solid var(--palette-secondary-dark, #682808);
+}
+
+#SFDialog .creature-count-unfilled {
+	border-right: 1px solid var(--palette-secondary-dark, #000000);
+}
+
+#SFDialog .creature-count-unfilled,
+#SFDialog .creature-count {
 	padding: 0rem 0.5rem;
 }
+
 #SFDialog .creature-cr {
 	font-size: 0.8rem;
+	padding: 0.25rem 0.5rem;
+	display: inline-block;
 }
 /* Unstyle Foundry Styles */
 #SFDialog a.content-link {
@@ -493,7 +508,7 @@
 	cursor: pointer;
 	display: inline-block;
 	font-size: 0.8rem;
-	padding: 0.25rem 0.5rem;
+	/* padding: 0.25rem 0.5rem;*/
 }
 #SFDialog a.content-link i.fas {
 	color: inherit;
