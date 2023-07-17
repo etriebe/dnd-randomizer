@@ -16,6 +16,7 @@ export class Encounter {
     this.amountToAdjustEncounter = data.amounttoadjustencounter;
     this.currency = data.loot.currency;
     this.creatures = [];
+    this.unfilledformula = [];
     this.combatsummary = {};
     this.loot = [];
     this.lootActorId = "";
@@ -57,57 +58,13 @@ export class Encounter {
       this.creatures.push(new EncCreature(creature));
     }
 
-    /*
-    Removing for now while we let combat estimate do all the analyzing
-    let totalAttacks = 0;
-    let totalDamage = 0;
-    let totalAOEDamage = 0;
-    let allAttackBonuses = [];
-    for (let creature of this.creatures)
+    if (this.data.unfilledformula)
     {
-      await creature.npcactor.analyzeActor();
-      let creatureCombatData = creature.npcactor.combatdata;
-      for (var i = 0; i < creature.quantity; i++)
+      for (let unfilled of this.data.unfilledformula)
       {
-        for (let attack of creatureCombatData)
-        {
-          try
-          {
-            let attackBonus = attack.attackbonustohit;
-            let averageDamage = attack.averagedamage;
-            let numberOfAttacks = attack.numberofattacks;
-            for (var j = 0; j < numberOfAttacks; j++)
-            {
-              totalAttacks++;
-              if (attack.hasareaofeffect)
-              {
-                totalAOEDamage += averageDamage;
-              }
-              else
-              {
-                totalDamage += averageDamage;
-              }
-              allAttackBonuses.push(attackBonus);
-            }
-          }
-          catch (error)
-          {
-            console.warn(`Failed to add combat summary for creature ${creature.name}`);
-          }
-        }
+        this.unfilledformula.push(unfilled);
       }
     }
-
-    var attackBonusTotal = 0;
-    for(var i = 0; i < allAttackBonuses.length; i++) {
-      attackBonusTotal += allAttackBonuses[i];
-    }
-    let allAttackBonusAverage = attackBonusTotal / allAttackBonuses.length;
-    this.combatsummary["totalattacks"] = totalAttacks;
-    this.combatsummary["totaldamage"] = totalDamage;
-    this.combatsummary["totalaoedamage"] = totalAOEDamage;
-    this.combatsummary["averageattackbonus"] = allAttackBonusAverage;
-    */
     return this;
   }
 

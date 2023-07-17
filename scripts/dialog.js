@@ -252,6 +252,15 @@ export class SFDialog extends FormApplication
 				$details.find('.encounter-details-header').append(`<span class="creature-button"><span class="creature-count">${creature.quantity}</span> ${actorLink}${actorCRSpan}${actorLevelSpan}</span>`);
 			}
 
+			for (const unfilled of encounter.unfilledformula)
+			{
+				const formula = unfilled.formula;
+				const targetXP = unfilled.targetxp;
+				const numberOfCreatures = unfilled.numberofcreatures
+				const xpTargetSpan = `<span class="creature-cr">XP Target: ${targetXP}</span>`;
+				$details.find('.encounter-details-header').append(`<span class="unfilled-formula"><span class="creature-count-unfilled">${numberOfCreatures}</span>${xpTargetSpan}</span>`);
+			}
+
 
 			for (const loot of encounter.loot)
 			{
