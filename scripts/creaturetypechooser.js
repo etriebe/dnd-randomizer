@@ -3,6 +3,7 @@ import { SFLOCALCONSTS } from "./localconst.js";
 import { SFLocalHelpers } from "./localmodule.js";
 import { sortable } from "./sortables.js";
 import { DialogUtils } from "./utils/DialogUtils.js";
+import { FoundryUtils } from "./utils/FoundryUtils.js";
 
 export class SFCreatureTypeChooser extends FormApplication {
 	constructor() {
@@ -34,6 +35,17 @@ export class SFCreatureTypeChooser extends FormApplication {
 			SFCONSTS.MODULE_NAME,
 			"filterMonsterTypes"
 		  );
+
+		if (FoundryUtils.getSystemId() === "pf2e")
+		{
+			// add a checkbox for ignoring generic monsters
+			const ignoreCreaturesWithNoImage = game.settings.get( SFCONSTS.MODULE_NAME, "ignoreCreaturesWithNoImage");
+			$ul.append(`<li class="ignoreCreaturesWithNoImageLi">
+				<input type="checkbox" name="ignoreCreaturesWithNoImage" ${ignoreCreaturesWithNoImage ? "checked" : ""}>
+				<span class="ignore-creatures">Ignore Creatures with the default image</span>
+			</li>`);
+		}
+
 
 		let totalCount = 0;
 		for (let currentType of creatureTypes) {
@@ -84,7 +96,21 @@ export class SFCreatureTypeChooser extends FormApplication {
 
 			filterMonsterSettings.push(setting);
 		});
-		
+
+		let ignoreCreaturesWithNoImage = false;
+		$ul.find('li.ignoreCreaturesWithNoImageLi').each((index, item) => {
+			let $element = $(item).find('input');
+			ignoreCreaturesWithNoImage = $element.is(':checked');
+		});
+		const previousSetting = game.settings.get( SFCONSTS.MODULE_NAME, "ignoreCreaturesWithNoImage");
+
+		if (previousSetting != ignoreCreaturesWithNoImage)
+		{
+			// This will force a reload of the index
+			SFLocalHelpers.dictionariesPopulated = false;
+		}
+
+		await game.settings.set(SFCONSTS.MODULE_NAME, 'ignoreCreaturesWithNoImage', ignoreCreaturesWithNoImage);
 		await game.settings.set(SFCONSTS.MODULE_NAME, 'filterMonsterTypes',filterMonsterSettings);
 	}
 }

@@ -97,6 +97,13 @@ Hooks.once("init", async function ()
     type: Object,
     default: [],
   });
+
+  game.settings.register(SFCONSTS.MODULE_NAME, 'ignoreCreaturesWithNoImage', {
+    name: "Whether we ignore creatures with no image, mostly for pf2e",
+    scope: "world",
+    type: Boolean,
+    default: false,
+  });
 });
 
 Hooks.once('ready', async function ()

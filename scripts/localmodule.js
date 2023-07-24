@@ -317,6 +317,11 @@ export class SFLocalHelpers {
           // fieldsToIndex.push(FoundryUtils.getSystemVariable("CreatureCR"));
         }
 
+        if (FoundryUtils.getSystemId() === "pf2e")
+        {
+          fieldsToIndex.push("img");
+        }
+
         const index = await compendium.getIndex({ fields: fieldsToIndex });
 
         if (index.size === 0)
@@ -328,6 +333,8 @@ export class SFLocalHelpers {
         {
           console.log(`Indexing compendium ${compendium.collection}`);
         }
+
+        const ignoreCreaturesWithNoImage = game.settings.get( SFCONSTS.MODULE_NAME, "ignoreCreaturesWithNoImage");
 
         for (let actor of index) {
           if (!actor)
@@ -354,6 +361,12 @@ export class SFLocalHelpers {
             if (this.allMonsters.filter((m) => m.actorname === actorObject.actorname).length > 0)
             {
               console.log(`Already have actor ${actorName}, actor id ${actor._id} in dictionary`);
+              continue;
+            }
+
+            if (ignoreCreaturesWithNoImage && actor.img === "systems/pf2e/icons/default-icons/npc.svg")
+            {
+              console.log(`Skipping actor ${actorName} because it has a default image and our setting requested it.`);
               continue;
             }
 
