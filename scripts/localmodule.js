@@ -322,9 +322,9 @@ export class SFLocalHelpers {
           fieldsToIndex.push("img");
         }
 
-        const index = await compendium.getIndex({ fields: fieldsToIndex });
+        let packIndex = await compendium.getIndex({ fields: fieldsToIndex });
 
-        if (index.size === 0)
+        if (packIndex.size === 0)
         {
           console.log(`Skipping Compendium ${compendium.collection} because it was empty`)
           continue;
@@ -334,9 +334,36 @@ export class SFLocalHelpers {
           console.log(`Indexing compendium ${compendium.collection}`);
         }
 
+        switch (game.system.id) {
+          case 'pf2e': {
+            const systemPath = game.pf2e.system.moduleArt;
+            await systemPath.refresh();
+
+            packIndex = packIndex.map((x) => {
+              // Handle Images
+              const actorArt = systemPath.map.get(x.uuid)?.img;
+              x.img = actorArt ?? x.img;
+              if (x.img === '') x.img = 'icons/svg/mystery-man.svg';
+              return x;
+            });
+            break;
+          }
+          case 'dnd5e': {
+            const systemPath = game.dnd5e.moduleArt;
+            await systemPath.registerModuleArt();
+            packIndex = packIndex.map((x) => {
+              const actorArt = systemPath.map.get(x.uuid)?.img;
+              x.img = actorArt ?? x.img;
+              if (x.img === '') x.img = 'icons/svg/mystery-man.svg';
+              return x;
+            });
+            break;
+          }
+        }
+
         const ignoreCreaturesWithNoImage = game.settings.get( SFCONSTS.MODULE_NAME, "ignoreCreaturesWithNoImage");
 
-        for (let actor of index) {
+        for (let actor of packIndex) {
           if (!actor)
           {
             break;
