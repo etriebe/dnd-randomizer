@@ -192,7 +192,7 @@ export class ActorUtils
 
   static getActorBiography(actor)
   {
-    return FoundryUtils.getDataObjectFromObject(actor).details.biography.value;
+    return FoundryUtils.getDataObjectFromObject(actor).details?.biography?.value;
   }
 
   static getActualActorObject(currentMonster)
