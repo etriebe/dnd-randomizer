@@ -139,13 +139,13 @@ export class Encounter {
   async spawn() {
     await this.loadActors();
     const _this = this;
-    Hooks.once("preCreateMeasuredTemplate", (template) => {
+    Hooks.once("preCreateMeasuredTemplate", async (template) => {
       canvas.tokens.activate();
       if (this.lootActorId === "")
       {
-        this.createLootSheet();
+        await this.createLootSheet();
       }
-      CreatureSpawner.fromTemplate(template, _this);
+      await CreatureSpawner.fromTemplate(template, _this);
       return false;
     });
   }
