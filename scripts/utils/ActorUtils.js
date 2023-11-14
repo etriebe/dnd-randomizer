@@ -11,12 +11,20 @@ export class ActorUtils
   static getCreatureTypeForActor(actor)
   {
     let creatureTypeValue = FoundryUtils.getSystemVariableForObject(actor, "CreatureType");
+
+    let currentSystem = game.system.id;
+
     if (creatureTypeValue === '')
     {
-      creatureTypeValue = 'other';
+      creatureTypeValue = ['other'];
     }
 
-    return creatureTypeValue;
+    if (currentSystem === "pf2e")
+    {
+      return creatureTypeValue.filter(t => t in CONFIG.PF2E.creatureTypes).sort();
+    }
+
+    return [creatureTypeValue];
   }
 
   static async getActorObjectFromActorIdCompendiumName(actorId, compendiumName)

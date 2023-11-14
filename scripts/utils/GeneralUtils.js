@@ -68,4 +68,25 @@ export class GeneralUtils {
       let average = arrayToAverage.reduce((a, b) => a + b) / arrayToAverage.length;
       return average;
     }
+
+    static getUniqueValuesFromListOfArrays(listOfArrays, toLowerCase)
+    {
+      // Create an empty set to store the unique values
+      let uniqueValues = new Set();
+      // Loop through each array in the list
+      for (let array of listOfArrays) {
+        // Loop through each element in the array
+        for (let element of array) {
+          if (toLowerCase)
+          {
+            element = element.toLowerCase();
+          }
+          // Add the element to the set, which will ignore duplicates
+          uniqueValues.add(element);
+        }
+      }
+
+      // Return the set as an array
+      return [...uniqueValues].sort();
+    }
 }
