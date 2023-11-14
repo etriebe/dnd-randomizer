@@ -425,10 +425,11 @@ export class SFLocalHelpers {
     static calculateCreatureTypeCounts()
     {
       this.creatureTypeCount = {};
-      const creatureTypeList = this.allMonsters.map(i => i.creaturetype).filter(GeneralUtils.onlyUnique).sort();
+      const toLowerCase = true;
+      const creatureTypeList = GeneralUtils.getUniqueValuesFromListOfArrays(this.allMonsters.map(i => i.creaturetype), toLowerCase);
       for (let creatureType of creatureTypeList)
       {
-        let monsterCount = this.allMonsters.filter(m => m.creaturetype && m.creaturetype.toLowerCase() === creatureType.toLowerCase()).length;
+        let monsterCount = this.allMonsters.filter(m => m.creaturetype && m.creaturetype.includes(creatureType.toLowerCase())).length;
         this.creatureTypeCount[creatureType] = monsterCount;
       }
     }
@@ -540,7 +541,7 @@ export class SFLocalHelpers {
             continue;
           }
 
-          if (filteredMonsterTypes.filter(m => monsterObject.creaturetype && m === monsterObject.creaturetype).length === 0)
+          if (filteredMonsterTypes.filter(m => monsterObject.creaturetype && monsterObject.creaturetype.includes(m)).length === 0)
           {
             continue;
           }

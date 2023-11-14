@@ -790,7 +790,7 @@ export const SFLOCALCONSTS = {
         // Object is for actor
         "CreatureType": {
             "dnd5e": "system.details.type.value",
-            "pf2e": "system.details.creatureType",
+            "pf2e": "system.traits.value",
         },
         // Object is for spell
         "SpellLevel": {
