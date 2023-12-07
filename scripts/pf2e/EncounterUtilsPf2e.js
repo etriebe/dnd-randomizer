@@ -17,6 +17,7 @@ export class EncounterUtilsPf2e
       currentEncounter["difficulty"] = currentEncounterDifficulty;
       let currentEncounterFormula = encounterTypeInformation.EncounterFormula;
       let amountToAdjustEncounter = 0;
+      currentEncounter["unfilledformula"] = [];
 
       for (var i = 0; i < currentEncounterFormula.length; i++)
       {
@@ -41,6 +42,11 @@ export class EncounterUtilsPf2e
         if (filteredMonsterList.length === 0)
         {
           console.warn(`Unable to find monsters for the current requested level configuration: ${expectedMonsterLevel}`);
+          let unfilledFormula = {};
+          unfilledFormula["formula"] = currentEncounterDescription;
+          unfilledFormula["targetmonsterlevel"] = expectedMonsterLevel;
+          unfilledFormula["numberofcreatures"] = numberOfCreatures;
+          currentEncounter["unfilledformula"].push(unfilledFormula);
           continue;
         }
 
@@ -52,6 +58,11 @@ export class EncounterUtilsPf2e
         if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype)
         {
           console.log(`Skipping creature ${monsterName}, id ${randomMonster.actorid} b/c not same creature type ${singleCreatureType} as previous monster.`);
+          let unfilledFormula = {};
+          unfilledFormula["formula"] = currentEncounterDescription;
+          unfilledFormula["targetmonsterlevel"] = expectedMonsterLevel;
+          unfilledFormula["numberofcreatures"] = numberOfCreatures;
+          currentEncounter["unfilledformula"].push(unfilledFormula);
           continue;
         }
         let randomMonsterLevel = FoundryUtils.getDataObjectFromObject(randomMonsterActorObj).details.level.value;
