@@ -7,7 +7,7 @@ import { SFLOCALCONSTS } from "./localconst.js";
 import { SFCONSTS } from "./main.js";
 import { EncounterUtilsPf2e } from "./pf2e/EncounterUtilsPf2e.js";
 import { ActorUtils } from "./utils/ActorUtils.js";
-
+import { EncounterUtils } from "./utils/EncounterUtils.js";
 export class SFDialog extends FormApplication
 {
 	constructor()
@@ -336,13 +336,40 @@ export class SFDialog extends FormApplication
 				averageLevelOfPlayers = html.find('#averageLevelOfPlayers select[name="averageLevelOfPlayers"]').val();
 			}
 
+			const encounterType = html.find('#encounterTypeSpan select[id="encounterTypeSelect"]').val();
 			const params = {
 				loot_type: html.find('#lootType select[name="lootType"]').val(),
-				encounterType: html.find('#encounterTypeSpan select[id="encounterTypeSelect"]').val(),
+				encounterType: encounterType,
 				creatureTypeVariety: html.find('#creatureTypeVariationSpan select[id="creatureTypeVariationSelect"]').val(),
 				numberOfPlayers: numberOfPlayers,
 				averageLevelOfPlayers: averageLevelOfPlayers
 			};
+
+			let encounterTypeInformation = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
+
+			const isEncounterFormulaPossible = EncounterUtils.isEncounterFormulaPossibleForPlayers(encounterTypeInformation, averageLevelOfPlayers);
+
+			if (!isEncounterFormulaPossible)
+			{
+				let d = new Dialog({
+					title: "Encounter Alert",
+					content: "<p>The encounter type chosen is impossible for your current average player level. Please choose another type or check the console for more information.</p>",
+					buttons: {
+					 one: {
+					  icon: '<i class="fas fa-check"></i>',
+					  label: "OK",
+					  callback: () => console.log("Dialog dismissed")
+					 }
+					},
+					default: "one",
+					render: html => console.log("Alert dialog rendered"),
+					close: html => console.log("Alert dialog closed")
+				});
+				d.render(true);
+				$button.prop('disabled', false).removeClass('disabled');
+				$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
+				return;
+			}
 
 			let forceReload = false;
 			await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
