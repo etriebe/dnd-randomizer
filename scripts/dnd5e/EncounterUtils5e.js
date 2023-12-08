@@ -662,5 +662,8 @@ export class EncounterUtils5e
     }
   }
 
-  static getCRFromXP
+  static isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers)
+  {
+    return true;
+  }
 }
