@@ -17,4 +17,20 @@ export class EncounterUtils
         return EncounterUtilsPf2e.isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers);
     }
   }
+
+  static getEncounterDescriptionObjects()
+  {
+    let currentSystem = game.system.id;
+		let encounterDescriptionsObject;
+		switch (currentSystem)
+		{
+			case "dnd5e":
+				encounterDescriptionsObject = SFLOCALCONSTS.DND5E_ENCOUNTER_TYPE_DESCRIPTIONS;
+				break;
+			case "pf2e":
+				encounterDescriptionsObject = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS;
+				break;
+		}
+    return encounterDescriptionsObject;
+  }
 }
