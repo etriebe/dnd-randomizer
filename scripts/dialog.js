@@ -85,16 +85,7 @@ export class SFDialog extends FormApplication
 	populateEncounterTypes()
 	{
 		let currentSystem = game.system.id;
-		let encounterDescriptionsObject;
-		switch (currentSystem)
-		{
-			case "dnd5e":
-				encounterDescriptionsObject = SFLOCALCONSTS.DND5E_ENCOUNTER_TYPE_DESCRIPTIONS;
-				break;
-			case "pf2e":
-				encounterDescriptionsObject = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS;
-				break;
-		}
+		let encounterDescriptionsObject = EncounterUtils.getEncounterDescriptionObjects();
 
 		const html = this.element;
 		let $span = html.find('#encounterTypePlaceholder').first();
@@ -345,9 +336,10 @@ export class SFDialog extends FormApplication
 				averageLevelOfPlayers: averageLevelOfPlayers
 			};
 
-			let encounterTypeInformation = SFLOCALCONSTS.PF2E_ENCOUNTER_TYPE_DESCRIPTIONS[encounterType];
+			let encounterTypeObject = EncounterUtils.getEncounterDescriptionObjects();
+			let encounterFormula = encounterTypeObject[encounterType];
 
-			const isEncounterFormulaPossible = EncounterUtils.isEncounterFormulaPossibleForPlayers(encounterTypeInformation, averageLevelOfPlayers);
+			const isEncounterFormulaPossible = EncounterUtils.isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers);
 
 			if (!isEncounterFormulaPossible)
 			{
