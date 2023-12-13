@@ -77,7 +77,7 @@ export class GeneralUtils {
       for (let array of listOfArrays) {
         // Loop through each element in the array
         for (let element of array) {
-          if (element === null && element === undefined)
+          if (element === null || element === undefined)
           {
             // Don't add undefined or null to list of unique values
             continue;
