@@ -16,7 +16,7 @@ export class ActorUtils
 
     if (creatureTypeValue === '')
     {
-      creatureTypeValue = ['other'];
+      creatureTypeValue = 'other';
     }
 
     if (currentSystem === "pf2e")
