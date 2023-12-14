@@ -14,7 +14,7 @@ export class EncounterUtils
     }
     else if (FoundryUtils.getSystemId() === "dnd5e")
     {
-        return EncounterUtilsPf2e.isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers);
+      return EncounterUtils5e.isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers);
     }
   }
 
