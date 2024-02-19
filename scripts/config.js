@@ -133,7 +133,7 @@ Hooks.on("renderSidebarTab", (settings) =>
     });
   }
 
-  if (settings.id === "compendium")
+  if (settings.id === "compendium" && FoundryUtils.getSystemId() === "dnd5e")
   {
     const html = settings.element;
     if (html.find("#SFCreatureCodexButton").length !== 0) return;
