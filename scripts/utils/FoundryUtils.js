@@ -242,12 +242,12 @@ export class FoundryUtils
     }
   }
 
-  static getItemLink(item)
+  static async getItemLink(item)
   {
     let useDefaultFoundryLinks = game.settings.get(SFCONSTS.MODULE_NAME, 'useDefaultLinkBehavior');
     if (useDefaultFoundryLinks)
     {
-      return TextEditor.enrichHTML(item.dynamicLink, { async: false });
+      return await TextEditor.enrichHTML(item.dynamicLink, { async: true });
     }
 
     let itemID = item.id;
