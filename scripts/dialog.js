@@ -272,7 +272,7 @@ export class SFDialog extends FormApplication
 
 			for (const loot of encounter.loot)
 			{
-				const itemName = loot.dynamicLink.length > 0 ? await FoundryUtils.getItemLink(loot) : loot.name
+				const itemName = loot.dynamicLink.length > 0 ? await FoundryUtils.getItemLink(loot) : loot.name;
 				$details.find('.encounter-details-loot').append(`<span class="loot-button">
 					${loot.quantity} <i class="fas fa-times" style="font-size: 0.5rem"></i>
 					${itemName}
