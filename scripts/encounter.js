@@ -146,6 +146,7 @@ export class Encounter {
         await this.createLootSheet();
       }
       await CreatureSpawner.fromTemplate(template, _this);
+      canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate",[(Array.from(canvas.scene.templates)).pop().id])
       return false;
     });
   }
