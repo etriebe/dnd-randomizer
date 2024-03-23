@@ -163,14 +163,16 @@ export class Encounter {
 
     let actorData = null;
     let actorType = FoundryUtils.getSystemVariable("LootActorType");
+    let randchestimg = await this.getRandomChestIcon();
     if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
     {
       actorData = {
         name: this.name || this.id,
         type: actorType,
         texture: {
-          src: await this.getRandomChestIcon(),
+          src: randchestimg,
         },
+        img: randchestimg
         currency: {
           // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
           cp: this.currency.cp,
