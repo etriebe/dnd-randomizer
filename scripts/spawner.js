@@ -37,10 +37,13 @@ export class CreatureSpawner {
             canvas.dimensions.distance
           )
         );
-
+        let actorimg = lootActor.img;
         const tokenData = await ActorUtils.getTokenDocument(lootActor, {
           x: position.x,
           y: position.y,
+          texture: {
+            src: actorimg, 
+          },
         });
         tokenData.actorLink = true;
         let lootToken = await canvas.scene.createEmbeddedDocuments("Token", [tokenData]);
