@@ -173,7 +173,7 @@ export class Encounter {
         texture: {
           src: randchestimg,
         },
-        img: randchestimg
+        img: randchestimg,
         currency: {
           // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
           cp: this.currency.cp,
