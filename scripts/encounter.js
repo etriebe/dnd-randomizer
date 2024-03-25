@@ -25,7 +25,7 @@ export class Encounter {
     this.id = data.id || randomID(40);
   }
   
-  static async generateDynamicEncounter(encounterType,lootType,creatureVariety,encounterDifficulty,spawnLocationX,spawnLocationY){
+  static async generateDynamicEncounter(encounterType,lootType,creatureVariety,encounterDifficulty,spawnLocationX,spawnLocationY,diameter){
 
     let numberOfPlayers = 0;
     let averageLevelOfPlayers = 0;
@@ -64,7 +64,7 @@ export class Encounter {
       x: spawnLocationX,
       y: spawnLocationY,
       direction: 0,
-      distance: 1,
+      distance: diameter,
       borderColor: "#44975C",
       fillColor: "#44975C"
     }]);
