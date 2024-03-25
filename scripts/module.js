@@ -9,7 +9,7 @@ import { FoundryUtils } from "./utils/FoundryUtils.js";
 
 Hooks.once("init", async () => {
   console.log(SFCONSTS.MODULE_NAME + ' | initializing');
-  globalThis.dndrandomizer = Encounter.generateDynamicEncounter;
+  globalThis.dndrandomizer = Encounter;
 });
 
 export class SFHelpers {
