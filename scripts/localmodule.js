@@ -608,4 +608,28 @@ export class SFLocalHelpers {
       }
       return encounterList;
     }
+
+    static async createDynamicEncounters(monsterList, filteredItems, params)
+    {
+      let averageLevelOfPlayers = params.averageLevelOfPlayers;
+      let numberOfPlayers = params.numberOfPlayers;
+      let currentSystem = game.system.id;
+      let difficulty = params.difficulty;
+      let encounterList = [];
+
+      switch (currentSystem)
+      {
+        case "dnd5e":
+            let currentEncounter = await EncounterUtils5e.createEncounterDnd5e(difficulty, monsterList, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          break;
+        case "pf2e":
+          for (let i = 0; i < 30; i++)
+          {
+            let currentEncounter = await EncounterUtilsPf2e.createEncounterPf2e(monsterList, filteredItems, averageLevelOfPlayers, numberOfPlayers, params);
+            encounterList.push(currentEncounter);
+          }
+      }
+      return encounterList;
+    }
 }

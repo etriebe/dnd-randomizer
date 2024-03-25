@@ -8,6 +8,11 @@ import { ActorUtils } from "./utils/ActorUtils.js";
 import { SFLocalHelpers } from "./localmodule.js";
 
 
+Hooks.once("init", async () => {
+  console.log(SFCONSTS.MODULE_NAME + ' | initializing');
+  globalThis.dndrandomizer = Encounter;
+});
+
 export class Encounter {
   constructor(data) {
     this.data = data;
@@ -21,6 +26,226 @@ export class Encounter {
     this.loot = [];
     this.lootActorId = "";
     this.id = data.id || randomID(40);
+  }
+  
+  async generateDynamicEncounter(encounterType,lootType,creatureVariety,encounterDifficulty,spawnLocationX,spawnLocationY){
+
+    let numberOfPlayers = 0;
+    let averageLevelOfPlayers = 0;
+    let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
+    if (useLocalPCs)
+    {
+      let activePlayerInfo = SFLocalHelpers.getActivePlayersCountAndLevels();
+      numberOfPlayers = activePlayerInfo["numberofplayers"];
+      averageLevelOfPlayers = activePlayerInfo["averageplayerlevel"];
+    }
+
+    /*
+    if (!numberOfPlayers || averageLevelOfPlayers === 0)
+    {
+      numberOfPlayers = html.find('#numberOfPlayers select[name="numberOfPlayers"]').val();
+      averageLevelOfPlayers = html.find('#averageLevelOfPlayers select[name="averageLevelOfPlayers"]').val();
+    }
+    */
+    
+    //const encounterType = html.find('#encounterTypeSpan select[id="encounterTypeSelect"]').val();
+    const params = {
+      loot_type: lootType,
+      encounterType: encounterType,
+      creatureTypeVariety: creatureVariety,
+      difficulty: encounterDifficulty,
+      numberOfPlayers: numberOfPlayers,
+      averageLevelOfPlayers: averageLevelOfPlayers
+
+    };
+
+    let encounterTypeObject = EncounterUtils.getEncounterDescriptionObjects();
+    let encounterFormula = encounterTypeObject[encounterType];
+
+    const isEncounterFormulaPossible = EncounterUtils.isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers);
+
+    let forceReload = false;
+    await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+    let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
+    let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
+    let generateEncounters = await SFLocalHelpers.createDynamicEncounters(filteredMonsters, filteredItems, params);
+
+    let newTemplate = await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [{
+      t: "circle",
+      user: game.userId,
+      x: spawnLocationX,
+      y: spawnLocationY,
+      direction: 0,
+      distance: 20,
+      borderColor: "#44975C",
+      fillColor: "#44975C"
+    }]);
+    const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
+    await _this.populateEncounters(encounterData);
+    CreatureSpawner.DynamicSpawn(newTemplate);
+
+    /*
+    generateEncounters = generateEncounters.sort((a, b) =>
+    {
+      const da = SFCONSTS.DIFFICULTY[a.difficulty.replace(" ", "")];
+      const db = SFCONSTS.DIFFICULTY[b.difficulty.replace(" ", "")];
+      if (da > db) return -1;
+      if (da < db) return 1;
+      return 0;
+    });
+    */
+    
+    /*
+    $button.prop('disabled', false).removeClass('disabled');
+    $button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
+  
+
+		html.find('.filter-controller select').on('change', function (event)
+		{
+			$(event.currentTarget).closest('.form-encounters').attr('data-show', $(event.currentTarget).val());
+		});
+
+		ModuleUtils.setupFilterBarListeners(html);
+
+		html.find('.filter-controller input').on('keyup change', function (event)
+		{
+			event.preventDefault();
+			const query = $(event.currentTarget).val();
+			const lis = html.find('.form-encounters ul li');
+			let queryIndex = {};
+			let queryElements = [];
+			lis.each((index, li) =>
+			{
+				li = $(li);
+				let encId = li.data("id");
+				let encName = li.find(".encounter-details-header-title").val();
+				queryElements.push(encName);
+				if (queryIndex[encName]) queryIndex[encName].push(encId);
+				else queryIndex[encName] = [encId];
+
+				li.find(".entity-link").each((index, link) =>
+				{
+					let name = $(link).text();
+					queryElements.push(name);
+					if (queryIndex[name]) queryIndex[name].push(encId);
+					else queryIndex[name] = [encId];
+				});
+			});
+			const idsToShow = {};
+			let fs = FuzzySet(queryElements, true);
+			let res = fs.get(query, [], 0.3).map(el => el[1]).forEach((el) =>
+			{
+				queryIndex[el].forEach(id => idsToShow[id] = true);
+			});
+			queryElements.forEach(el =>
+			{
+				if (el.toLowerCase().includes(query.toLowerCase()))
+					queryIndex[el].forEach(id => idsToShow[id] = true);
+			});
+			lis.each((index, li) =>
+			{
+				li = $(li);
+				li.toggleClass('hidden', !(idsToShow[li.data("id")] || !query));
+			});
+
+		});
+
+
+
+		// TODO: CLEAN UP CODE
+		// show and hide styled inputs, update natural language statement
+		html.find('.input-container').click(function ()
+		{
+			var target = $(this);
+			var targetInput = $(this).find('input');
+			var targetSelect = $(this).find('select');
+			var styledSelect = $(this).find('.newSelect');
+			target.addClass('active');
+			targetInput.focus();
+			targetInput.change(function ()
+			{
+				var inputValue = $(this).val();
+				var placeholder = target.find('.placeholder');
+				target.removeClass('active');
+				placeholder.html(inputValue);
+			});
+			targetSelect.change(function ()
+			{
+				var inputValue = $(this).val();
+				var placeholder = target.find('.placeholder');
+				target.removeClass('active');
+				placeholder.html(inputValue);
+			});
+			styledSelect.click(function ()
+			{
+				var target = $(this);
+				setTimeout(function ()
+				{
+					target.parent().parent().removeClass('active');
+				}, 10);
+			});
+		});
+
+		// style selects
+
+		// Create the new select
+		var select = $('.fancy-select');
+		select.wrap('<div class="newSelect"></div>');
+		html.find('.newSelect').prepend('<div class="newOptions"></div>');
+
+		//populate the new select
+		select.each(function ()
+		{
+			var selectOption = $(this).find('option');
+			var target = $(this).parent().find('.newOptions');
+			selectOption.each(function ()
+			{
+				var optionContents = $(this).html();
+				var optionValue = $(this).attr('value');
+				target.append('<div class="newOption" data-value="' + optionValue + '">' + optionContents + '</div>');
+			});
+		});
+		// new select functionality
+		var newSelect = html.find('.newSelect');
+		var newOption = html.find('.newOption');
+		// update based on selection 
+		newOption.on('mouseup', function ()
+		{
+			var OptionInUse = $(this);
+			var siblingOptions = $(this).parent().find('.newOption');
+			var newValue = $(this).attr('data-value');
+			var selectOption = $(this).parent().parent().find('select option');
+			// style selected option
+			siblingOptions.removeClass('selected');
+			OptionInUse.addClass('selected');
+			// update the actual input
+			selectOption.each(function ()
+			{
+				var optionValue = $(this).attr('value');
+				if (newValue == optionValue)
+				{
+					$(this).prop('selected', true);
+				} else
+				{
+					$(this).prop('selected', false);
+				}
+			});
+		});
+		newSelect.click(function ()
+		{
+			var target = $(this);
+			target.parent().find('select').change();
+		});
+
+		// Set Defaults
+		$('#numberOfPlayers .placeholder').text(charData.chars);
+		$('#numberOfPlayers select').val(charData.chars).trigger('change');
+		$(`#numberOfPlayers .newOptions .newOption[data-value="${charData.chars}"]`).addClass('active selected');
+		$('#averageLevelOfPlayers .placeholder').text(charData.level);
+		$('#averageLevelOfPlayers select').val(charData.level);
+		$(`#averageLevelOfPlayers .newOptions .newOption[data-value="${charData.level}"]`).addClass('active selected');
+		$(`#lootType .newOptions .newOption[data-value="Treasure Horde"]`).addClass('active selected');
+    */
   }
 
   async prepareData(lootOnly = false) {
@@ -150,6 +375,21 @@ export class Encounter {
       return false;
     });
   }
+
+  async DynamicSpawn(template) {
+    await this.loadActors();
+    const _this = this;
+    canvas.tokens.activate();
+    if (this.lootActorId === "")
+    {
+      await this.createLootSheet();
+    }
+    await CreatureSpawner.fromTemplate(template, _this);
+    canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate",[(Array.from(canvas.scene.templates)).pop().id])
+    return false;
+    
+  }
+
 
   async getRandomChestIcon() {
     const folder = await FilePicker.browse("public", "icons/containers/chest");
