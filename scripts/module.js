@@ -9,7 +9,7 @@ import { FoundryUtils } from "./utils/FoundryUtils.js";
 
 Hooks.once("init", async () => {
   console.log(SFCONSTS.MODULE_NAME + ' | initializing');
-  globalThis.StocasticFantastic = StocasticFantastic;
+  globalThis.SFHelpers = SFHelpers;
 });
 
 export class SFHelpers {
