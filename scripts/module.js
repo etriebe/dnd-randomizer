@@ -8,7 +8,7 @@ import { FoundryUtils } from "./utils/FoundryUtils.js";
 
 
 Hooks.once("init", async () => {
-  console.log(MODULE_NAME + ' | initializing');
+  console.log(SFCONSTS.MODULE_NAME + ' | initializing');
   globalThis.StocasticFantastic = StocasticFantastic;
 });
 
