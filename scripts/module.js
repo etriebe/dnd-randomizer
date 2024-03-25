@@ -5,6 +5,13 @@ import { SFDialog } from "./dialog.js";
 import { CombatEstimateDialog } from "./combatestimatedialog.js";
 import { FoundryUtils } from "./utils/FoundryUtils.js";
 
+
+
+Hooks.once("init", async () => {
+  console.log(MODULE_NAME + ' | initializing');
+  globalThis.StocasticFantastic = StocasticFantastic;
+});
+
 export class SFHelpers {
   static getFolder(type) {
     return game.settings.get(SFCONSTS.MODULE_NAME, `${type}Folder`);
