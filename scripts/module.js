@@ -7,10 +7,7 @@ import { FoundryUtils } from "./utils/FoundryUtils.js";
 
 
 
-Hooks.once("init", async () => {
-  console.log(SFCONSTS.MODULE_NAME + ' | initializing');
-  globalThis.SFHelpers = SFHelpers;
-});
+
 
 export class SFHelpers {
   static getFolder(type) {

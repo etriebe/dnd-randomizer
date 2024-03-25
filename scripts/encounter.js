@@ -10,7 +10,7 @@ import { SFLocalHelpers } from "./localmodule.js";
 
 Hooks.once("init", async () => {
   console.log(SFCONSTS.MODULE_NAME + ' | initializing');
-  globalThis.dndrandomizer = Encounter;
+  globalThis.dndrandomizer = Encounter.generateDynamicEncounter;
 });
 
 export class Encounter {
