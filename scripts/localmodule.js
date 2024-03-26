@@ -592,8 +592,8 @@ export class SFLocalHelpers {
         return !el || el[p.collection] ? true : false;
       });
 
-      const filteredMonsterTypes = [{monsterType}];
-      
+      const filteredMonsterTypes = monsterType;
+
       const filteredEnvironments = Array.from(SFCONSTS.GEN_OPT.environment).filter((e) => {
         const el = savedEnvironmentSettings.find((i) => Object.keys(i)[0] == e);
         return !el || el[e] ? true : false;

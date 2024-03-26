@@ -25,7 +25,7 @@ export class Encounter {
     this.id = data.id || randomID(40);
   }
   
-  static async generateDynamicEncounter(encounterType,lootType,creatureVariety,encounterDifficulty,spawnLocationX,spawnLocationY,diameter){
+  static async generateDynamicEncounter(encounterType,lootType,creatureVariety,encounterDifficulty,spawnLocationX,spawnLocationY,diameter,monsterTypeFilter){
 
     let numberOfPlayers = 0;
     let averageLevelOfPlayers = 0;
@@ -54,7 +54,7 @@ export class Encounter {
 
     let forceReload = false;
     await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-    let filteredMonsters = await SFLocalHelpers.filterMonstersByType("aberration");
+    let filteredMonsters = await SFLocalHelpers.filterMonstersByType(monsterTypeFilter);
     let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
     let generateEncounters = await SFLocalHelpers.createDynamicEncounters(filteredMonsters, filteredItems, params);
 
