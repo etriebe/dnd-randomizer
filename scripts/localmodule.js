@@ -567,6 +567,76 @@ export class SFLocalHelpers {
       return filteredMonsters;
     }
   
+    static async filterMonstersByType(monsterType)
+    {
+      let filteredMonsters = [];
+
+      const constCompFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterCompendiums"
+      );
+
+      const constMonsterTypeFilter = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "filterMonsterTypes"
+      );
+
+      const savedEnvironmentSettings = game.settings.get(
+        SFCONSTS.MODULE_NAME,
+        "environmentsToCreateEncountersFor"
+        );
+
+      const filteredCompendiums = Array.from(FoundryUtils.getCompendiums()).filter((p) => {
+        if (p.documentName !== "Actor") return false;
+        const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
+        return !el || el[p.collection] ? true : false;
+      });
+
+      const filteredMonsterTypes = [{monsterType}];
+      
+      const filteredEnvironments = Array.from(SFCONSTS.GEN_OPT.environment).filter((e) => {
+        const el = savedEnvironmentSettings.find((i) => Object.keys(i)[0] == e);
+        return !el || el[e] ? true : false;
+      });
+
+      for (const monsterObject of this.allMonsters)
+      {
+        try {
+          if (filteredCompendiums.filter((c) => c.metadata.id === monsterObject.compendiumname).length === 0) 
+          {
+            continue;
+          }
+
+          if (filteredMonsterTypes.filter(m => monsterObject.creaturetype && monsterObject.creaturetype.includes(m)).length === 0)
+          {
+            continue;
+          }
+
+          let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[monsterObject.actorname];
+          if (extraEnvironmentMapping && extraEnvironmentMapping.filter(e => filteredEnvironments.filter(f => f === e).length > 0).length > 0)
+          {
+            console.log(`Added monster ${monsterObject.actorname} because it appeared in TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING`);
+            filteredMonsters.push(monsterObject.actor);
+            continue;
+          }
+
+          if (monsterObject.environment.filter(e => filteredEnvironments.filter(f => f === e).length > 0).length > 0)
+          {
+            filteredMonsters.push(monsterObject.actor);
+          }
+        }
+        catch (error) {
+          console.warn(`Unable to process creature: Name:${monsterObject.actorname}, Id: ${ActorUtils.getActorId(monsterObject)}`);
+        }
+      }
+
+      return filteredMonsters;
+    }
+
+
+
+
+
     static async createEncounters(monsterList, filteredItems, params, numberOfEncounters)
     {
       let averageLevelOfPlayers = params.averageLevelOfPlayers;
