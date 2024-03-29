@@ -54,7 +54,15 @@ export class Encounter {
 
     let forceReload = false;
     await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-    let filteredMonsters = await SFLocalHelpers.filterMonstersByType(monsterTypeFilter);
+    let filteredMonsters;
+    if(monsterTypeFilter === "")
+    {
+      filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
+    }
+    else{
+      filteredMonsters = await SFLocalHelpers.filterMonstersByType(monsterTypeFilter);
+    }
+    
     let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
     let generateEncounters = await SFLocalHelpers.createDynamicEncounters(filteredMonsters, filteredItems, params);
 
