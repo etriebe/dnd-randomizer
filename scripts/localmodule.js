@@ -633,10 +633,6 @@ export class SFLocalHelpers {
       return filteredMonsters;
     }
 
-
-
-
-
     static async createEncounters(monsterList, filteredItems, params, numberOfEncounters)
     {
       let averageLevelOfPlayers = params.averageLevelOfPlayers;

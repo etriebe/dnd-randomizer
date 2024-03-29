@@ -71,7 +71,6 @@ export class Encounter {
     const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
 	
     this.DynamicSpawn(newTemplate[0],encounterData[0]);
-
   }
 
   async prepareData(lootOnly = false) {
@@ -216,9 +215,7 @@ export class Encounter {
       await CreatureSpawner.fromTemplate(template, encounterData);
       canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate",[(Array.from(canvas.scene.templates)).pop().id])
       return false;
-      
   }
-
 
   async getRandomChestIcon() {
     const folder = await FilePicker.browse("public", "icons/containers/chest");
