@@ -8,6 +8,8 @@ import { ActorUtils } from "./utils/ActorUtils.js";
 import { SFLocalHelpers } from "./localmodule.js";
 
 
+
+
 export class Encounter {
   constructor(data) {
     this.data = data;
@@ -21,6 +23,62 @@ export class Encounter {
     this.loot = [];
     this.lootActorId = "";
     this.id = data.id || randomID(40);
+  }
+  
+  static async generateDynamicEncounter(encounterType,lootType,creatureVariety,encounterDifficulty,spawnLocationX,spawnLocationY,diameter,monsterTypeFilter){
+
+    let numberOfPlayers = 0;
+    let averageLevelOfPlayers = 0;
+    let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
+    if (useLocalPCs)
+    {
+      let activePlayerInfo = SFLocalHelpers.getActivePlayersCountAndLevels();
+      numberOfPlayers = activePlayerInfo["numberofplayers"];
+      averageLevelOfPlayers = activePlayerInfo["averageplayerlevel"];
+    }
+
+    const params = {
+      loot_type: lootType,
+      encounterType: encounterType,
+      creatureTypeVariety: creatureVariety,
+      difficulty: encounterDifficulty,
+      numberOfPlayers: numberOfPlayers,
+      averageLevelOfPlayers: averageLevelOfPlayers
+
+    };
+
+    //let encounterTypeObject = EncounterUtils.getEncounterDescriptionObjects();
+    //let encounterFormula = encounterTypeObject[encounterType];
+
+    //const isEncounterFormulaPossible = EncounterUtils.isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers);
+
+    let forceReload = false;
+    await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+    let filteredMonsters;
+    if(monsterTypeFilter === "")
+    {
+      filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
+    }
+    else{
+      filteredMonsters = await SFLocalHelpers.filterMonstersByType(monsterTypeFilter);
+    }
+    
+    let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
+    let generateEncounters = await SFLocalHelpers.createDynamicEncounters(filteredMonsters, filteredItems, params);
+
+    let newTemplate = await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [{
+      t: "circle",
+      user: game.userId,
+      x: spawnLocationX,
+      y: spawnLocationY,
+      direction: 0,
+      distance: diameter,
+      borderColor: "#44975C",
+      fillColor: "#44975C"
+    }]);
+    const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
+	
+    this.DynamicSpawn(newTemplate[0],encounterData[0]);
   }
 
   async prepareData(lootOnly = false) {
@@ -149,6 +207,22 @@ export class Encounter {
       canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate",[(Array.from(canvas.scene.templates)).pop().id])
       return false;
     });
+  }
+
+  static async DynamicSpawn(template,encounterData) {
+    
+      for (let creature of encounterData.creatures) {
+        await creature.getActor();
+      }
+      const _this = encounterData;
+      canvas.tokens.activate();
+      if (encounterData.lootActorId === "")
+      {
+        await encounterData.createLootSheet();
+      }
+      await CreatureSpawner.fromTemplate(template, encounterData);
+      canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate",[(Array.from(canvas.scene.templates)).pop().id])
+      return false;
   }
 
   async getRandomChestIcon() {
