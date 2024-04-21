@@ -171,13 +171,15 @@ export class Encounter {
         texture: {
           src: await this.getRandomChestIcon(),
         },
-        currency: {
-          // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
-          cp: this.currency.cp,
-          sp: this.currency.sp,
-          ep: this.currency.ep,
-          gp: this.currency.gp,
-          pp: this.currency.pp,
+        system: {
+          currency: {
+            // If Loot sheet is missing use currency as Normal (Adds Support for other NPC Sheets such as TidySheet5e)
+            cp: this.currency.cp,
+            sp: this.currency.sp,
+            ep: this.currency.ep,
+            gp: this.currency.gp,
+            pp: this.currency.pp,
+          }
         },
         folder: folder.id,
       };
