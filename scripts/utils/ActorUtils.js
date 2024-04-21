@@ -21,7 +21,14 @@ export class ActorUtils
 
     if (currentSystem === "pf2e")
     {
-      return creatureTypeValue.filter(t => t in CONFIG.PF2E.creatureTypes).sort();
+      if (FoundryUtils.isFoundryVersion10())
+      {
+        return creatureTypeValue;
+      }
+      else if (FoundryUtils.isFoundryVersion11())
+      {
+        return creatureTypeValue.filter(t => t in CONFIG.PF2E.creatureTypes).sort();
+      }
     }
 
     return [creatureTypeValue];
