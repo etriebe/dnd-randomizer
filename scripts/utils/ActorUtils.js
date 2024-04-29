@@ -941,7 +941,7 @@ export class ActorUtils
       {
         // if the attack doesn't has the property requested set to true, we'll skip the attack
         let attackProperties = currentAttack.properties;
-        if (!eval(`attackProperties.${property}`))
+        if (!eval(`attackProperties.has('${property}')`))
         {
           continue;
         }
@@ -972,7 +972,7 @@ export class ActorUtils
       {
         // if the attack doesn't has the property requested set to true, we'll skip the attack
         let attackProperties = currentAttack.attackobject.system.properties;
-        if (!eval(`attackProperties.${property}`))
+        if (!eval(`attackProperties.has('${property}')`))
         {
           continue;
         }
