@@ -160,7 +160,7 @@ Hooks.on("renderSidebarTab", (settings) =>
 		</button>`;
 
     let elementToAppendTo = ``;
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       elementToAppendTo = `.combat-tracker-header`;
     }
