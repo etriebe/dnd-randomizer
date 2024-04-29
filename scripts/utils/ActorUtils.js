@@ -25,7 +25,7 @@ export class ActorUtils
       {
         return creatureTypeValue;
       }
-      else if (FoundryUtils.isFoundryVersion11())
+      else if (FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
       {
         return creatureTypeValue.filter(t => t in CONFIG.PF2E.creatureTypes).sort();
       }
@@ -217,7 +217,7 @@ export class ActorUtils
 
   static async getTokenDocument(actor, data)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       return await actor.getTokenDocument(data);
     }
@@ -941,7 +941,7 @@ export class ActorUtils
       {
         // if the attack doesn't has the property requested set to true, we'll skip the attack
         let attackProperties = currentAttack.properties;
-        if (!eval(`attackProperties.${property}`))
+        if (!eval(`attackProperties.has('${property}')`))
         {
           continue;
         }
@@ -972,7 +972,7 @@ export class ActorUtils
       {
         // if the attack doesn't has the property requested set to true, we'll skip the attack
         let attackProperties = currentAttack.attackobject.system.properties;
-        if (!eval(`attackProperties.${property}`))
+        if (!eval(`attackProperties.has('${property}')`))
         {
           continue;
         }

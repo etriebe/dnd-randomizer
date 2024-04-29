@@ -266,7 +266,7 @@ export class Encounter
     let actorData = null;
     let actorType = FoundryUtils.getSystemVariable("LootActorType");
     let randchestimg = await this.getRandomChestIcon();
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       actorData = {
         name: this.name || this.id,

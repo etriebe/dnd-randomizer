@@ -12,6 +12,11 @@ export class FoundryUtils
     return game.version.match(/^11\./) != null;
   }
 
+  static isFoundryVersion12()
+  {
+    return game.version.match(/^12\./) != null;
+  }
+
   static getSystemId()
   {
     return game.system.id;
@@ -23,7 +28,7 @@ export class FoundryUtils
 
   static getCombatantDisposition(obj)
   {
-    if (FoundryUtils.isFoundryVersion10())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       return obj.token.disposition;
     }
@@ -44,7 +49,11 @@ export class FoundryUtils
   {
     let currentSystem = game.system.id;
     let variableValues;
-    if (FoundryUtils.isFoundryVersion11())
+    if (FoundryUtils.isFoundryVersion12())
+    {
+      variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES_V12[variableName];
+    }
+    else if (FoundryUtils.isFoundryVersion11())
     {
       variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES_V11[variableName];
     }
@@ -74,18 +83,7 @@ export class FoundryUtils
 
   static getDataObjectFromObject(obj)
   {
-    if (FoundryUtils.isFoundryVersion11())
-    {
-      if (obj.system)
-      {
-        return obj.system;
-      }
-      else
-      {
-        return obj;
-      }
-    }
-    if (FoundryUtils.isFoundryVersion10())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       if (obj.system)
       {
@@ -111,7 +109,7 @@ export class FoundryUtils
 
   static getTemplateDataObject(obj)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       return obj;
     }
@@ -224,7 +222,22 @@ export class FoundryUtils
     let actorName = actor.actorname;
     let compendiumName = actor.compendiumname;
 
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
+    if (this.isFoundryVersion12())
+    {
+      if (compendiumName)
+      {
+        const dataUUID = `Compendium.${compendiumName}.Actor.${actorID}`;
+        // <a class="content-link sf-dialog-content-link" draggable="true" data-link="" data-uuid="Compendium.SharedData.monsters.Actor.MsT8BhZClVWRGfW5" data-id="MsT8BhZClVWRGfW5" data-type="Actor" data-pack="SharedData.monsters" data-tooltip="Non-Player Character Actor"><i class="fas fa-user"></i>Aboleth</a>
+        // <a class="content-link sf-dialog-content-link" draggable="true" data-link="" data-uuid="Compendium.SharedData.monsters.QO4tXYALnDxHribl.Actor" data-id="QO4tXYALnDxHribl" data-type="Actor" data-pack="SharedData.monsters"><div class="actor-link-name"><i class="fas fa-user"></i> Cloud Giant Smiling One</div></a>
+        return `<a class="content-link sf-dialog-content-link" draggable="true" data-link="" data-uuid="${dataUUID}" data-id="${actorID}" data-type="Actor" data-pack="${compendiumName}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+      }
+      else
+      {
+        //<a class="content-link" draggable="true" data-link="" data-uuid="Actor.QRmxkNhh8xpisYUo" data-id="QRmxkNhh8xpisYUo" data-type="Actor" data-tooltip="Non-Player Character Actor"><i class="fas fa-user"></i>Drow Mage</a>
+        return `<a class="content-link sf-dialog-content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
+      }
+    }
+    else if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       if (compendiumName)
       {
@@ -253,7 +266,7 @@ export class FoundryUtils
     let itemID = item.id;
     let itemName = item.name;
     let compendiumName = item.compendiumname;
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       if (compendiumName)
       {
