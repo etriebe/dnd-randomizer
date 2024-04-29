@@ -222,7 +222,22 @@ export class FoundryUtils
     let actorName = actor.actorname;
     let compendiumName = actor.compendiumname;
 
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (this.isFoundryVersion12())
+    {
+      if (compendiumName)
+      {
+        const dataUUID = `Compendium.${compendiumName}.Actor.${actorID}`;
+        // <a class="content-link sf-dialog-content-link" draggable="true" data-link="" data-uuid="Compendium.SharedData.monsters.Actor.MsT8BhZClVWRGfW5" data-id="MsT8BhZClVWRGfW5" data-type="Actor" data-pack="SharedData.monsters" data-tooltip="Non-Player Character Actor"><i class="fas fa-user"></i>Aboleth</a>
+        // <a class="content-link sf-dialog-content-link" draggable="true" data-link="" data-uuid="Compendium.SharedData.monsters.QO4tXYALnDxHribl.Actor" data-id="QO4tXYALnDxHribl" data-type="Actor" data-pack="SharedData.monsters"><div class="actor-link-name"><i class="fas fa-user"></i> Cloud Giant Smiling One</div></a>
+        return `<a class="content-link sf-dialog-content-link" draggable="true" data-link="" data-uuid="${dataUUID}" data-id="${actorID}" data-type="Actor" data-pack="${compendiumName}"><div class="actor-link-name"><i class="fas fa-user"></i> ${actorName}</div></a>`;
+      }
+      else
+      {
+        //<a class="content-link" draggable="true" data-link="" data-uuid="Actor.QRmxkNhh8xpisYUo" data-id="QRmxkNhh8xpisYUo" data-type="Actor" data-tooltip="Non-Player Character Actor"><i class="fas fa-user"></i>Drow Mage</a>
+        return `<a class="content-link sf-dialog-content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
+      }
+    }
+    else if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
     {
       if (compendiumName)
       {
