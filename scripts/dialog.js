@@ -284,7 +284,10 @@ export class SFDialog extends FormApplication
 	async activateListeners(html)
 	{
 		super.activateListeners(html);
+
+		ModuleUtils.disableButtonsWhileIndexing(html);
 		await SFLocalHelpers.populateObjectsFromCompendiums(false);
+		ModuleUtils.enabledButtonsAfterIndexingFinished(html);
 		const _this = this;
 		const charData = this.getDefaultsFromScene();
 		let getFavoritedEncounters = game.settings.get(SFCONSTS.MODULE_NAME, 'favoritedEncounters');
@@ -373,7 +376,10 @@ export class SFDialog extends FormApplication
 			}
 
 			let forceReload = false;
+
+			ModuleUtils.disableButtonsWhileIndexing(html);
 			await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
+			ModuleUtils.enabledButtonsAfterIndexingFinished(html);
 			let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
 			let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
 			let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, filteredItems, params, 30);
