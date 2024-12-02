@@ -50,10 +50,8 @@ jobs:
         body: ${{ github.event.release.body }}
 
     - name: Publish Module to FoundryVTT Website
-      uses: Varriount/fvtt-autopublish@84ae0505de00bb73e955e5dba545f6e8e75799c9
+      id: publish-to-foundry-website
+      uses: cs96and/FoundryVTT-release-package@v1
       with:
-        username: ${{ secrets.FOUNDRY_ADMIN_USERNAME }}
-        password: ${{ secrets.FOUNDRY_ADMIN_PASSWORD }}
-        module-id: ${{ secrets.FOUNDRY_ADMIN_MODULE_ID }}
+        package-token: ${{ secrets.PACKAGE_TOKEN }}
         manifest-url: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.json
-        manifest-file: ${{ env.MANIFEST_FILE_PATH }}
