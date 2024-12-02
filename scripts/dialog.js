@@ -321,8 +321,11 @@ export class SFDialog extends FormApplication
 			}
 			const $button = $(event.currentTarget);
 
+			// Add button spinner and disable all buttons
 			$button.prop('disabled', true).addClass('disabled');
 			$button.find('i.fas').removeClass('fa-dice').addClass('fa-spinner fa-spin');
+			ModuleUtils.disableButtonsWhileIndexing(html, false);
+
 			let numberOfPlayers = 0;
 			let averageLevelOfPlayers = 0;
 			let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
@@ -376,10 +379,8 @@ export class SFDialog extends FormApplication
 			}
 
 			let forceReload = false;
-
-			ModuleUtils.disableButtonsWhileIndexing(html);
 			await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
-			ModuleUtils.enabledButtonsAfterIndexingFinished(html);
+
 			let filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
 			let filteredItems = await SFLocalHelpers.filterItemsFromCompendiums();
 			let generateEncounters = await SFLocalHelpers.createEncounters(filteredMonsters, filteredItems, params, 30);
@@ -394,6 +395,8 @@ export class SFDialog extends FormApplication
 			const encounterData = await SFHelpers.parseEncounter(generateEncounters, params);
 			await _this.populateEncounters(encounterData);
 
+			// Enable buttons and remove spinner, reset look and feel
+			ModuleUtils.enabledButtonsAfterIndexingFinished(html, false);
 			$button.prop('disabled', false).removeClass('disabled');
 			$button.find('i.fas').removeClass('fa-spinner fa-spin').addClass('fa-dice');
 		});

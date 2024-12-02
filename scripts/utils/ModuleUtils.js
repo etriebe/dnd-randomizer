@@ -62,25 +62,32 @@ export class ModuleUtils {
 		});
     };
 
-	static disableButtonsWhileIndexing(html)
+	static disableButtonsWhileIndexing(html, disableGenerateEncounterButton = true)
 	{
 		html.find('button.toolbar-button').each(function ()
 		{
 			$(this).prop('disabled', true).addClass('disabled');
 		});
-		const generateEncounterButton = html.find('button#generate-remote-encounters-button');
-		generateEncounterButton.prop('disabled', true).addClass('disabled');
-		generateEncounterButton[0].innerHTML = `Indexing...`;
+		if (disableGenerateEncounterButton)
+		{
+			const generateEncounterButton = html.find('button#generate-remote-encounters-button');
+			generateEncounterButton.prop('disabled', true).addClass('disabled');
+			generateEncounterButton[0].innerHTML = `Indexing...`;
+		}
 	}
 
-	static enabledButtonsAfterIndexingFinished(html)
+	static enabledButtonsAfterIndexingFinished(html, enableGenerateEncounterButton = true)
 	{
 		html.find('button.toolbar-button').each(function ()
 		{
 			$(this).prop('disabled', false).removeClass('disabled');
 		});
-		const generateEncounterButton = html.find('button#generate-remote-encounters-button');
-		generateEncounterButton.prop('disabled', false).removeClass('disabled');
-		generateEncounterButton[0].innerHTML = `<i class="fas fa-dice"></i> Generate Encounters`;
+
+		if (enableGenerateEncounterButton)
+		{
+			const generateEncounterButton = html.find('button#generate-remote-encounters-button');
+			generateEncounterButton.prop('disabled', false).removeClass('disabled');
+			generateEncounterButton[0].innerHTML = `<i class="fas fa-dice"></i> Generate Encounters`;
+		}
 	}
 }
