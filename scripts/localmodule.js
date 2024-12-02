@@ -334,31 +334,18 @@ export class SFLocalHelpers {
           console.log(`Indexing compendium ${compendium.collection}`);
         }
 
-        switch (game.system.id) {
-          case 'pf2e': {
-            const systemPath = game.pf2e.system.moduleArt;
-            await systemPath.refresh();
-
-            packIndex = packIndex.map((x) => {
-              // Handle Images
-              const actorArt = systemPath.map.get(x.uuid)?.img;
-              x.img = actorArt ?? x.img;
-              if (x.img === '') x.img = 'icons/svg/mystery-man.svg';
-              return x;
-            });
-            break;
-          }
-          case 'dnd5e': {
-            const systemPath = game.dnd5e.moduleArt;
-            await systemPath.registerModuleArt();
-            packIndex = packIndex.map((x) => {
-              const actorArt = systemPath.map.get(x.uuid)?.img;
-              x.img = actorArt ?? x.img;
-              if (x.img === '') x.img = 'icons/svg/mystery-man.svg';
-              return x;
-            });
-            break;
-          }
+        if (game.compendiumArt.enabled)
+        {
+          packIndex = packIndex.map((x) =>
+          {
+            const actorArt = game.compendiumArt.get(x.uuid) ?? {};
+            x.img = actorArt.actor ?? actorArt.token ?? x.img;
+            if (x.img === '')
+            {
+              x.img = 'icons/svg/mystery-man.svg';
+            }
+            return x;
+          });
         }
 
         const ignoreCreaturesWithNoImage = game.settings.get( SFCONSTS.MODULE_NAME, "ignoreCreaturesWithNoImage");
@@ -391,7 +378,7 @@ export class SFLocalHelpers {
               continue;
             }
 
-            if (ignoreCreaturesWithNoImage && actor.img === "systems/pf2e/icons/default-icons/npc.svg")
+            if (ignoreCreaturesWithNoImage && (actor.img === "systems/pf2e/icons/default-icons/npc.svg" || actor.img === "icons/svg/mystery-man.svg"))
             {
               console.log(`Skipping actor ${actorName} because it has a default image and our setting requested it.`);
               continue;
