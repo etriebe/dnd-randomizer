@@ -1,5 +1,5 @@
 {
-  "name": "dnd-randomizer",
+  "id": "dnd-randomizer",
   "title": "Stochastic, Fantastic! - Random Encounter Generator",
   "description": "A random encounter generator for D&D 5e and PF2e. This will take your local compendiums and attempt to generate encounters based on either static level or local PCs.",
   "version": "0.13",
