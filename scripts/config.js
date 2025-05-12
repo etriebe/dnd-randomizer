@@ -120,15 +120,15 @@ Hooks.on("renderActorDirectory", (app, html, data) =>
   }
 
   if (html.querySelectorAll(":scope #sfButton").length !== 0) return;
-  const button = `<button id="sfButton" style="flex-basis: auto;">
+  const button = `<button type="button" id="sfButton" style="flex-basis: auto;">
   <i class="fas fa-dice"></i> Generate Encounter
 </button>`;
-  html.querySelectorAll(`:scope .header-actions`).first().append(button);
-  html.querySelectorAll(":scope #sfButton").on("click", async (e) =>
+  html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("afterend", button);
+  html.querySelectorAll(":scope #sfButton").forEach((e) => e?.addEventListener("click", async (e) =>
   {
     e.preventDefault();
     if (!canvas.SFDialog?.rendered) await canvas.SFDialog.render(true);
-  });
+  }));
 });
 
 Hooks.on("renderCompendiumDirectory", (app, html, data) =>
@@ -142,15 +142,15 @@ Hooks.on("renderCompendiumDirectory", (app, html, data) =>
   if (FoundryUtils.getSystemId() === "dnd5e")
   {
     if (html.querySelectorAll(":scope #SFCreatureCodexButton").length !== 0) return;
-    const button = `<button id="SFCreatureCodexButton" style="flex-basis: auto;">
+    const button = `<button type="button" id="SFCreatureCodexButton" style="flex-basis: auto;">
     <i class="fas fa-dice"></i> Creature Codex
   </button>`;
-    html.querySelectorAll(`:scope .header-actions`).first().append(button);
-    html.querySelectorAll(":scope #SFCreatureCodexButton").on("click", async (e) =>
+    html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("afterend", button);
+    html.querySelectorAll(":scope #SFCreatureCodexButton").forEach((e) => e?.addEventListener("click", async (e) =>
     {
       e.preventDefault();
       if (!canvas.SFCreatureCodex?.rendered) await canvas.SFCreatureCodex.render(true);
-    });
+    }));
   }
 });
 
@@ -169,7 +169,7 @@ Hooks.on("renderCombatDirectory", (app, html, data) =>
       return;
     }
 
-    const button = `<button id="combatEstimateButton" style="flex-basis: auto;">
+    const button = `<button type="button" id="combatEstimateButton" style="flex-basis: auto;">
 		<i class="fas fa-calculator"></i> Combat Estimate
 		</button>`;
 
@@ -182,13 +182,13 @@ Hooks.on("renderCombatDirectory", (app, html, data) =>
     {
       elementToAppendTo = `#combat-round`;
     }
-    html.querySelectorAll(`:scope ${elementToAppendTo}`).first().append(button);
-    html.querySelectorAll(":scope #combatEstimateButton").on("click", async (e) =>
+    html.querySelectorAll(`:scope ${elementToAppendTo}`)[0].insertAdjacentHTML("afterend", button);
+    html.querySelectorAll(":scope #combatEstimateButton").forEach((e) => e?.addEventListener("click", async (e) =>
     {
       e.preventDefault();
       const ceDialog = new CombatEstimateDialog();
       ceDialog.render(true);
-    });
+    }));
   }
 });
 
