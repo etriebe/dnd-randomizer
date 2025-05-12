@@ -17,6 +17,11 @@ export class FoundryUtils
     return game.version.match(/^12\./) != null;
   }
 
+  static isFoundryVersion13()
+  {
+    return game.version.match(/^13\./) != null;
+  }
+
   static getSystemId()
   {
     return game.system.id;
@@ -49,7 +54,11 @@ export class FoundryUtils
   {
     let currentSystem = game.system.id;
     let variableValues;
-    if (FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion13())
+    {
+      variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES_V13[variableName];
+    }
+    else if (FoundryUtils.isFoundryVersion12())
     {
       variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES_V12[variableName];
     }
