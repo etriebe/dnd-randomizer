@@ -398,7 +398,7 @@ export class NPCActor5e
         const spellSaveActivity = activities.find(a => a.type === "save");
         if (spellSaveActivity)
         {
-            let abilityModType = spellSaveActivity.save.ability;
+            let abilityModType = spellSaveActivity.save.ability.first();
             let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
             spellSaveActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
         }
