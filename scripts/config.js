@@ -111,6 +111,87 @@ Hooks.once('ready', async function ()
 
 });
 
+Hooks.on("renderActorDirectory", (app, html, data) =>
+{
+
+  if (!game.user.isGM)
+  {
+    return;
+  }
+
+  if (html.querySelectorAll(":scope #sfButton").length !== 0) return;
+  const button = `<button id="sfButton" style="flex-basis: auto;">
+  <i class="fas fa-dice"></i> Generate Encounter
+</button>`;
+  html.querySelectorAll(`:scope .header-actions`).first().append(button);
+  html.querySelectorAll(":scope #sfButton").on("click", async (e) =>
+  {
+    e.preventDefault();
+    if (!canvas.SFDialog?.rendered) await canvas.SFDialog.render(true);
+  });
+});
+
+Hooks.on("renderCompendiumDirectory", (app, html, data) =>
+{
+
+  if (!game.user.isGM)
+  {
+    return;
+  }
+
+  if (FoundryUtils.getSystemId() === "dnd5e")
+  {
+    if (html.querySelectorAll(":scope #SFCreatureCodexButton").length !== 0) return;
+    const button = `<button id="SFCreatureCodexButton" style="flex-basis: auto;">
+    <i class="fas fa-dice"></i> Creature Codex
+  </button>`;
+    html.querySelectorAll(`:scope .header-actions`).first().append(button);
+    html.querySelectorAll(":scope #SFCreatureCodexButton").on("click", async (e) =>
+    {
+      e.preventDefault();
+      if (!canvas.SFCreatureCodex?.rendered) await canvas.SFCreatureCodex.render(true);
+    });
+  }
+});
+
+Hooks.on("renderCombatDirectory", (app, html, data) =>
+{
+
+  if (!game.user.isGM)
+  {
+    return;
+  }
+
+  if (FoundryUtils.getSystemId() === "dnd5e")
+  {
+    if (html.querySelectorAll(":scope #combatEstimateButton").length !== 0)
+    {
+      return;
+    }
+
+    const button = `<button id="combatEstimateButton" style="flex-basis: auto;">
+		<i class="fas fa-calculator"></i> Combat Estimate
+		</button>`;
+
+    let elementToAppendTo = ``;
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    {
+      elementToAppendTo = `.combat-tracker-header`;
+    }
+    else
+    {
+      elementToAppendTo = `#combat-round`;
+    }
+    html.querySelectorAll(`:scope ${elementToAppendTo}`).first().append(button);
+    html.querySelectorAll(":scope #combatEstimateButton").on("click", async (e) =>
+    {
+      e.preventDefault();
+      const ceDialog = new CombatEstimateDialog();
+      ceDialog.render(true);
+    });
+  }
+});
+
 Hooks.on("renderSidebarTab", (settings) =>
 {
   if (!game.user.isGM)
