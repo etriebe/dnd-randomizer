@@ -33,7 +33,7 @@ export class FoundryUtils
 
   static getCombatantDisposition(obj)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       return obj.token.disposition;
     }
@@ -92,7 +92,7 @@ export class FoundryUtils
 
   static getDataObjectFromObject(obj)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       if (obj.system)
       {
@@ -118,7 +118,7 @@ export class FoundryUtils
 
   static getTemplateDataObject(obj)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       return obj;
     }
@@ -231,7 +231,7 @@ export class FoundryUtils
     let actorName = actor.actorname;
     let compendiumName = actor.compendiumname;
 
-    if (this.isFoundryVersion12())
+    if (this.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       if (compendiumName)
       {
@@ -246,7 +246,7 @@ export class FoundryUtils
         return `<a class="content-link sf-dialog-content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
       }
     }
-    else if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    else if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       if (compendiumName)
       {
@@ -275,7 +275,7 @@ export class FoundryUtils
     let itemID = item.id;
     let itemName = item.name;
     let compendiumName = item.compendiumname;
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       if (compendiumName)
       {
