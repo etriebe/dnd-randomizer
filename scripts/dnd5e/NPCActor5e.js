@@ -314,17 +314,18 @@ export class NPCActor5e
         }
         let abilityModType = spellObject.abilityMod;
         let parentDataObject = FoundryUtils.getDataObjectFromObject(spellObject.parent);
-        let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
+        let abilityModValue = 0;
         let spellDataObject = FoundryUtils.getDataObjectFromObject(spellObject);
         let totalDamageForAttack = 0;
 
         if (FoundryUtils.isDND5eVersion4() || FoundryUtils.isDND5eVersion5())
         {
-            totalDamageForAttack += NPCActor5e.getActivitiesAverageDamage(spellDataObject.activities, abilityModValue);
+            totalDamageForAttack += NPCActor5e.getActivitiesAverageDamage(spellDataObject.activities, parentDataObject);
         }
         else
         {
             let damageList = spellDataObject.damage.parts;
+            !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
 
             for (let i = 0; i < damageList.length; i++)
             {
@@ -391,23 +392,27 @@ export class NPCActor5e
         return currentAttackResult;
     }
 
-    static getActivitiesAverageDamage(activities, abilityModValue)
+    static getActivitiesAverageDamage(activities, parentDataObject)
     {
         let totalDamageForAttack = 0;
         const spellSaveActivity = activities.find(a => a.type === "save");
         if (spellSaveActivity)
         {
+            let abilityModType = spellSaveActivity.save.ability;
+            let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
             spellSaveActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
         }
         const damageActivity = activities.find(a => a.type === "damage");
         if (damageActivity)
         {
-            damageActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
+            damageActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, 0));
         }
         const attackActivity = activities.find(a => a.type === "attack");
         if (attackActivity)
         {
-            damageActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
+            let abilityModType = attackActivity.attack.ability;
+            let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
+            attackActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
             if (attackActivity.damage.includeBase)
             {
                 totalDamageForAttack += abilityModValue;
@@ -439,9 +444,7 @@ export class NPCActor5e
 
         if (FoundryUtils.isDND5eVersion4() || FoundryUtils.isDND5eVersion5())
         {
-            let abilityModType = attackActivity.attack.ability;
-            abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
-            totalDamageForAttack += NPCActor5e.getActivitiesAverageDamage(attackDataObject.activities, abilityModValue);
+            totalDamageForAttack += NPCActor5e.getActivitiesAverageDamage(attackDataObject.activities, parentDataObject);
         }
         else
         {
