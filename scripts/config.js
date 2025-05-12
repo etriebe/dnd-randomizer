@@ -123,7 +123,7 @@ Hooks.on("renderActorDirectory", (app, html, data) =>
   const button = `<button type="button" id="sfButton" style="flex-basis: auto;">
   <i class="fas fa-dice"></i> Generate Encounter
 </button>`;
-  html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("afterend", button);
+  html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("beforeend", button);
   html.querySelectorAll(":scope #sfButton").forEach((e) => e?.addEventListener("click", async (e) =>
   {
     e.preventDefault();
@@ -145,7 +145,7 @@ Hooks.on("renderCompendiumDirectory", (app, html, data) =>
     const button = `<button type="button" id="SFCreatureCodexButton" style="flex-basis: auto;">
     <i class="fas fa-dice"></i> Creature Codex
   </button>`;
-    html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("afterend", button);
+    html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("beforeend", button);
     html.querySelectorAll(":scope #SFCreatureCodexButton").forEach((e) => e?.addEventListener("click", async (e) =>
     {
       e.preventDefault();
@@ -182,7 +182,7 @@ Hooks.on("renderCombatDirectory", (app, html, data) =>
     {
       elementToAppendTo = `#combat-round`;
     }
-    html.querySelectorAll(`:scope ${elementToAppendTo}`)[0].insertAdjacentHTML("afterend", button);
+    html.querySelectorAll(`:scope ${elementToAppendTo}`)[0].insertAdjacentHTML("beforeend", button);
     html.querySelectorAll(":scope #combatEstimateButton").forEach((e) => e?.addEventListener("click", async (e) =>
     {
       e.preventDefault();
