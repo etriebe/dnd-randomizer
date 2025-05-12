@@ -24,7 +24,7 @@ export class Encounter
     this.combatsummary = {};
     this.loot = [];
     this.lootActorId = "";
-    this.id = data.id || randomID(40);
+    this.id = data.id || foundry.utils.randomID();
   }
 
   static async generateDynamicEncounter(encounterType, lootType, creatureVariety, encounterDifficulty, spawnLocationX, spawnLocationY, diameter, monsterTypeFilter)

@@ -22,6 +22,16 @@ export class FoundryUtils
     return game.version.match(/^13\./) != null;
   }
 
+  static isDND5eVersion5()
+  {
+    return game.system.version.match(/^5\./) != null;
+  }
+
+  static isDND5eVersion4()
+  {
+    return game.system.version.match(/^4\./) != null;
+  }
+
   static getSystemId()
   {
     return game.system.id;

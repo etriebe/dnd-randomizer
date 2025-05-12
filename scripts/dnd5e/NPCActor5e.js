@@ -316,44 +316,52 @@ export class NPCActor5e
         let parentDataObject = FoundryUtils.getDataObjectFromObject(spellObject.parent);
         let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
         let spellDataObject = FoundryUtils.getDataObjectFromObject(spellObject);
-        let damageList = spellDataObject.damage.parts;
-
         let totalDamageForAttack = 0;
-        for (let i = 0; i < damageList.length; i++)
+
+        if (FoundryUtils.isDND5eVersion4() || FoundryUtils.isDND5eVersion5())
         {
-            let damageArray = damageList[i];
-            let damageDescription = damageArray[0];
-            let damageType = damageArray[1];
-            damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
-            if (damageType.toLowerCase() === "healing")
+            totalDamageForAttack += NPCActor5e.getActivitiesAverageDamage(spellDataObject.activities, abilityModValue);
+        }
+        else
+        {
+            let damageList = spellDataObject.damage.parts;
+
+            for (let i = 0; i < damageList.length; i++)
             {
-                continue;
+                let damageArray = damageList[i];
+                let damageDescription = damageArray[0];
+                let damageType = damageArray[1];
+                damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+                if (damageType.toLowerCase() === "healing")
+                {
+                    continue;
+                }
+
+                let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
+                for (let j = 0; j < abilitiesModMatches.length; j++)
+                {
+                    let abilitiesDescription = abilitiesModMatches[j][0];
+                    let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "parentDataObject.abilities.");
+                    let abilitiesModValue = eval(newAbilitiesDescription);
+                    damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
+                }
+
+                let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
+
+                totalDamageForAttack += totalAverageRollResult;
             }
 
-            let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
-            for (let j = 0; j < abilitiesModMatches.length; j++)
+            let scalingObject = spellDataObject.scaling;
+            if (scalingObject && scalingObject.mode === "cantrip")
             {
-                let abilitiesDescription = abilitiesModMatches[j][0];
-                let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "parentDataObject.abilities.");
-                let abilitiesModValue = eval(newAbilitiesDescription);
-                damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
+                let cantripMultiplier = this.getCantripMultiplier();
+                totalDamageForAttack = totalDamageForAttack * cantripMultiplier;
             }
 
-            let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
-
-            totalDamageForAttack += totalAverageRollResult;
-        }
-
-        let scalingObject = spellDataObject.scaling;
-        if (scalingObject && scalingObject.mode === "cantrip")
-        {
-            let cantripMultiplier = this.getCantripMultiplier();
-            totalDamageForAttack = totalDamageForAttack * cantripMultiplier;
-        }
-
-        if (totalDamageForAttack === 0)
-        {
-            return;
+            if (totalDamageForAttack === 0)
+            {
+                return;
+            }
         }
 
         let currentAttackResult = {};
@@ -383,6 +391,32 @@ export class NPCActor5e
         return currentAttackResult;
     }
 
+    static getActivitiesAverageDamage(activities, abilityModValue)
+    {
+        let totalDamageForAttack = 0;
+        const spellSaveActivity = activities.find(a => a.type === "save");
+        if (spellSaveActivity)
+        {
+            spellSaveActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
+        }
+        const damageActivity = activities.find(a => a.type === "damage");
+        if (damageActivity)
+        {
+            damageActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
+        }
+        const attackActivity = activities.find(a => a.type === "attack");
+        if (attackActivity)
+        {
+            damageActivity.damage.parts.forEach(dp => totalDamageForAttack += NPCActor5e.getAverageDamageFromDescription(dp.formula, abilityModValue));
+            if (attackActivity.damage.includeBase)
+            {
+                totalDamageForAttack += abilityModValue;
+            }
+        }
+
+        return totalDamageForAttack;
+    }
+
     guessActorMultiAttack(attackList, multiAttackDescription)
     {
         let firstAttack = attackList.find(a => a.type === "weapon");
@@ -398,54 +432,64 @@ export class NPCActor5e
 
     getInfoForAttackObject(attackObject, numberOfAttacks)
     {
-        let abilityModType = attackObject.abilityMod;
         let attackDataObject = FoundryUtils.getDataObjectFromObject(attackObject);
         let parentDataObject = FoundryUtils.getDataObjectFromObject(attackObject.parent);
-        let abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
-        let damageList = attackDataObject.damage.parts;
-
+        let abilityModValue = 0;
         let totalDamageForAttack = 0;
 
-        if (damageList.length === 0 && attackDataObject.formula != "")
+        if (FoundryUtils.isDND5eVersion4() || FoundryUtils.isDND5eVersion5())
         {
-            let damageDescription = attackDataObject.formula;
-            damageDescription = damageDescription.toLowerCase().replaceAll(/\[.+\]/gm, "");
-
-            let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
-            if (!isNaN(totalAverageRollResult))
-            {
-                totalDamageForAttack += totalAverageRollResult;
-            }
+            let abilityModType = attackActivity.attack.ability;
+            abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
+            totalDamageForAttack += NPCActor5e.getActivitiesAverageDamage(attackDataObject.activities, abilityModValue);
         }
         else
         {
-            for (let i = 0; i < damageList.length; i++)
+            let abilityModType = attackObject.abilityMod;
+            abilityModValue = !abilityModType ? 0 : eval("parentDataObject.abilities." + abilityModType + ".mod");
+            let damageList = attackDataObject.damage.parts;
+            if (damageList.length === 0 && attackDataObject.formula != "")
             {
-                let damageArray = damageList[i];
-                let damageDescription = damageArray[0];
-                let damageType = damageArray[1];
-                damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
-                let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
-                for (let j = 0; j < abilitiesModMatches.length; j++)
-                {
-                    let abilitiesDescription = abilitiesModMatches[j][0];
-                    let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "parentDataObject.abilities.");
-                    let abilitiesModValue = eval(newAbilitiesDescription);
-                    damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
-                }
+                let damageDescription = attackDataObject.formula;
+                damageDescription = damageDescription.toLowerCase().replaceAll(/\[.+\]/gm, "");
 
                 let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
-                if (isNaN(totalAverageRollResult))
+                if (!isNaN(totalAverageRollResult))
                 {
-                    if (damageType != "healing")
-                    {
-                        console.warn(`No damage for ${this.actorname}, ${this.actorid}, attack ${attackObject.name}, damage type ${damageType}`);
-                    }
-                    continue;
+                    totalDamageForAttack += totalAverageRollResult;
                 }
-                totalDamageForAttack += totalAverageRollResult;
+            }
+            else
+            {
+                for (let i = 0; i < damageList.length; i++)
+                {
+                    let damageArray = damageList[i];
+                    let damageDescription = damageArray[0];
+                    let damageType = damageArray[1];
+                    damageDescription = damageDescription.toLowerCase().replaceAll(`[${damageType.toLowerCase()}]`, "");
+                    let abilitiesModMatches = [...damageDescription.matchAll(/@abilities\.(str|dex|int|con|wis|cha)\.mod/gm)];
+                    for (let j = 0; j < abilitiesModMatches.length; j++)
+                    {
+                        let abilitiesDescription = abilitiesModMatches[j][0];
+                        let newAbilitiesDescription = abilitiesDescription.replaceAll("@abilities.", "parentDataObject.abilities.");
+                        let abilitiesModValue = eval(newAbilitiesDescription);
+                        damageDescription = damageDescription.replaceAll(abilitiesDescription, abilitiesModValue);
+                    }
+
+                    let totalAverageRollResult = NPCActor5e.getAverageDamageFromDescription(damageDescription, abilityModValue);
+                    if (isNaN(totalAverageRollResult))
+                    {
+                        if (damageType != "healing")
+                        {
+                            console.warn(`No damage for ${this.actorname}, ${this.actorid}, attack ${attackObject.name}, damage type ${damageType}`);
+                        }
+                        continue;
+                    }
+                    totalDamageForAttack += totalAverageRollResult;
+                }
             }
         }
+
         let currentAttackResult = {};
         currentAttackResult["averagedamage"] = totalDamageForAttack;
         currentAttackResult["attackobject"] = attackObject;
@@ -477,7 +521,23 @@ export class NPCActor5e
 
     static getSaveDC(attackObject)
     {
-        return FoundryUtils.getDataObjectFromObject(attackObject).save.dc;
+        if (FoundryUtils.isDND5eVersion4() || FoundryUtils.isDND5eVersion5())
+        {
+            let saveActivity = attackObject.system.activities.find(a => a.type === "save");
+            if (saveActivity)
+            {
+                return saveActivity.save.dc.value;
+            }
+            else
+            {
+                console.warn(`Unable to find save activity for ${attackObject.name}`);
+                return 0;
+            }
+        }
+        else
+        {
+            return FoundryUtils.getDataObjectFromObject(attackObject).save.dc;
+        }
     }
 
     getCantripMultiplier()
