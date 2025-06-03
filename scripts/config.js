@@ -174,7 +174,7 @@ Hooks.on("renderCombatDirectory", (app, html, data) =>
 		</button>`;
 
     let elementToAppendTo = ``;
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       elementToAppendTo = `.combat-tracker-header`;
     }
@@ -241,7 +241,7 @@ Hooks.on("renderSidebarTab", (settings) =>
 		</button>`;
 
     let elementToAppendTo = ``;
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       elementToAppendTo = `.combat-tracker-header`;
     }
