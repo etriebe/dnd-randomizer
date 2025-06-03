@@ -407,6 +407,8 @@ export class SFLocalHelpers {
           }
         }
       }
+
+      console.log(`Finished populating monsters from compendiums. Found ${this.allMonsters.length} monsters.`);
     }
 
     static calculateCreatureTypeCounts()

@@ -25,7 +25,7 @@ export class ActorUtils
       {
         return creatureTypeValue;
       }
-      else if (FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+      else if (FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
       {
         return creatureTypeValue.filter(t => t in CONFIG.PF2E.creatureTypes).sort();
       }
@@ -217,7 +217,7 @@ export class ActorUtils
 
   static async getTokenDocument(actor, data)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       return await actor.getTokenDocument(data);
     }

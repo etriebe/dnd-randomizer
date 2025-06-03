@@ -24,7 +24,7 @@ export class Encounter
     this.combatsummary = {};
     this.loot = [];
     this.lootActorId = "";
-    this.id = data.id || randomID(40);
+    this.id = data.id || foundry.utils.randomID();
   }
 
   static async generateDynamicEncounter(encounterType, lootType, creatureVariety, encounterDifficulty, spawnLocationX, spawnLocationY, diameter, monsterTypeFilter)
@@ -266,7 +266,7 @@ export class Encounter
     let actorData = null;
     let actorType = FoundryUtils.getSystemVariable("LootActorType");
     let randchestimg = await this.getRandomChestIcon();
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       actorData = {
         name: this.name || this.id,

@@ -111,6 +111,87 @@ Hooks.once('ready', async function ()
 
 });
 
+Hooks.on("renderActorDirectory", (app, html, data) =>
+{
+
+  if (!game.user.isGM)
+  {
+    return;
+  }
+
+  if (html.querySelectorAll(":scope #sfButton").length !== 0) return;
+  const button = `<button type="button" id="sfButton" style="flex-basis: auto;">
+  <i class="fas fa-dice"></i> Generate Encounter
+</button>`;
+  html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("beforeend", button);
+  html.querySelectorAll(":scope #sfButton").forEach((e) => e?.addEventListener("click", async (e) =>
+  {
+    e.preventDefault();
+    if (!canvas.SFDialog?.rendered) await canvas.SFDialog.render(true);
+  }));
+});
+
+Hooks.on("renderCompendiumDirectory", (app, html, data) =>
+{
+
+  if (!game.user.isGM)
+  {
+    return;
+  }
+
+  if (FoundryUtils.getSystemId() === "dnd5e")
+  {
+    if (html.querySelectorAll(":scope #SFCreatureCodexButton").length !== 0) return;
+    const button = `<button type="button" id="SFCreatureCodexButton" style="flex-basis: auto;">
+    <i class="fas fa-dice"></i> Creature Codex
+  </button>`;
+    html.querySelectorAll(`:scope .header-actions`)[0].insertAdjacentHTML("beforeend", button);
+    html.querySelectorAll(":scope #SFCreatureCodexButton").forEach((e) => e?.addEventListener("click", async (e) =>
+    {
+      e.preventDefault();
+      if (!canvas.SFCreatureCodex?.rendered) await canvas.SFCreatureCodex.render(true);
+    }));
+  }
+});
+
+Hooks.on("renderCombatDirectory", (app, html, data) =>
+{
+
+  if (!game.user.isGM)
+  {
+    return;
+  }
+
+  if (FoundryUtils.getSystemId() === "dnd5e")
+  {
+    if (html.querySelectorAll(":scope #combatEstimateButton").length !== 0)
+    {
+      return;
+    }
+
+    const button = `<button type="button" id="combatEstimateButton" style="flex-basis: auto;">
+		<i class="fas fa-calculator"></i> Combat Estimate
+		</button>`;
+
+    let elementToAppendTo = ``;
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
+    {
+      elementToAppendTo = `.combat-tracker-header`;
+    }
+    else
+    {
+      elementToAppendTo = `#combat-round`;
+    }
+    html.querySelectorAll(`:scope ${elementToAppendTo}`)[0].insertAdjacentHTML("beforeend", button);
+    html.querySelectorAll(":scope #combatEstimateButton").forEach((e) => e?.addEventListener("click", async (e) =>
+    {
+      e.preventDefault();
+      const ceDialog = new CombatEstimateDialog();
+      ceDialog.render(true);
+    }));
+  }
+});
+
 Hooks.on("renderSidebarTab", (settings) =>
 {
   if (!game.user.isGM)
@@ -160,7 +241,7 @@ Hooks.on("renderSidebarTab", (settings) =>
 		</button>`;
 
     let elementToAppendTo = ``;
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
     {
       elementToAppendTo = `.combat-tracker-header`;
     }

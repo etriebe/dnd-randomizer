@@ -868,6 +868,47 @@ export const SFLOCALCONSTS = {
       "dnd5e": "system.details.biography.value",
     },
   },
+  SYSTEM_VARIABLES_V13: {
+    // Object is for actor
+    "CreatureType": {
+      "dnd5e": "system.details.type.value",
+      "pf2e": "system.traits.value",
+    },
+    // Object is for spell
+    "SpellLevel": {
+      "dnd5e": "system.level",
+      "pf2e": "system.level.value",
+    },
+    // Object is for actor
+    "CreatureCR": {
+      "dnd5e": "system.details.cr",
+      "pf2e": "system.details.level",
+    },
+    // Object is for actor
+    "CreatureEnvironment": {
+      "dnd5e": "system.details.environment",
+      "pf2e": "level",
+    },
+    "ItemRarity": {
+      "dnd5e": "system.rarity",
+      "pf2e": "system.traits.rarity"
+    },
+    "ItemPrice": {
+      "dnd5e": "system.price",
+      "pf2e": "system.price"
+    },
+    "LootActorType": {
+      "dnd5e": "npc",
+      "pf2e": "loot"
+    },
+    "ClassLevel": {
+      "dnd5e": "system.levels"
+    },
+    // Object is for actor
+    "CreatureBiography": {
+      "dnd5e": "system.details.biography.value",
+    },
+  },
   PATHFINDER_2E_ENCOUNTER_BUDGET: {
     // Key=Encounter Difficulty : Value=[XP Budget, Character Adjustment]
     "Trivial": [40, 10],
