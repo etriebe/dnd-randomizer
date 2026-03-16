@@ -81,7 +81,7 @@ export class CreatureSpawner {
       x = Math.cos(angle) * radius + center.x;
       y = Math.sin(angle) * radius + center.y;
     }
-    while (!collision || (canvas.walls.checkCollision(new Ray(center,{x:x,y:y}), { type: 'move' }) && attemptNumber < 100))
+    while (!collision || (CONFIG.Canvas.polygonBackends.move.testCollision(center, {x:x,y:y}, {type: "move", mode: "any"}) && attemptNumber < 100))
 
     return { x: x, y: y };
   }

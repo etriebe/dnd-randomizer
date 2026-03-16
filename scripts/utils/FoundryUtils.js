@@ -56,7 +56,7 @@ export class FoundryUtils
   static getSystemVariableForObject(object, variableName)
   {
     let currentSystemVariableName = FoundryUtils.getSystemVariable(variableName);
-    return getProperty(object, currentSystemVariableName);
+    return foundry.utils.getProperty(object, currentSystemVariableName);
     // return eval(`object.${currentSystemVariableName}`);
   }
 

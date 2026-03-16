@@ -1,6 +1,7 @@
 import { FoundryUtils } from "../utils/FoundryUtils.js";
 import { SFLOCALCONSTS } from "../localconst.js";
 import { SFLocalHelpers } from "../localmodule.js";
+
 export class EncounterUtilsPf2e
 {
   static async createEncounterPf2e(monsterList, itemList, averageLevelOfPlayers, numberOfPlayers, params)
@@ -34,11 +35,12 @@ export class EncounterUtilsPf2e
         console.error(`Encounter type description is invalid. Expected format of number:formula. For example: 2:0.3*x. This would choose 2 creatures that are roughly near 30% of the the target encounter XP. Actual: ${currentEncounterDescription}`);
         return;
       }
-      let numberOfCreatures = creatureDescriptionParts[0];
-      let levelInRelationToParty = creatureDescriptionParts[1];
+      let numberOfCreatures = parseInt(creatureDescriptionParts[0]);
+      let levelInRelationToParty = parseInt(creatureDescriptionParts[1]);
 
-      const expectedMonsterLevel = parseInt(averageLevelOfPlayers) +  parseInt(levelInRelationToParty);
+      const expectedMonsterLevel = parseInt(averageLevelOfPlayers) + levelInRelationToParty;
       let filteredMonsterList = monsterList.filter(m => FoundryUtils.getDataObjectFromObject(m.actor).details.level.value === expectedMonsterLevel);
+
       if (filteredMonsterList.length === 0)
       {
         console.warn(`Unable to find monsters for the current requested level configuration: ${expectedMonsterLevel}`);
@@ -50,36 +52,72 @@ export class EncounterUtilsPf2e
         continue;
       }
 
-      let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
-      let randomMonster = filteredMonsterList[randomMonsterIndex];
-      let randomMonsterActorObj = randomMonster.actor;
-      let monsterName = randomMonster.actorname;
-
-      if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype)
+      if (isSingleCreatureTypeVariety)
       {
-        console.log(`Skipping creature ${monsterName}, id ${randomMonster.actorid} b/c not same creature type ${singleCreatureType} as previous monster.`);
-        let unfilledFormula = {};
-        unfilledFormula["formula"] = currentEncounterDescription;
-        unfilledFormula["targetmonsterlevel"] = expectedMonsterLevel;
-        unfilledFormula["numberofcreatures"] = numberOfCreatures;
-        currentEncounter["unfilledformula"].push(unfilledFormula);
-        continue;
-      }
-      let randomMonsterLevel = FoundryUtils.getDataObjectFromObject(randomMonsterActorObj).details.level.value;
-      let creatureCombatDetails = {};
-      creatureCombatDetails["name"] = monsterName;
-      creatureCombatDetails["actorid"] = randomMonster.actorid;
-      creatureCombatDetails["compendiumname"] = randomMonster.compendiumname;
-      creatureCombatDetails["quantity"] = numberOfCreatures;
-      creatureCombatDetails["level"] = randomMonsterLevel;
+        // Silver-standard behavior: one monster type, quantity = numberOfCreatures
+        let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
+        let randomMonster = filteredMonsterList[randomMonsterIndex];
 
-      // Lock in the current creature type value
-      if (isSingleCreatureTypeVariety && singleCreatureType === null)
+        if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype)
+        {
+          console.log(`Skipping creature ${randomMonster.actorname}, id ${randomMonster.actorid} b/c not same creature type ${singleCreatureType} as previous monster.`);
+          let unfilledFormula = {};
+          unfilledFormula["formula"] = currentEncounterDescription;
+          unfilledFormula["targetmonsterlevel"] = expectedMonsterLevel;
+          unfilledFormula["numberofcreatures"] = numberOfCreatures;
+          currentEncounter["unfilledformula"].push(unfilledFormula);
+          continue;
+        }
+
+        let creatureCombatDetails = {
+          name: randomMonster.actorname,
+          actorid: randomMonster.actorid,
+          compendiumname: randomMonster.compendiumname,
+          quantity: numberOfCreatures,
+          level: FoundryUtils.getDataObjectFromObject(randomMonster.actor).details.level.value
+        };
+
+        if (singleCreatureType === null) {
+          singleCreatureType = randomMonster.creaturetype;
+        }
+
+        currentEncounter["creatures"].push(creatureCombatDetails);
+      }
+      else
       {
-        singleCreatureType = randomMonster.creaturetype;
-      }
+        // Variety: pick multiple monsters
+        let remaining = numberOfCreatures;
+        let availableMonsters = [...filteredMonsterList];
 
-      currentEncounter["creatures"].push(creatureCombatDetails);
+        while (remaining > 0 && availableMonsters.length > 0) {
+          let index = Math.floor(Math.random() * availableMonsters.length);
+          let monster = availableMonsters.splice(index, 1)[0];
+          let creatureCombatDetails = {
+            name: monster.actorname,
+            actorid: monster.actorid,
+            compendiumname: monster.compendiumname,
+            quantity: 1,
+            level: FoundryUtils.getDataObjectFromObject(monster.actor).details.level.value
+          };
+          currentEncounter["creatures"].push(creatureCombatDetails);
+          remaining--;
+        }
+
+        // If we still have remaining after exhausting the list, repeat monsters
+        while (remaining > 0) {
+          let index = Math.floor(Math.random() * filteredMonsterList.length);
+          let monster = filteredMonsterList[index];
+          let creatureCombatDetails = {
+            name: monster.actorname,
+            actorid: monster.actorid,
+            compendiumname: monster.compendiumname,
+            quantity: 1,
+            level: FoundryUtils.getDataObjectFromObject(monster.actor).details.level.value
+          };
+          currentEncounter["creatures"].push(creatureCombatDetails);
+          remaining--;
+        }
+      }
     }
 
     currentEncounter["level"] = averageLevelOfPlayers;
@@ -241,8 +279,6 @@ export class EncounterUtilsPf2e
   
   static isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers)
   {
-    // Whole object looks like this.
-    // "Elite Enemies (Severe)": { "EncounterFormula": ["3:0"], "EncounterDifficulty": "Severe" },
     const formula = encounterFormula.EncounterFormula; 
 
     for (let formulaPart of formula)

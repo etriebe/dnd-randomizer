@@ -106,7 +106,12 @@ export class Propagator {
       x: position.x + (tokenData.width * canvas.scene.dimensions.size) / 2,
       y: position.y + (tokenData.height * canvas.scene.dimensions.size) / 2,
     });
-    const collisionCheck = canvas.walls.checkCollision(r, { mode: 'any', type: 'move' });
+    const targetPoint = {
+      x: position.x + (tokenData.width * canvas.scene.dimensions.size) / 2,
+      y: position.y + (tokenData.height * canvas.scene.dimensions.size) / 2,
+    };
+
+    const collisionCheck = CONFIG.Canvas.polygonBackends.move.testCollision(origin, targetPoint, { type: "move", mode: "any" });
     return (!collision || !collisionCheck);
   }
 }
