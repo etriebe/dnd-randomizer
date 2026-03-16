@@ -9,6 +9,7 @@ export class SFTreasureChooser extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;
+		this.system = "testing2";
 	}
 
 	static get defaultOptions() {

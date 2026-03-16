@@ -7,6 +7,7 @@ export class SFEnvironmentChooser extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;
+		this.system = "testing4";
 	}
 
 	static get defaultOptions() {

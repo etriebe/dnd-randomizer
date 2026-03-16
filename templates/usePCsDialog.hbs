@@ -43,7 +43,12 @@
 			<button class="toolbar-button" id="force-reindex" title="Force Reindex"><i class="fas fa-rotate-right"></i></button>
 			<button class="toolbar-button" id="filter-treasure" title="Choose Treasure Types"><i class="fas fa-treasure-chest"></i></button>
 			<button class="toolbar-button" id="filter-creatures" title="Choose Creature Types"><i class="fas fa-skull"></i></button>
-			<button class="toolbar-button" id="filter-environments" title="Choose Environments"><i class="fas fa-tree"></i></button>
+			{{#if (eq system "pf2e")}}
+				<button class="toolbar-button" id="filter-traits" title="Choose Traits"><i class="fas fa-person-circle-question"></i></button>
+			{{/if}}
+			{{#if (eq system "dnd5e")}}
+				<button class="toolbar-button" id="filter-environments" title="Choose Environments"><i class="fas fa-tree"></i></button>
+			{{/if}}
 			<button class="toolbar-button" id="filter-people" title="Choose PCs"><i class="fas fa-users"></i></button>
 			<button class="toolbar-button" id="filter-compendium" title="Filter Compendiums"><i class="fas fa-filter"></i></button>
 			<button class="toolbar-button" id="license-and-credits" title="Licensing & Credits"><i class="fas fa-info-circle"></i></button>

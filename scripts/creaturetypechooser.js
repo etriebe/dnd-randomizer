@@ -9,6 +9,7 @@ export class SFCreatureTypeChooser extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;
+		this.system = "testing5";
 	}
 
 	static get defaultOptions() {

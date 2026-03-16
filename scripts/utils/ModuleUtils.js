@@ -4,6 +4,7 @@ import { SFPlayerChooser } from "../playerchooser.js";
 import { SFCreatureTypeChooser } from "../creaturetypechooser.js";
 import { SFTreasureChooser } from "../treasurechooser.js";
 import { SFLocalHelpers } from "../localmodule.js";
+import { SFTraitsChooser } from "../traitschooser.js";
 
 export class ModuleUtils {
     static setupFilterBarListeners(html) {
@@ -23,6 +24,11 @@ export class ModuleUtils {
 		{
 			event.preventDefault();
 			new SFEnvironmentChooser().render(true);
+		});
+
+		html.find('button#filter-traits').on('click', (event) => {
+			event.preventDefault();
+			new SFTraitsChooser().render(true);
 		});
 
 		html.find('button#filter-people').on('click', (event) =>

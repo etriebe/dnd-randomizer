@@ -9,6 +9,7 @@ export class SFCompendiumSorter extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;
+		this.system = "testing7";
 	}
 
 	static get defaultOptions() {

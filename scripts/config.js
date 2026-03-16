@@ -98,6 +98,20 @@ Hooks.once("init", async function ()
     default: [],
   });
 
+  game.settings.register(SFCONSTS.MODULE_NAME, 'traitsToCreateEncountersFor', {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: [],
+  });
+
+  game.settings.register(SFCONSTS.MODULE_NAME, 'traitsSelectionType', {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false, // False: AND, True: OR
+  });
+
   game.settings.register(SFCONSTS.MODULE_NAME, 'ignoreCreaturesWithNoImage', {
     name: "Whether we ignore creatures with no image, mostly for pf2e",
     scope: "world",

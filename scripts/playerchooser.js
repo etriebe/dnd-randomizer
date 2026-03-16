@@ -8,6 +8,7 @@ export class SFPlayerChooser extends FormApplication {
 	constructor() {
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;
+		this.system = "testing3";
 	}
 
 	static get defaultOptions() {

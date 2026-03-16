@@ -14,6 +14,7 @@ export class SFDialog extends FormApplication
 	{
 		super();
 		this.environments = SFCONSTS.GEN_OPT.environment;
+		this.system = "testing";
 	}
 
 	static get defaultOptions()
@@ -35,6 +36,7 @@ export class SFDialog extends FormApplication
 		}
 
 		let dialogTemplate = useLocalPCs ? `modules/dnd-randomizer/templates/usePCsDialog.hbs` : `modules/dnd-randomizer/templates/dialog.hbs`;
+		
 		return {
 			...super.defaultOptions,
 			title: game.i18n.localize('SF.dialog.title'),
@@ -42,14 +44,15 @@ export class SFDialog extends FormApplication
 			template: dialogTemplate,
 			resizable: true,
 			width: window.innerWidth > 700 ? 700 : window.innerWidth - 100,
-			height: window.innerHeight > 800 ? 800 : window.innerHeight - 100
+			height: window.innerHeight > 800 ? 800 : window.innerHeight - 100,
 		};
 	}
 
 	getData()
 	{
 		return {
-			environments: this.environments
+			environments: this.environments,
+			system: FoundryUtils.getSystemId().toLowerCase()
 		};
 	}
 
