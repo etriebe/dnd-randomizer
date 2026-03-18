@@ -109,7 +109,7 @@ Hooks.once("init", async function ()
     scope: "world",
     config: false,
     type: Boolean,
-    default: false, // False: AND, True: OR
+    default: true, // False: AND, True: OR
   });
 
   game.settings.register(SFCONSTS.MODULE_NAME, 'ignoreCreaturesWithNoImage', {
