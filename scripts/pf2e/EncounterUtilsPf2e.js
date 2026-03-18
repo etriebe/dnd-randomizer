@@ -2,10 +2,8 @@ import { FoundryUtils } from "../utils/FoundryUtils.js";
 import { SFLOCALCONSTS } from "../localconst.js";
 import { SFLocalHelpers } from "../localmodule.js";
 
-export class EncounterUtilsPf2e
-{
-  static async createEncounterPf2e(monsterList, itemList, averageLevelOfPlayers, numberOfPlayers, params)
-  {
+export class EncounterUtilsPf2e {
+  static async createEncounterPf2e(monsterList, itemList, averageLevelOfPlayers, numberOfPlayers, params) {
     let currentEncounter = {};
     currentEncounter["creatures"] = [];
     let currentEncounterXP = 0;
@@ -20,18 +18,16 @@ export class EncounterUtilsPf2e
     let amountToAdjustEncounter = 0;
     currentEncounter["unfilledformula"] = [];
 
-    for (var i = 0; i < currentEncounterFormula.length; i++)
-    {
+    for (var i = 0; i < currentEncounterFormula.length; i++) {
       let currentEncounterDescription = currentEncounterFormula[i];
-      
+
       let targetEncounterDifficultyInformation = SFLOCALCONSTS.PATHFINDER_2E_ENCOUNTER_BUDGET[currentEncounterDifficulty];
       let originalTargetEncounterXP = targetEncounterDifficultyInformation[0];
       let characterAdjustment = targetEncounterDifficultyInformation[1];
       amountToAdjustEncounter = (numberOfPlayers - 4) * characterAdjustment;
       let creatureDescriptionParts = currentEncounterDescription.split(":");
 
-      if (creatureDescriptionParts.length != 2)
-      {
+      if (creatureDescriptionParts.length != 2) {
         console.error(`Encounter type description is invalid. Expected format of number:formula. For example: 2:0.3*x. This would choose 2 creatures that are roughly near 30% of the the target encounter XP. Actual: ${currentEncounterDescription}`);
         return;
       }
@@ -41,8 +37,7 @@ export class EncounterUtilsPf2e
       const expectedMonsterLevel = parseInt(averageLevelOfPlayers) + levelInRelationToParty;
       let filteredMonsterList = monsterList.filter(m => FoundryUtils.getDataObjectFromObject(m.actor).details.level.value === expectedMonsterLevel);
 
-      if (filteredMonsterList.length === 0)
-      {
+      if (filteredMonsterList.length === 0) {
         console.warn(`Unable to find monsters for the current requested level configuration: ${expectedMonsterLevel}`);
         let unfilledFormula = {};
         unfilledFormula["formula"] = currentEncounterDescription;
@@ -52,14 +47,12 @@ export class EncounterUtilsPf2e
         continue;
       }
 
-      if (isSingleCreatureTypeVariety)
-      {
+      if (isSingleCreatureTypeVariety) {
         // Silver-standard behavior: one monster type, quantity = numberOfCreatures
         let randomMonsterIndex = Math.floor((Math.random() * filteredMonsterList.length));
         let randomMonster = filteredMonsterList[randomMonsterIndex];
 
-        if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype)
-        {
+        if (singleCreatureType != null && singleCreatureType != randomMonster.creaturetype) {
           console.log(`Skipping creature ${randomMonster.actorname}, id ${randomMonster.actorid} b/c not same creature type ${singleCreatureType} as previous monster.`);
           let unfilledFormula = {};
           unfilledFormula["formula"] = currentEncounterDescription;
@@ -83,8 +76,7 @@ export class EncounterUtilsPf2e
 
         currentEncounter["creatures"].push(creatureCombatDetails);
       }
-      else
-      {
+      else {
         // Variety: pick multiple monsters
         let remaining = numberOfCreatures;
         let availableMonsters = [...filteredMonsterList];
@@ -127,16 +119,14 @@ export class EncounterUtilsPf2e
     return currentEncounter;
   }
 
-  static getPF2ELootForEncounter(currentEncounter, itemList, params)
-  {
+  static getPF2ELootForEncounter(currentEncounter, itemList, params) {
     let lootType = params.loot_type;
     let currencyTable = SFLOCALCONSTS.PF2E_CURRENCY_TABLE;
     let encounterLevel = currentEncounter["level"];
     let encounterDifficulty = currentEncounter["difficulty"];
     let currencyList = currencyTable[encounterLevel];
     let goldPieces = 0;
-    switch (encounterDifficulty)
-    {
+    switch (encounterDifficulty) {
       case "Low":
         goldPieces = currencyList[0];
         break;
@@ -160,8 +150,7 @@ export class EncounterUtilsPf2e
     currencyResultObject["sp"] = 0;
     currencyResultObject["cp"] = 0;
 
-    for (let item of itemsResultObject)
-    {
+    for (let item of itemsResultObject) {
       currencyResultObject = EncounterUtilsPf2e.subtractCurrencyAmount(currencyResultObject, item.object.itemcost);
     }
 
@@ -174,13 +163,11 @@ export class EncounterUtilsPf2e
     return lootResultObject;
   }
 
-  static subtractCurrencyAmount(currencyObject, subtractionAmount)
-  {
+  static subtractCurrencyAmount(currencyObject, subtractionAmount) {
     let currentAmountTotal = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(currencyObject);
     let subtractionAmountTotal = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(subtractionAmount);
 
-    if (subtractionAmountTotal > currentAmountTotal)
-    {
+    if (subtractionAmountTotal > currentAmountTotal) {
       throw new Error(`Subtraction amount ${subtractionAmountTotal} was larger than total amount ${currentAmountTotal}`);
     }
 
@@ -198,25 +185,20 @@ export class EncounterUtilsPf2e
     return currencyResultObject;
   }
 
-  static getPF2EItemLootForEncounter(itemList, goldPieces, encounterLevel, lootType)
-  {
+  static getPF2EItemLootForEncounter(itemList, goldPieces, encounterLevel, lootType) {
     let itemsResultObject = [];
     let itemCount = 0;
     let goldPiecesLeft = goldPieces;
-    if (lootType === "Individual Treasure")
-    {
+    if (lootType === "Individual Treasure") {
       itemCount = 1;
     }
-    else
-    {
+    else {
       itemCount = FoundryUtils.getRollResult("2d4");
     }
 
-    for (let i = 0; i < itemCount; i++)
-    {
+    for (let i = 0; i < itemCount; i++) {
       // Leave at least 10 gp left
-      if (goldPiecesLeft < 10)
-      {
+      if (goldPiecesLeft < 10) {
         break;
       }
 
@@ -226,43 +208,44 @@ export class EncounterUtilsPf2e
         j++;
         let randomItemIndex = Math.floor((Math.random() * itemList.length));
         let randomItemObject = itemList[randomItemIndex];
-        let itemType = randomItemObject.itemtype;
-        let itemLevel = randomItemObject.level;
-        let itemCost = randomItemObject.itemcost;
-        let itemName = randomItemObject.itemname;
-        let item = randomItemObject.item;
+        try {
+          let itemType = randomItemObject.itemtype;
+          let itemLevel = randomItemObject.level;
+          let itemCost = randomItemObject.itemcost;
+          let itemName = randomItemObject.itemname;
+          let item = randomItemObject.item;
 
-        let totalGoldCost = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(itemCost.value);
+          let totalGoldCost = EncounterUtilsPf2e.getTotalGoldCostFromCostObject(itemCost.value);
 
-        if (totalGoldCost === 0)
-        {
-          // ignore treasure with 0 cost
-          continue;
-        }
-
-        if (totalGoldCost <= goldPiecesLeft)
-        {
-          if (itemType === "consumable" && encounterLevel < itemLevel)
-          {
+          if (totalGoldCost === 0) {
+            // ignore treasure with 0 cost
             continue;
           }
 
-          goldPiecesLeft = goldPiecesLeft - totalGoldCost;
+          if (totalGoldCost <= goldPiecesLeft) {
+            if (itemType === "consumable" && encounterLevel < itemLevel) {
+              continue;
+            }
 
-          let currentObjectDictionary = {};
-          currentObjectDictionary.quantity = 1;
-          currentObjectDictionary.name = itemName;
-          currentObjectDictionary.object = randomItemObject;
-          itemsResultObject.push(currentObjectDictionary);
-          break;
+            goldPiecesLeft = goldPiecesLeft - totalGoldCost;
+
+            let currentObjectDictionary = {};
+            currentObjectDictionary.quantity = 1;
+            currentObjectDictionary.name = itemName;
+            currentObjectDictionary.object = randomItemObject;
+            itemsResultObject.push(currentObjectDictionary);
+            break;
+          }
+        }
+        catch (error) {
+          console.log(`Skipping item: ${randomItemObject.itemname}, id ${randomItemObject.itemid}. Error: ${error}`);
         }
       }
     }
     return itemsResultObject;
   }
 
-  static getTotalGoldCostFromCostObject(costObject)
-  {
+  static getTotalGoldCostFromCostObject(costObject) {
     let totalGoldCost = 0;
     totalGoldCost += parseInt(costObject.pp ?? 0) * 10;
     totalGoldCost += parseInt(costObject.gp ?? 0);
@@ -271,23 +254,19 @@ export class EncounterUtilsPf2e
     return totalGoldCost;
   }
 
-  static getAdjustedXPString(amountToAdjustEncounter)
-  {
+  static getAdjustedXPString(amountToAdjustEncounter) {
     let plusOrMinus = amountToAdjustEncounter > 0 ? "+" : "";
     return `Needs ${plusOrMinus}${amountToAdjustEncounter} XP adjustment`;
   }
-  
-  static isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers)
-  {
-    const formula = encounterFormula.EncounterFormula; 
 
-    for (let formulaPart of formula)
-    {
+  static isEncounterFormulaPossibleForPlayers(encounterFormula, averageLevelOfPlayers) {
+    const formula = encounterFormula.EncounterFormula;
+
+    for (let formulaPart of formula) {
       const creatureDescriptionParts = formulaPart.split(":");
       const levelInRelationToParty = creatureDescriptionParts[1];
       const desiredCreatureLevel = parseInt(averageLevelOfPlayers) + parseInt(levelInRelationToParty);
-      if (desiredCreatureLevel < -1)
-      {
+      if (desiredCreatureLevel < -1) {
         console.warn(`There are no monsters below requested level for formula. Requested Creature level: ${desiredCreatureLevel}, Average Player Level: ${averageLevelOfPlayers}`);
         return false;
       }

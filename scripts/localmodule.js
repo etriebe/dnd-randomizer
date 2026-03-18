@@ -530,7 +530,7 @@ export class SFLocalHelpers {
           }
         }
 
-        let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OFs_BEASTS_CREATURE_ENVIRONMENT_MAPPING[monsterObject.actorname];
+        let extraEnvironmentMapping = SFLOCALCONSTS.TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING[monsterObject.actorname];
         if (extraEnvironmentMapping && extraEnvironmentMapping.filter(e => filteredEnvironments.filter(f => f === e).length > 0).length > 0) {
           console.log(`Added monster ${monsterObject.actorname} because it appeared in TOME_OF_BEASTS_CREATURE_ENVIRONMENT_MAPPING`);
           filteredMonsters.push(monsterObject.actor);
