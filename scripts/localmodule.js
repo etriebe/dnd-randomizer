@@ -509,24 +509,27 @@ export class SFLocalHelpers {
           continue;
         }
 
-        if (savedTraitsSelectionModeSettings) {
-          // OR mode
-          if (filteredTraitTypes.filter(m => monsterObject.traits && monsterObject.traits.includes(m)).length === 0) {
-            continue;
-          }
-        }
-        else {
-          const skipCreature = false;
-          // AND mode. They must have every selected trait on every monster
-          for (let trait of filteredTraitTypes) {
-            if (!monsterObject.traits.includes(trait)) {
-              skipCreature = true;
-              break;
+        if (FoundryUtils.getSystemId() === "pf2e")
+        {
+          if (savedTraitsSelectionModeSettings) {
+            // OR mode
+            if (filteredTraitTypes.filter(m => monsterObject.traits && monsterObject.traits.includes(m)).length === 0) {
+              continue;
             }
           }
-
-          if (skipCreature) {
-            continue;
+          else {
+            const skipCreature = false;
+            // AND mode. They must have every selected trait on every monster
+            for (let trait of filteredTraitTypes) {
+              if (!monsterObject.traits.includes(trait)) {
+                skipCreature = true;
+                break;
+              }
+            }
+  
+            if (skipCreature) {
+              continue;
+            }
           }
         }
 
