@@ -357,8 +357,8 @@ export class SFLocalHelpers {
 
           if (FoundryUtils.getSystemId() === "pf2e") {
             monsterObject["traits"] = actor.system.traits.value;
-            this.allMonsters.push(monsterObject);
           }
+          this.allMonsters.push(monsterObject);
         }
         catch (error) {
           console.warn(error);
