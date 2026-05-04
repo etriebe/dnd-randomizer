@@ -220,8 +220,6 @@ export class SFDialog extends FormApplication
 
 			$ul.find('li:last-child .create-encounter i.fas[data-trigger="spawn"]').on('click', function (event)
 			{
-				canvas.templates.activate();
-				ui.notifications.info("Please place a Circle Template to Spawn the Encounter");
 				encounter.spawn();
 			});
 

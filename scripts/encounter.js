@@ -192,17 +192,24 @@ export class Encounter {
     await this.loadActors();
     const _this = this;
     if (FoundryUtils.isFoundryVersion14()) {
+      canvas.regions.activate({tool: "circle"})
+      ui.notifications.info("Please place a Region Template (Circle, Rectangle, Ellipses, Cone) to Spawn the Encounter!");
       if (this.lootActorId === "") {
         await this.createLootSheet();
       }
+      // Activate template layer for user to place a circle template
+      canvas.templates.activate();
+      // Wait for user to create a measured template
+      const template = await new Promise((resolve) => {
+        Hooks.once("preCreateRegion", (templateDoc) => {
+          resolve(templateDoc);
+          return false; // Prevent the template from being created
+        });
+      });
+      const shape = template.shapes.find(s => s);
       const spawnArea = await canvas.regions.placeRegion({
         name: "Spawn Area",
-        shapes: [{
-          type: "circle",
-          x: 0,
-          y: 0,
-          radius: canvas.dimensions.distancePixels * 7
-        }],
+        shapes: template.shapes,
         restriction: { enabled: true },
         levels: [canvas.level.id]
       }, { create: false });
@@ -220,9 +227,12 @@ export class Encounter {
           tokensToSpawn.push(tD);
         }
         const spawnedTokens = await spawnArea.spawnTokens(tokensToSpawn);
+        canvas.tokens.activate();
       }
     }
     else {
+      canvas.templates.activate();
+      ui.notifications.info("Please place a Circle Template to Spawn the Encounter!");
       Hooks.once("preCreateMeasuredTemplate", async (template) => {
         canvas.tokens.activate();
         if (this.lootActorId === "") {
