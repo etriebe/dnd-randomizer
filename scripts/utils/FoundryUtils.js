@@ -22,6 +22,11 @@ export class FoundryUtils
     return game.version.match(/^13\./) != null;
   }
 
+  static isFoundryVersion14()
+  {
+    return game.version.match(/^14\./) != null;
+  }
+
   static isDND5eVersion5()
   {
     return game.system.version.match(/^5\./) != null;
@@ -44,7 +49,7 @@ export class FoundryUtils
 
   static getCombatantDisposition(obj)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13() || FoundryUtils.isFoundryVersion14())
     {
       return obj.token.disposition;
     }
@@ -65,7 +70,11 @@ export class FoundryUtils
   {
     let currentSystem = game.system.id;
     let variableValues;
-    if (FoundryUtils.isFoundryVersion13())
+    if (FoundryUtils.isFoundryVersion14())
+    {
+      variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES_V13[variableName];
+    }
+    else if (FoundryUtils.isFoundryVersion13())
     {
       variableValues = SFLOCALCONSTS.SYSTEM_VARIABLES_V13[variableName];
     }
@@ -103,7 +112,7 @@ export class FoundryUtils
 
   static getDataObjectFromObject(obj)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13() || FoundryUtils.isFoundryVersion14())
     {
       if (obj.system)
       {
@@ -129,7 +138,7 @@ export class FoundryUtils
 
   static getTemplateDataObject(obj)
   {
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13() || FoundryUtils.isFoundryVersion14())
     {
       return obj;
     }
@@ -242,7 +251,7 @@ export class FoundryUtils
     let actorName = actor.actorname;
     let compendiumName = actor.compendiumname;
 
-    if (this.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
+    if (this.isFoundryVersion12() || FoundryUtils.isFoundryVersion13() || FoundryUtils.isFoundryVersion14())
     {
       if (compendiumName)
       {
@@ -257,7 +266,7 @@ export class FoundryUtils
         return `<a class="content-link sf-dialog-content-link" draggable="true" data-type="Actor" data-uuid="Actor.${actorID}"><i class="fas fa-user"></i>${actorName}</a>`;
       }
     }
-    else if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
+    else if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13() || FoundryUtils.isFoundryVersion14())
     {
       if (compendiumName)
       {
@@ -286,7 +295,7 @@ export class FoundryUtils
     let itemID = item.id;
     let itemName = item.name;
     let compendiumName = item.compendiumname;
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13() || FoundryUtils.isFoundryVersion14())
     {
       if (compendiumName)
       {

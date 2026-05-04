@@ -10,10 +10,8 @@ import { SFLocalHelpers } from "./localmodule.js";
 
 
 
-export class Encounter
-{
-  constructor(data)
-  {
+export class Encounter {
+  constructor(data) {
     this.data = data;
     this.name = data.name;
     this.difficulty = data.difficulty;
@@ -27,14 +25,12 @@ export class Encounter
     this.id = data.id || foundry.utils.randomID();
   }
 
-  static async generateDynamicEncounter(encounterType, lootType, creatureVariety, encounterDifficulty, spawnLocationX, spawnLocationY, diameter, monsterTypeFilter)
-  {
+  static async generateDynamicEncounter(encounterType, lootType, creatureVariety, encounterDifficulty, spawnLocationX, spawnLocationY, diameter, monsterTypeFilter) {
 
     let numberOfPlayers = 0;
     let averageLevelOfPlayers = 0;
     let useLocalPCs = game.settings.get(SFCONSTS.MODULE_NAME, 'usePlayerOwnedCharactersForGeneration');
-    if (useLocalPCs)
-    {
+    if (useLocalPCs) {
       let activePlayerInfo = SFLocalHelpers.getActivePlayersCountAndLevels();
       numberOfPlayers = activePlayerInfo["numberofplayers"];
       averageLevelOfPlayers = activePlayerInfo["averageplayerlevel"];
@@ -58,12 +54,10 @@ export class Encounter
     let forceReload = false;
     await SFLocalHelpers.populateObjectsFromCompendiums(forceReload);
     let filteredMonsters;
-    if (monsterTypeFilter === "")
-    {
+    if (monsterTypeFilter === "") {
       filteredMonsters = await SFLocalHelpers.filterMonstersFromCompendiums();
     }
-    else
-    {
+    else {
       filteredMonsters = await SFLocalHelpers.filterMonstersByType(monsterTypeFilter);
     }
 
@@ -85,11 +79,9 @@ export class Encounter
     this.DynamicSpawn(newTemplate[0], encounterData[0]);
   }
 
-  async prepareData(lootOnly = false)
-  {
+  async prepareData(lootOnly = false) {
     //Prepare loot data
-    for (let loot of this.data.loot.items)
-    {
+    for (let loot of this.data.loot.items) {
       const item = new EncItem(loot, "item");
 
       // Set these to force the use of compendium name and item id to get an exact match quickly
@@ -97,46 +89,39 @@ export class Encounter
       item.id = loot.object?.itemid;
 
       const itemData = await item.getData();
-      if (itemData && itemData.type !== "spell")
-      {
+      if (itemData && itemData.type !== "spell") {
         this.loot.push(item);
         continue;
       }
     }
 
     //Prepare scroll data
-    for (let loot of this.data.loot.scrolls)
-    {
+    for (let loot of this.data.loot.scrolls) {
       const item = new EncItem(loot, "item", true);
       if (await item.getData()) this.loot.push(item);
     }
 
     //Prepare abstract loot data
-    for (let loot of this.data.loot.other)
-    {
+    for (let loot of this.data.loot.other) {
       const item = new EncItem(loot, "abstract");
       item.getData();
       this.loot.push(item);
     }
     if (lootOnly) return this;
     //Prepare creature data
-    for (let creature of this.data.creatures)
-    {
+    for (let creature of this.data.creatures) {
       this.creatures.push(new EncCreature(creature));
     }
 
-    if (this.data.unfilledformula)
-    {
-      for (let unfilled of this.data.unfilledformula)
-      {
+    if (this.data.unfilledformula) {
+      for (let unfilled of this.data.unfilledformula) {
         this.unfilledformula.push(unfilled);
       }
     }
     return this;
   }
 
-  validate()
-  {
+  validate() {
     if (
       this.data.creatures.every(
         (creature) =>
@@ -147,21 +132,18 @@ export class Encounter
       return this;
   }
 
-  static getCompendiumEntryByName(name, type)
-  {
+  static getCompendiumEntryByName(name, type) {
     name = type == "Actor" ? name : Encounter.fuzzyMatch(name, type);
     const constCompFilter = game.settings.get(
       SFCONSTS.MODULE_NAME,
       "filterCompendiums"
     );
-    const filteredCompendiums = Array.from(FoundryUtils.getCompendiums()).filter((p) =>
-    {
+    const filteredCompendiums = Array.from(FoundryUtils.getCompendiums()).filter((p) => {
       if (p.documentName !== type) return false;
       const el = constCompFilter.find((i) => Object.keys(i)[0] == p.collection);
       return !el || el[p.collection] ? true : false;
     });
-    const compendiums = filteredCompendiums.sort((a, b) =>
-    {
+    const compendiums = filteredCompendiums.sort((a, b) => {
       const filterIndexA = constCompFilter.indexOf(
         constCompFilter.find((i) => Object.keys(i)[0] == a.collection)
       );
@@ -171,22 +153,18 @@ export class Encounter
       return filterIndexA > filterIndexB ? 1 : -1;
     });
     let entries = [];
-    for (let compendium of compendiums)
-    {
+    for (let compendium of compendiums) {
       const entry = compendium.index.find((i) => i.name === name);
       if (entry) entries.push({ entry: entry, compendium: compendium });
     }
     return entries.length > 0 ? entries[0] : null;
   }
   //returns the most similar name in a compendium
-  static fuzzyMatch(name, type)
-  {
+  static fuzzyMatch(name, type) {
     const compendiums = FoundryUtils.getCompendiums().filter((p) => p.documentName === type);
     let matchDb = [];
-    for (let compendium of compendiums)
-    {
-      for (let entry of compendium.index)
-      {
+    for (let compendium of compendiums) {
+      for (let entry of compendium.index) {
         matchDb.push(entry.name);
       }
     }
@@ -195,54 +173,76 @@ export class Encounter
     return result ? result[0][1] : undefined;
   }
 
-  async loadActors()
-  {
-    for (let creature of this.creatures)
-    {
+  async loadActors() {
+    for (let creature of this.creatures) {
       await creature.getActor();
     }
   }
 
-  async analyzeActors()
-  {
-    for (let creature of this.creatures)
-    {
-      if (creature.npcactor.analyzeActor === undefined)
-      {
+  async analyzeActors() {
+    for (let creature of this.creatures) {
+      if (creature.npcactor.analyzeActor === undefined) {
         creature.npcactor = await ActorUtils.getActorObjectFromActorIdCompendiumName(creature.actorid, creature.compendiumname);
       }
       await creature.npcactor.analyzeActor();
     }
   }
 
-  async spawn()
-  {
+  async spawn() {
     await this.loadActors();
     const _this = this;
-    Hooks.once("preCreateMeasuredTemplate", async (template) =>
-    {
-      canvas.tokens.activate();
-      if (this.lootActorId === "")
-      {
+    if (FoundryUtils.isFoundryVersion14()) {
+      if (this.lootActorId === "") {
         await this.createLootSheet();
       }
-      await CreatureSpawner.fromTemplate(template, _this);
-      canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", [(Array.from(canvas.scene.templates)).pop().id]);
-      return false;
-    });
+      const spawnArea = await canvas.regions.placeRegion({
+        name: "Spawn Area",
+        shapes: [{
+          type: "circle",
+          x: 0,
+          y: 0,
+          radius: canvas.dimensions.distancePixels * 7
+        }],
+        restriction: { enabled: true },
+        levels: [canvas.level.id]
+      }, { create: false });
+      if (spawnArea) {
+        const tokensToSpawn = [];
+        for (let creature of this.creatures) {
+          for (let i = 0; i < creature.quantity; i++) {
+            const tD = await ActorUtils.getTokenDocument(creature._actor);
+            tokensToSpawn.push(tD);
+          }
+        }
+        if (this.lootActorId != "") {
+          const actor = await game.actors.get(this.lootActorId);
+          const tD = await ActorUtils.getTokenDocument(actor);
+          tokensToSpawn.push(tD);
+        }
+        const spawnedTokens = await spawnArea.spawnTokens(tokensToSpawn);
+      }
+    }
+    else {
+      Hooks.once("preCreateMeasuredTemplate", async (template) => {
+        canvas.tokens.activate();
+        if (this.lootActorId === "") {
+          await this.createLootSheet();
+        }
+        await CreatureSpawner.fromTemplate(template, _this);
+        canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", [(Array.from(canvas.scene.templates)).pop().id]);
+        return false;
+      });
+    }
   }
 
-  static async DynamicSpawn(template, encounterData)
-  {
+  static async DynamicSpawn(template, encounterData) {
 
-    for (let creature of encounterData.creatures)
-    {
+    for (let creature of encounterData.creatures) {
       await creature.getActor();
     }
     const _this = encounterData;
     canvas.tokens.activate();
-    if (encounterData.lootActorId === "")
-    {
+    if (encounterData.lootActorId === "") {
       await encounterData.createLootSheet();
     }
     await CreatureSpawner.fromTemplate(template, encounterData);
@@ -250,14 +250,12 @@ export class Encounter
     return false;
   }
 
-  async getRandomChestIcon()
-  {
+  async getRandomChestIcon() {
     const folder = await FilePicker.browse("public", "icons/containers/chest");
     return folder.files[Math.floor(Math.random() * folder.files.length)];
   }
 
-  async createLootSheet()
-  {
+  async createLootSheet() {
     const folderName = SFHelpers.getFolder("loot");
     const folder = game.folders.getName(folderName)
       ? game.folders.getName(folderName)
@@ -266,8 +264,7 @@ export class Encounter
     let actorData = null;
     let actorType = FoundryUtils.getSystemVariable("LootActorType");
     let randchestimg = await this.getRandomChestIcon();
-    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13())
-    {
+    if (FoundryUtils.isFoundryVersion10() || FoundryUtils.isFoundryVersion11() || FoundryUtils.isFoundryVersion12() || FoundryUtils.isFoundryVersion13() || FoundryUtils.isFoundryVersion14()) {
       actorData = {
         name: this.name || this.id,
         type: actorType,
@@ -288,8 +285,7 @@ export class Encounter
         folder: folder.id,
       };
     }
-    else
-    {
+    else {
       actorData = {
         name: this.name || this.id,
         type: "npc",
@@ -310,14 +306,12 @@ export class Encounter
 
     const actor = await Actor.create(actorData);
     let items = [];
-    for (let item of this.loot)
-    {
+    for (let item of this.loot) {
       items.push(await item.getData());
     }
 
     let currentSystem = game.system.id;
-    if (currentSystem === "pf2e")
-    {
+    if (currentSystem === "pf2e") {
       const pack = game.packs.get("pf2e.equipment-srd");
       const cp = (await pack.getDocument(pack.index.find(i => i.name === "Copper Pieces")._id)).toObject();
       const sp = (await pack.getDocument(pack.index.find(i => i.name === "Silver Pieces")._id)).toObject();
@@ -336,8 +330,7 @@ export class Encounter
     this.lootActorId = actor.id;
   }
 
-  async combatEstimate()
-  {
+  async combatEstimate() {
     await this.analyzeActors();
     canvas.CombatEstimateDialog = new CombatEstimateDialog(this.creatures);
     await canvas.CombatEstimateDialog.render(true);
@@ -345,10 +338,8 @@ export class Encounter
   }
 }
 
-class EncCreature
-{
-  constructor(creature)
-  {
+class EncCreature {
+  constructor(creature) {
     this.name = creature.name;
     this.npcactor = creature.npcactor;
     this.actorid = creature.actorid;
@@ -361,12 +352,10 @@ class EncCreature
     this._actor = null;
   }
 
-  async getActor()
-  {
+  async getActor() {
     if (this._actor) return this._actor;
     let actor = game.actors.find((a) => a.name === this.name);
-    if (!actor)
-    {
+    if (!actor) {
       const folderName = SFHelpers.getFolder("actor");
       const folder = game.folders.getName(folderName)
         ? game.folders.getName(folderName)
@@ -384,16 +373,13 @@ class EncCreature
     return actor;
   }
 
-  getDLink()
-  {
+  getDLink() {
     let actor = game.actors.find((a) => a.name === this.name);
-    if (actor)
-    {
+    if (actor) {
       this.compendium = "";
       return `@Actor[${actor.id}]{${this.name}}`;
     }
-    if (!actor)
-    {
+    if (!actor) {
       const compData = Encounter.getCompendiumEntryByName(this.name, "Actor");
       this.compendium = compData.compendium.collection;
       return `@Compendium[${compData.compendium.collection}.${compData.entry._id}]{${this.name}}`;
@@ -401,10 +387,8 @@ class EncCreature
   }
 }
 
-class EncItem
-{
-  constructor(item, type, isScroll = false)
-  {
+class EncItem {
+  constructor(item, type, isScroll = false) {
     this.name = item.name;
     this.compendiumname = "";
     this.id = "";
@@ -416,10 +400,8 @@ class EncItem
     this._itemDocument = null;
   }
 
-  async getData()
-  {
-    switch (this.type)
-    {
+  async getData() {
+    switch (this.type) {
       case "item":
         return await this.getItemData();
       case "abstract":
@@ -427,31 +409,26 @@ class EncItem
     }
   }
 
-  static getCompendiumEntryByCompendiumAndId(compendiumName, id)
-  {
+  static getCompendiumEntryByCompendiumAndId(compendiumName, id) {
     const compendium = game.packs.find(p => p.metadata.id === compendiumName);
     const entry = compendium.index.find((i) => i._id === id);
-    if (entry)
-    {
+    if (entry) {
       return { entry: entry, compendium: compendium };
     }
   }
 
-  getRandomLootImg()
-  {
+  getRandomLootImg() {
     return SFCONSTS.LOOT_ICONS[
       Math.floor(Math.random() * SFCONSTS.LOOT_ICONS.length)
     ];
   }
 
-  async getItemData()
-  {
+  async getItemData() {
     if (this._itemDocument) return this._itemDocument;
 
     let item = game.items.find((a) => a.name === this.name);
 
-    if (item)
-    {
+    if (item) {
       this.name = item.name;
       this._itemDocument = this.isScroll
         ? await this.toSpellScroll(item)
@@ -462,21 +439,17 @@ class EncItem
       return this._itemDocument;
     }
 
-    if (!item)
-    {
+    if (!item) {
       let compData = null;
-      if (this.compendiumname && this.id)
-      {
+      if (this.compendiumname && this.id) {
         compData = EncItem.getCompendiumEntryByCompendiumAndId(this.compendiumname, this.id);
       }
 
-      if (!compData)
-      {
+      if (!compData) {
         compData = Encounter.getCompendiumEntryByName(this.name, "Item");
       }
 
-      if (!compData)
-      {
+      if (!compData) {
         return undefined;
       }
       item = await game.packs
@@ -495,8 +468,7 @@ class EncItem
     }
   }
 
-  async generateAbstractLootData()
-  {
+  async generateAbstractLootData() {
     if (this._itemDocument) return this._itemDocument;
     this._itemDocument = {
       name: this.name,
@@ -513,8 +485,7 @@ class EncItem
     return this._itemDocument;
   }
 
-  async toSpellScroll(item)
-  {
+  async toSpellScroll(item) {
     if (FoundryUtils.getDataObjectFromObject(item).type !== "spell") return undefined;
     const itemData = item.toObject();
     const level = FoundryUtils.getDataObjectFromObject(itemData).level;
